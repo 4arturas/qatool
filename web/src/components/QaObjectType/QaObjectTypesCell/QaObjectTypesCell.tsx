@@ -1,6 +1,6 @@
 import type { QaObjectTypesQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import QaObjectType from 'src/components/QaObjectType/QaObjectType';
+import QaObjectType from 'src/components/QaObjectType/QaObjectType/QaObjectType';
 
 
 export const QUERY = gql`

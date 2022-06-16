@@ -1,5 +1,5 @@
 import { MetaTags } from '@redwoodjs/web'
-import QaObjectTypesCell from "src/components/QaObjectTypesCell";
+import QaObjectTypesCell from "src/components/QaObjectType/QaObjectTypesCell";
 
 const ObjectTypesPage = () => {
   return (
