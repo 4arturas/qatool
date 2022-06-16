@@ -14,6 +14,8 @@ const Routes = () => {
   return (
     <Router>
       <Set wrap={QaLayout}>
+        <Route path="/object-types" page={ObjectTypesPage} name="objectTypes" />
+        <Route path="/object-type/{id:Int}" page={ObjectTypePage} name="objectType" />
         <Route path="/" page={HomePage} name="home" />
       </Set>
       <Route notfound page={NotFoundPage} />
