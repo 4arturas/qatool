@@ -24,7 +24,7 @@ export const Success = ({ qaObjectTypes }: CellSuccessProps<QaObjectTypesQuery>)
   return (
     <ul>
       {qaObjectTypes.map((item) => (
-        <QaObjectType qaObjectType={item} />
+        <QaObjectType key={item.id} qaObjectType={item} />
       ))}
     </ul>
   )
