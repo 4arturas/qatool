@@ -1,3 +1,5 @@
+import {Link, routes} from "@redwoodjs/router";
+
 interface Props {
   qaObjectType : {
     id: number,
@@ -8,7 +10,11 @@ interface Props {
 const QaObjectType = ({qaObjectType}: Props) => {
   return (
     <div>
-      <h2>{qaObjectType.name}</h2>
+      <h2>
+        <Link to={routes.objectType({id:qaObjectType.id})}>
+          {qaObjectType.name}
+        </Link>
+      </h2>
     </div>
   )
 }
