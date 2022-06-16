@@ -121,3 +121,16 @@ The best way to learn Redwood is by going through the comprehensive [tutorial](h
 - [Learn how to contribute](https://redwoodjs.com/docs/contributing)
 -
 
+## TEMP add data to database
+````
+INSERT INTO QaObjectType (name) VALUES('COLLECTION');
+INSERT INTO QaObjectType (name) VALUES('SERVER');
+INSERT INTO QaObjectType (name) VALUES('SUITE');
+INSERT INTO QaObjectType (name) VALUES('CASE');
+INSERT INTO QaObjectType (name) VALUES('BODY');
+INSERT INTO QaObjectType (name) VALUES('TEST');
+INSERT INTO QaObjectType (name) VALUES('REPLACE');
+INSERT INTO QaObjectType (name) VALUES('REMOVE');
+INSERT INTO QaObjectType (name) VALUES('RESULT');
+INSERT INTO QaObjectType (name) VALUES('RESPONSE');
+````
