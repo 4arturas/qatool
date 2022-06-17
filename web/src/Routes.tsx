@@ -8,11 +8,18 @@
 // 'src/pages/Admin/BooksPage/BooksPage.js' -> AdminBooksPage
 
 import { Router, Route, Set } from '@redwoodjs/router'
+import QaObjectRelationshipsLayout from 'src/layouts/QaObjectRelationshipsLayout'
 import QaLayout from "src/layouts/QaLayout/QaLayout";
 
 const Routes = () => {
   return (
     <Router>
+      <Set wrap={QaObjectRelationshipsLayout}>
+        <Route path="/qa-object-relationships/new" page={QaObjectRelationshipNewQaObjectRelationshipPage} name="newQaObjectRelationship" />
+        <Route path="/qa-object-relationships/{id:Int}/edit" page={QaObjectRelationshipEditQaObjectRelationshipPage} name="editQaObjectRelationship" />
+        <Route path="/qa-object-relationships/{id:Int}" page={QaObjectRelationshipQaObjectRelationshipPage} name="qaObjectRelationship" />
+        <Route path="/qa-object-relationships" page={QaObjectRelationshipQaObjectRelationshipsPage} name="qaObjectRelationships" />
+      </Set>
       <Set wrap={QaLayout}>
         <Route path="/object-types" page={ObjectTypesPage} name="objectTypes" />
         <Route path="/object-type/{id:Int}" page={ObjectTypePage} name="objectType" />
