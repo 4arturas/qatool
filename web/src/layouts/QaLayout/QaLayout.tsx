@@ -6,15 +6,23 @@ type QaLayoutProps = {
 
 const QaLayout = ({ children }: QaLayoutProps) => {
   return <>
-    <header>
-      <h1>QA Tool</h1>
+    <div className="rw-scaffold">
+      <header className="rw-header">
+        <h1 className="rw-heading rw-heading-primary">QA Tool</h1>
       <ul>
-        <li style={{display:'inline', marginRight: "20px"}}><Link to={routes.home()}>Home</Link></li>
-        <li style={{display:'inline', marginRight: "20px"}}><Link to={routes.objectTypes()}>Object Types</Link></li>
-        <li style={{display:'inline', marginRight: "20px"}}><Link to={routes.qaObjects()}>QA Objects</Link></li>
+        <li style={{display:'inline', marginRight: "20px"}}>
+          <Link to={routes.home()} className="rw-link">Home</Link>
+        </li>
+        <li style={{display:'inline', marginRight: "20px"}}>
+          <Link to={routes.objectTypes()} className="rw-link">Object Types</Link>
+        </li>
+        <li style={{display:'inline', marginRight: "20px"}}>
+          <Link to={routes.qaObjects()} className="rw-link">QA Objects</Link>
+        </li>
       </ul>
     </header>
     <main>{children}</main>
+    </div>
   </>
 }
 
