@@ -37,8 +37,8 @@ model QaObjectType {
 model QaObjectRelationship {
   id         Int        @id @default(autoincrement())
 
-  parentId   Int                   @unique
-  childrenId Int?
+  parentId   Int
+  childrenId Int
   parent     QaObject  @relation("PARENT", fields: [parentId], references: [id])
   children   QaObject? @relation("CHILDREN", fields: [childrenId], references: [id])
 }
