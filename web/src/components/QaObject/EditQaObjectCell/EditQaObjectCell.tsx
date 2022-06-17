@@ -6,6 +6,7 @@ import { toast } from '@redwoodjs/web/toast'
 import { navigate, routes } from '@redwoodjs/router'
 
 import QaObjectForm from 'src/components/QaObject/QaObjectForm'
+import {useState} from "react";
 
 export const QUERY = gql`
   query EditQaObjectById($id: Int!) {
@@ -42,6 +43,22 @@ const UPDATE_QA_OBJECT_MUTATION = gql`
   }
 `
 
+const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
+  mutation CreateQaObjectRelationshipMutation($input: CreateQaObjectRelationshipInput!) {
+    createQaObjectRelationship(input: $input) {
+      id
+    }
+  }
+`
+
+const DELETE_QA_OBJECT_RELATIONSHIP_BY_PARENT_ID_MUTATION = gql`
+  mutation DeleteQaObjectRelationshipMutation($parentId: Int!) {
+    deleteQaObjectRelationshipByParentId(parent: $parentId) {
+      parentId
+    }
+  }
+`
+
 export const Loading = () => <div>Loading...</div>
 
 export const Failure = ({ error }: CellFailureProps) => (
@@ -49,10 +66,24 @@ export const Failure = ({ error }: CellFailureProps) => (
 )
 
 export const Success = ({ qaObject }: CellSuccessProps<EditQaObjectById>) => {
+
+  const [parentId, setParentId] = useState(0);
+  const [children, setChildren] = useState([]);
+
   const [updateQaObject, { loading, error }] = useMutation(UPDATE_QA_OBJECT_MUTATION, {
+
     onCompleted: () => {
+
+      deleteQaObjectRelationshipByParentId({ variables: { parentId } });
+
+/*      children.map( (childrenId) => {
+        const castInput = { parentId: parentId, childrenId: parseInt(childrenId) };
+        createQaObjectRelationship({ variables: { input: castInput } });
+      });*/
+
+
       toast.success('QaObject updated')
-      navigate(routes.qaObjects())
+      // navigate(routes.qaObjects())
     },
     onError: (error) => {
       toast.error(error.message)
@@ -60,13 +91,37 @@ export const Success = ({ qaObject }: CellSuccessProps<EditQaObjectById>) => {
   })
 
   const onSave = (input, id) => {
-    const children = input.children;
+    setChildren(input.children);
     delete input.children;
 
+    setParentId(id);
     const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
     updateQaObject({ variables: { id, input: castInput } })
+  }
 
-    // TODO: update children
+  const [createQaObjectRelationship, { loading: loadingQaObjectRelationship, error: errorQaObjectRelationship }] = useMutation(CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, {
+    onCompleted: () => {
+      // toast.success('QaObjectRelationship created')
+      // navigate(routes.qaObjectRelationships())
+      console.log( 'hello')
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
+  const [deleteQaObjectRelationshipByParentId] = useMutation(DELETE_QA_OBJECT_RELATIONSHIP_BY_PARENT_ID_MUTATION, {
+    onCompleted: () => {
+      // toast.success('QaObjectRelationship deleted')
+    },
+    onError: (error) => {
+      // toast.error(error.message)
+    }
+  })
+
+  const onSaveQaObjectRelationship = (input) => {
+    const castInput = Object.assign(input, { parentId: parseInt(input.parentId), childrenId: parseInt(input.childrenId), })
+    createQaObjectRelationship({ variables: { input: castInput } })
   }
 
   return (
