@@ -7,7 +7,7 @@ type QaLayoutProps = {
 const QaLayout = ({ children }: QaLayoutProps) => {
   return <>
     <header>
-      <h1>QA Toll</h1>
+      <h1>QA Tool</h1>
       <ul>
         <li><Link to={routes.home()}>Home</Link></li>
         <li><Link to={routes.objectTypes()}>Object Types</Link></li>
