@@ -86,12 +86,47 @@ const QaObjectForm = (props) => {
         </SelectField>
 
 
-        <FieldError name="typeId" className="rw-field-error" />
+        <Label
+          name="name"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Name
+        </Label>
+
+        <TextField
+          name="name"
+          defaultValue={props.qaObject?.name}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        />
+
+
+        <FieldError name="name" className="rw-field-error" />
+
+        <Label
+          name="description"
+          className="rw-label"
+          errorClassName="rw-label rw-label-error"
+        >
+          Description
+        </Label>
+
+        <TextField
+          name="description"
+          defaultValue={props.qaObject?.description}
+          className="rw-input"
+          errorClassName="rw-input rw-input-error"
+          validation={{ required: true }}
+        />
+
+        <FieldError name="description" className="rw-field-error" />
 
         {typeId===COLLECTION?<CollectionForm qaObject={props}/>:<></>}
         {typeId===SUITE?<SuiteForm qaObject={props}/>:<></>}
 
-        {typeId!==0?
+        { typeId ?
           <div className="rw-button-group">
             <Submit
               disabled={props.loading}
