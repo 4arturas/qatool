@@ -25,7 +25,7 @@ export const objectTypeToName = (typeId: number) =>
   }
 }
 
-export const parentHasChildrenOfTypeId = (parentTypeId: number) =>
+export const getChildrenTypeIdByParentTypeId = (parentTypeId: number) =>
 {
   switch ( parentTypeId )
   {

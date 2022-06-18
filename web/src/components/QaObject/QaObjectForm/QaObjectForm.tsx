@@ -11,7 +11,7 @@ import {
 import {useEffect, useState} from "react";
 import CollectionForm from "./CollectionForm";
 import SuiteForm from "src/components/QaObject/QaObjectForm/SuiteForm";
-import {COLLECTION, parentHasChildrenOfTypeId, SUITE} from "src/global";
+import {COLLECTION, getChildrenTypeIdByParentTypeId, SUITE} from "src/global";
 import QaObjectsFindByTypeCell from "src/components/QaObject/QaObjectsFindByTypeCell";
 
 
@@ -138,7 +138,7 @@ const QaObjectForm = (props) => {
               Children
             </Label>
             <br/>
-            <QaObjectsFindByTypeCell parentId={props.qaObject?.id} typeId={ parentHasChildrenOfTypeId(typeId) } multiple={true}/>
+            <QaObjectsFindByTypeCell parentId={props.qaObject?.id} typeId={ getChildrenTypeIdByParentTypeId(typeId) } multiple={true}/>
           </>
           : <></>
         }
