@@ -1,12 +1,13 @@
 import type { EditQaObjectById } from 'types/graphql'
 
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import { useMutation } from '@redwoodjs/web'
-import { toast } from '@redwoodjs/web/toast'
-import { navigate, routes } from '@redwoodjs/router'
+import {useMutation, useQuery} from '@redwoodjs/web'
+import {useLazyQuery} from '@apollo/client'
+import {toast, Toaster} from '@redwoodjs/web/toast'
 
 import QaObjectForm from 'src/components/QaObject/QaObjectForm'
 import {useState} from "react";
+import {navigate, routes} from "@redwoodjs/router";
 
 export const QUERY = gql`
   query EditQaObjectById($id: Int!) {
@@ -51,10 +52,20 @@ const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
   }
 `
 
-const DELETE_QA_OBJECT_RELATIONSHIP_BY_PARENT_ID_MUTATION = gql`
-  mutation DeleteQaObjectRelationshipMutation($parentId: Int!) {
-    deleteQaObjectRelationshipByParentId(parent: $parentId) {
+const DELETE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
+  mutation DeleteQaObjectRelationshipMutation($id: Int!) {
+    deleteQaObjectRelationship(id: $id) {
+      id
+    }
+  }
+`
+
+const FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID = gql`
+  query FindRelationshipsWithTheSameParentId($parentId: Int!) {
+    qaObjectRelationshipsWithTheSameParentId(parentId: $parentId) {
+      id
       parentId
+      childrenId
     }
   }
 `
@@ -70,20 +81,42 @@ export const Success = ({ qaObject }: CellSuccessProps<EditQaObjectById>) => {
   const [parentId, setParentId] = useState(0);
   const [children, setChildren] = useState([]);
 
+  const [loadGreeting, { called, loading: l, data }] = useLazyQuery(FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID, {
+    variables: { parentId },
+  });
+
+  const [deleteQaObjectRelationship] = useMutation(DELETE_QA_OBJECT_RELATIONSHIP_MUTATION, {
+    onCompleted: () => {
+    },
+    onError: (error) => {
+    },
+  })
+
   const [updateQaObject, { loading, error }] = useMutation(UPDATE_QA_OBJECT_MUTATION, {
 
-    onCompleted: () => {
+    onCompleted: async () => {
+      const queryResult = await loadGreeting();
+      const data = queryResult.data.qaObjectRelationshipsWithTheSameParentId;
+      data.map((p)=> {
+        const id = p.id;
+        deleteQaObjectRelationship({ variables: { id } });
+      });
 
-      deleteQaObjectRelationshipByParentId({ variables: { parentId } });
-
-/*      children.map( (childrenId) => {
+      children.map( (childrenId) => {
         const castInput = { parentId: parentId, childrenId: parseInt(childrenId) };
         createQaObjectRelationship({ variables: { input: castInput } });
-      });*/
-
+      });
 
       toast.success('QaObject updated')
-      // navigate(routes.qaObjects())
+      navigate(routes.qaObjects())
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
+  const [createQaObjectRelationship, { loading: loadingQaObjectRelationship, error: errorQaObjectRelationship }] = useMutation(CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, {
+    onCompleted: () => {
     },
     onError: (error) => {
       toast.error(error.message)
@@ -97,31 +130,6 @@ export const Success = ({ qaObject }: CellSuccessProps<EditQaObjectById>) => {
     setParentId(id);
     const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
     updateQaObject({ variables: { id, input: castInput } })
-  }
-
-  const [createQaObjectRelationship, { loading: loadingQaObjectRelationship, error: errorQaObjectRelationship }] = useMutation(CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, {
-    onCompleted: () => {
-      // toast.success('QaObjectRelationship created')
-      // navigate(routes.qaObjectRelationships())
-      console.log( 'hello')
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
-
-  const [deleteQaObjectRelationshipByParentId] = useMutation(DELETE_QA_OBJECT_RELATIONSHIP_BY_PARENT_ID_MUTATION, {
-    onCompleted: () => {
-      // toast.success('QaObjectRelationship deleted')
-    },
-    onError: (error) => {
-      // toast.error(error.message)
-    }
-  })
-
-  const onSaveQaObjectRelationship = (input) => {
-    const castInput = Object.assign(input, { parentId: parseInt(input.parentId), childrenId: parseInt(input.childrenId), })
-    createQaObjectRelationship({ variables: { input: castInput } })
   }
 
   return (
