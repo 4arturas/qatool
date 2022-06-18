@@ -10,12 +10,27 @@ const CREATE_QA_OBJECT_MUTATION = gql`
     }
   }
 `
+const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
+  mutation CreateQaObjectRelationshipMutation($input: CreateQaObjectRelationshipInput!) {
+    createQaObjectRelationship(input: $input) {
+      id
+    }
+  }
+`
 
 const NewQaObject = () => {
+
   const [createQaObject, { loading, error }] = useMutation(CREATE_QA_OBJECT_MUTATION, {
     onCompleted: () => {
-      toast.success('QaObject created')
-      navigate(routes.qaObjects())
+
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
+  const [createQaObjectRelationship, { loading: loadingQaObjectRelationship, error: errorQaObjectRelationship }] = useMutation(CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, {
+    onCompleted: () => {
     },
     onError: (error) => {
       toast.error(error.message)
@@ -23,8 +38,24 @@ const NewQaObject = () => {
   })
 
   const onSave = (input) => {
+    const children = input.children;
+    delete input.children;
+
     const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
-    createQaObject({ variables: { input: castInput } })
+    const data = createQaObject({ variables: { input: castInput } });
+    data.then( (ret) => {
+      const createQaObject = ret.data.createQaObject;
+      const parentId: number = createQaObject.id;
+
+      children.map( async (childrenId) => {
+        const castInput = { parentId: parentId, childrenId: parseInt(childrenId) };
+        const ret = await createQaObjectRelationship({ variables: { input: castInput } });
+        const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
+      });
+
+      toast.success('QaObject created')
+      navigate(routes.qaObjects())
+    });
   }
 
   return (
