@@ -6,16 +6,7 @@ export const QUERY = gql`
   query FindQaObjectByObjectType($typeId: Int!) {
     qaObjects: getQaObjectsByType(typeId: $typeId) {
       id
-      typeId
       name
-      description
-      batchId
-      threads
-      loops
-      json
-      jsonata
-      createdAt
-      updatedAt
     }
   }
 `
@@ -29,7 +20,10 @@ export const Failure = ({ error }: CellFailureProps) => (
 )
 
 export const Success = ({ qaObjects, multiple, defaultValue }) => {
-  return <SelectField defaultValue={defaultValue} multiple={multiple} name="children">{qaObjects.map((q) => {
-    return <option key={q.id} value={q.id}>{q.name}</option>
-  })}</SelectField>
+  return <>
+    <SelectField defaultValue={defaultValue} multiple={multiple} name="children">{qaObjects.map((q) => {
+      return <option key={q.id} value={q.id}>{q.name}</option>
+    })}
+    </SelectField>
+  </>
 }
