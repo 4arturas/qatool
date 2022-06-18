@@ -28,8 +28,8 @@ export const Failure = ({ error }: CellFailureProps) => (
   <div className="rw-cell-error">{error.message}</div>
 )
 
-export const Success = ({ qaObjects, multiple }) => {
-  return <SelectField multiple={multiple} name="children">{qaObjects.map((q) => {
+export const Success = ({ qaObjects, multiple, defaultValue }) => {
+  return <SelectField defaultValue={defaultValue} multiple={multiple} name="children">{qaObjects.map((q) => {
     return <option key={q.id} value={q.id}>{q.name}</option>
   })}</SelectField>
 }
