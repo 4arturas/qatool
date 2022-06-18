@@ -1,3 +1,4 @@
+export const HAS_NO_PARENT = 0;
 export const COLLECTION = 1;
 export const SERVER = 2;
 export const SUITE = 3;
@@ -21,5 +22,20 @@ export const objectTypeToName = (typeId: number) =>
       return 'Suite';
     default:
       return 'Undefined ObjectType';
+  }
+}
+
+export const parentHasChildrenOfTypeId = (parentTypeId: number) =>
+{
+  switch ( parentTypeId )
+  {
+    case COLLECTION:
+      return SUITE;
+    case SUITE:
+      return CASE;
+    case CASE:
+      return TEST;
+    default:
+      return HAS_NO_PARENT;
   }
 }
