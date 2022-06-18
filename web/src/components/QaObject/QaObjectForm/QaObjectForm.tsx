@@ -11,7 +11,8 @@ import {
 import {useEffect, useState} from "react";
 import CollectionForm from "./CollectionForm";
 import SuiteForm from "src/components/QaObject/QaObjectForm/SuiteForm";
-import {COLLECTION, SUITE} from "src/global";
+import {COLLECTION, parentHasChildrenOfTypeId, SUITE} from "src/global";
+import QaObjectsFindByTypeCell from "src/components/QaObject/QaObjectsFindByTypeCell";
 
 
 
@@ -56,6 +57,7 @@ const QaObjectForm = (props) => {
 
         <SelectField
           name="typeId"
+          disabled={!!typeId}
           defaultValue={props.qaObject?.typeId}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
@@ -125,6 +127,21 @@ const QaObjectForm = (props) => {
 
         {typeId===COLLECTION?<CollectionForm qaObject={props}/>:<></>}
         {typeId===SUITE?<SuiteForm qaObject={props}/>:<></>}
+
+        { typeId ?
+          <>
+            <Label
+              name="children"
+              className="rw-label"
+              errorClassName="rw-label rw-label-error"
+            >
+              Children
+            </Label>
+            <br/>
+            <QaObjectsFindByTypeCell parentId={props.qaObject?.id} typeId={ parentHasChildrenOfTypeId(typeId) } multiple={true}/>
+          </>
+          : <></>
+        }
 
         { typeId ?
           <div className="rw-button-group">

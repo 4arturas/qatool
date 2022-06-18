@@ -38,17 +38,6 @@ const CollectionForm = (props) => {
 
         <FieldError name="batchId" className="rw-field-error" />
 
-
-        <Label
-          name="children"
-          className="rw-label"
-          errorClassName="rw-label rw-label-error"
-        >
-          Children
-        </Label>
-        <br/>
-        <QaObjectsFindByTypeCell parentId={props.qaObject.qaObject?.id} typeId={SUITE} multiple={true}/>
-
     </>
   )
 }
