@@ -85,7 +85,7 @@ const CollectionForm = (props) => {
           Children
         </Label>
         <br/>
-        <QaObjectsFindByTypeCell typeId={SUITE} multiple={true} defaultValue={[2,3]}/>
+        <QaObjectsFindByTypeCell parentId={props.qaObject.qaObject?.id} typeId={SUITE} multiple={true}/>
 
     </>
   )

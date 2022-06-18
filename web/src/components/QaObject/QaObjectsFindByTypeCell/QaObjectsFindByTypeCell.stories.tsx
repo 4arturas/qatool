@@ -15,7 +15,7 @@ export const failure = () => {
 }
 
 export const success = () => {
-  return Success ? <Form><Success multiple={true} {...standard()} defaultValue={[1,2,5]} /></Form> : null
+  return Success ? <Form><Success parentId={null} multiple={true} {...standard()} /></Form> : null
 }
 
 export default { title: 'Cells/QaObjectsFindByTypeCell' }
