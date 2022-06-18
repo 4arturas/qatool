@@ -1,11 +1,9 @@
 import type { FindQaObjectById } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
-import QaObject from 'src/components/QaObject/QaObject'
-
 export const QUERY = gql`
-  query FindQaObjectById($name: String!) {
-    qaObject: qaObject(name: $name) {
+  query FindQaObjectByName($name: Int!) {
+    qaObject: qaObject(id: $name) {
       id
       typeId
       name
