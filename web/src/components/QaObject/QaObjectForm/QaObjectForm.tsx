@@ -11,8 +11,9 @@ import {
 import {useEffect, useState} from "react";
 import CollectionForm from "./CollectionForm";
 import SuiteForm from "src/components/QaObject/QaObjectForm/SuiteForm";
-import {COLLECTION, getChildrenTypeIdByParentTypeId, SUITE} from "src/global";
+import {CASE, COLLECTION, getChildrenTypeIdByParentTypeId, SUITE} from "src/global";
 import QaObjectsFindByTypeCell from "src/components/QaObject/QaObjectsFindByTypeCell";
+import CaseForm from "src/components/QaObject/QaObjectForm/CaseForm";
 
 
 
@@ -127,6 +128,7 @@ const QaObjectForm = (props) => {
 
         {typeId===COLLECTION?<CollectionForm qaObject={props}/>:<></>}
         {typeId===SUITE?<SuiteForm qaObject={props}/>:<></>}
+        {typeId===CASE?<CaseForm qaObject={props}/>:<></>}
 
         { typeId ?
           <>
