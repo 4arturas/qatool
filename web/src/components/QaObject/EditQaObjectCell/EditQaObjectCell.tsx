@@ -81,7 +81,7 @@ export const Success = ({ qaObject }: CellSuccessProps<EditQaObjectById>) => {
   const [parentId, setParentId] = useState(0);
   const [children, setChildren] = useState([]);
 
-  const [loadGreeting, { called, loading: l, data }] = useLazyQuery(FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID, {
+  const [loadChildren, { called, loading: l, data }] = useLazyQuery(FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID, {
     variables: { parentId },
   });
 
@@ -95,7 +95,7 @@ export const Success = ({ qaObject }: CellSuccessProps<EditQaObjectById>) => {
   const [updateQaObject, { loading, error }] = useMutation(UPDATE_QA_OBJECT_MUTATION, {
 
     onCompleted: async () => {
-      const queryResult = await loadGreeting();
+      const queryResult = await loadChildren();
       const data = queryResult.data.qaObjectRelationshipsWithTheSameParentId;
       data.map((p)=> {
         const id = p.id;
