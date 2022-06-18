@@ -24,8 +24,6 @@ model QaObject {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  parent      QaObjectRelationship?  @relation("PARENT")
-  children    QaObjectRelationship[] @relation("CHILDREN")
 }
 
 model QaObjectType {
@@ -36,9 +34,7 @@ model QaObjectType {
 
 model QaObjectRelationship {
   id         Int        @id @default(autoincrement())
-
   parentId   Int
   childrenId Int
-  parent     QaObject  @relation("PARENT", fields: [parentId], references: [id])
-  children   QaObject? @relation("CHILDREN", fields: [childrenId], references: [id])
+  @@unique([parentId, childrenId])
 }
