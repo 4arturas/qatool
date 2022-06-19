@@ -17,6 +17,9 @@ export const QUERY = gql`
       loops
       json
       jsonata
+      address
+      method
+      header
       createdAt
       updatedAt
     }

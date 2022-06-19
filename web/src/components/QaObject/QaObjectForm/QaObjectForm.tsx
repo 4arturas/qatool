@@ -27,6 +27,7 @@ import CaseForm from "src/components/QaObject/QaObjectForm/CaseForm";
 import BodyForm from "src/components/QaObject/QaObjectForm/BodyForm";
 import ReplaceForm from "src/components/QaObject/QaObjectForm/ReplaceForm";
 import ResultForm from "src/components/QaObject/QaObjectForm/ResultForm";
+import ServerForm from "src/components/QaObject/QaObjectForm/ServerForm";
 
 
 
@@ -146,6 +147,7 @@ const QaObjectForm = (props) => {
         <FieldError name="description" className="rw-field-error" />
 
         {typeId===COLLECTION?<CollectionForm qaObject={props}/>:<></>}
+        {typeId===SERVER?<ServerForm qaObject={props}/>:<></>}
         {typeId===SUITE?<SuiteForm qaObject={props}/>:<></>}
         {typeId===CASE?<CaseForm qaObject={props}/>:<></>}
         {typeId===BODY?<BodyForm qaObject={props}/>:<></>}
@@ -211,6 +213,7 @@ const QaObjectForm = (props) => {
                       </tbody>
                     </table>
                   )
+                case SERVER:
                 case BODY:
                 case REPLACE:
                 case REMOVE:

@@ -22,6 +22,9 @@ export const QUERY = gql`
       loops
       json
       jsonata
+      address
+      method
+      header
       createdAt
       updatedAt
     }
@@ -39,6 +42,9 @@ const UPDATE_QA_OBJECT_MUTATION = gql`
       loops
       json
       jsonata
+      address
+      method
+      header
       createdAt
       updatedAt
     }

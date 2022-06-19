@@ -10,6 +10,9 @@ export const schema = gql`
     loops: Int
     json: String
     jsonata: String
+    address:     String
+    method:      String
+    header:      String
     createdAt: DateTime!
     updatedAt: DateTime!
   }
@@ -29,6 +32,9 @@ export const schema = gql`
     loops: Int
     json: String
     jsonata: String
+    address:     String
+    method:      String
+    header:      String
   }
 
   input UpdateQaObjectInput {
@@ -40,6 +46,9 @@ export const schema = gql`
     loops: Int
     json: String
     jsonata: String
+    address:     String
+    method:      String
+    header:      String
   }
 
   type Mutation {

@@ -89,6 +89,9 @@ const QaObjectsList = ({ qaObjects }) => {
             <th>Loops</th>
             <th>Json</th>
             <th>Jsonata</th>
+            <th>Address</th>
+            <th>Method</th>
+            <th>Header</th>
             <th>Created at</th>
             <th>Updated at</th>
             <th>&nbsp;</th>
@@ -106,6 +109,9 @@ const QaObjectsList = ({ qaObjects }) => {
               <td>{truncate(qaObject.loops)}</td>
               <td>{truncate(qaObject.json)}</td>
               <td>{truncate(qaObject.jsonata)}</td>
+              <td>{truncate(qaObject.address)}</td>
+              <td>{truncate(qaObject.method)}</td>
+              <td>{truncate(qaObject.header)}</td>
               <td>{timeTag(qaObject.createdAt)}</td>
               <td>{timeTag(qaObject.updatedAt)}</td>
               <td>

@@ -99,6 +99,18 @@ const QaObject = ({ qaObject }) => {
               <th>Jsonata</th>
               <td>{qaObject.jsonata}</td>
             </tr><tr>
+            </tr><tr>
+              <th>Address</th>
+              <td>{qaObject.address}</td>
+            </tr><tr>
+            </tr><tr>
+              <th>Method</th>
+              <td>{qaObject.method}</td>
+            </tr><tr>
+            </tr><tr>
+              <th>Header</th>
+              <td>{qaObject.header}</td>
+            </tr><tr>
               <th>Created at</th>
               <td>{timeTag(qaObject.createdAt)}</td>
             </tr><tr>
