@@ -70,16 +70,7 @@ const NewQaObject = () => {
     });
   }
 
-  return (
-    <div className="rw-segment">
-      <header className="rw-segment-header">
-        <h2 className="rw-heading rw-heading-secondary">New QaObject</h2>
-      </header>
-      <div className="rw-segment-main">
-        <QaObjectForm onSave={onSave} loading={loading} error={error} />
-      </div>
-    </div>
-  )
+  return <QaObjectForm onSave={onSave} loading={loading} error={error} />
 }
 
 export default NewQaObject

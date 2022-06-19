@@ -47,16 +47,6 @@ export const Failure = ({ error }: CellFailureProps) => (
 )
 
 export const Success = ({ qaObjects }: CellSuccessProps<FindQaObjects>) => {
-  return <>
-    <div>
-      <Link
-        to={routes.newQaObject()}
-        className="rw-button rw-button-green" style={{width:"130px", whiteSpace: "nowrap"}}
-      >
-        <div className="rw-button-icon">+</div> New QaObject
-      </Link>
+  return <QaObjects qaObjects={qaObjects} />
 
-    </div>
-    <QaObjects qaObjects={qaObjects} />
-  </>
 }
