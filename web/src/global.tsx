@@ -39,17 +39,40 @@ export const objectTypeToName = (typeId: number) =>
   }
 }
 
-export const getChildrenTypeIdByParentTypeId = (parentTypeId: number) =>
+export const getChildrenTypeIdByParentTypeId = (parentTypeId: number) : Array<number>=>
 {
   switch ( parentTypeId )
   {
     case COLLECTION:
-      return SUITE;
+      return [SUITE];
     case SUITE:
-      return CASE;
+      return [CASE];
     case CASE:
-      return TEST;
+      return [BODY,TEST];
+    case TEST:
+      return [REPLACE,REMOVE,RESULT,RESPONSE]
     default:
-      return HAS_NO_PARENT;
+      return [];
   }
+}
+
+export const getChildrenFromInput = (input) : Array<number> => {
+  let children: Array<number> = [];
+  const childrenFragment: string = 'children';
+  if ( input[childrenFragment] )
+  {
+    children = input[childrenFragment];
+    delete input[childrenFragment];
+  }
+
+  const childrenIDArr: Array<string> = [`${childrenFragment}${BODY}`, `${childrenFragment}${TEST}`, `${childrenFragment}${REPLACE}`, `${childrenFragment}${REMOVE}`, `${childrenFragment}${RESULT}`, `${childrenFragment}${RESPONSE}`];
+  childrenIDArr.map( (c) => {
+    if ( input[c] )
+    {
+      children.push( parseInt(input[c]) );
+      delete input[c];
+    }
+  });
+
+  return children;
 }

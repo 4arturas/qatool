@@ -15,7 +15,17 @@ export const failure = () => {
 }
 
 export const success = () => {
-  return Success ? <Form><Success parentId={null} multiple={true} {...standard()} /></Form> : null
+  return Success ? <Form>
+    <div style={{display:"flex", flexDirection: "row"}}>
+      <div>
+        <Success name="childrenMultiple" parentId={null} multiple={true} {...standard()} />
+      </div>
+      <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+      <div>
+        <Success name="childrenSingle" parentId={null} multiple={false} {...standard()} />
+      </div>
+    </div>
+  </Form> : null
 }
 
 export default { title: 'Cells/QaObjectsFindByTypeCell' }

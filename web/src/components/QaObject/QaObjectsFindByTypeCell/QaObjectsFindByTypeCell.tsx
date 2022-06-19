@@ -33,7 +33,7 @@ export const Failure = ({ error }: CellFailureProps) => (
 
 
 
-export const Success = ({ qaObjects, multiple, parentId }) => {
+export const Success = ({ qaObjects, multiple, parentId, name }) => {
 
   const [defaultValue, setDefaultValue] = useState(null);
 
@@ -48,19 +48,40 @@ export const Success = ({ qaObjects, multiple, parentId }) => {
       const getAsyncChildrenByParentId = async () => {
         const queryResult = await loadChildren();
         const data = queryResult.data.qaObjectRelationshipsWithTheSameParentId;
-        const children = data.map((c)=>c.childrenId);
-        setDefaultValue( children );
+        if ( multiple )
+        {
+          const children = data.map((c)=>c.childrenId);
+          setDefaultValue( children );
+        }
+        else
+        {
+          let selected: number = -1;
+
+          qaObjects.map((qO) => {
+            const id: number = parseInt(qO.id);
+            selected = data.find( (d) => d.childrenId === id )?.childrenId;
+            selected = selected?selected:-1;
+          } );
+          setDefaultValue(selected);
+        }
+
       };
       getAsyncChildrenByParentId();
     }
     else
-      setDefaultValue([]);
+    {
+      // if multiple is false, then value must be scalar, otherwise array
+      if ( multiple )
+        setDefaultValue([]);
+      else
+        setDefaultValue(-1);
+    }
 
   }, []);
 
   return <>
     {!defaultValue ? <span>Loading</span> :
-      <SelectField defaultValue={defaultValue} multiple={multiple} name="children">
+      <SelectField defaultValue={defaultValue} multiple={multiple} name={name}>
         {qaObjects.map((q) => {
           return <option key={q.id} value={q.id}>{q.name}</option>
         })}

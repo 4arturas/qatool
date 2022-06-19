@@ -11,23 +11,43 @@ import {
 import {useEffect, useState} from "react";
 import CollectionForm from "./CollectionForm";
 import SuiteForm from "src/components/QaObject/QaObjectForm/SuiteForm";
-import {CASE, COLLECTION, getChildrenTypeIdByParentTypeId, SUITE} from "src/global";
+import {
+  BODY,
+  CASE,
+  COLLECTION,
+  getChildrenTypeIdByParentTypeId, objectTypeToName,
+  REMOVE,
+  REPLACE, RESPONSE,
+  RESULT, SERVER,
+  SUITE,
+  TEST
+} from "src/global";
 import QaObjectsFindByTypeCell from "src/components/QaObject/QaObjectsFindByTypeCell";
 import CaseForm from "src/components/QaObject/QaObjectForm/CaseForm";
+import BodyForm from "src/components/QaObject/QaObjectForm/BodyForm";
+import ReplaceForm from "src/components/QaObject/QaObjectForm/ReplaceForm";
+import ResultForm from "src/components/QaObject/QaObjectForm/ResultForm";
 
 
 
 const QaObjectForm = (props) => {
+
   const formMethods = useForm()
+
   const [typeId,setTypeId] = useState(props?.qaObject?.typeId);
   const onSubmit = (data) => {
     props.onSave(data, props?.qaObject?.id)
   }
 
-
-
   const onSelect = (data) => {
     setTypeId(parseInt(data.target.value));
+  }
+
+  const renderOption = (typeId1, typeId2) => {
+    const render: boolean = !typeId1 || typeId1 === typeId2;
+    if (render)
+      return <option value={typeId2}>{objectTypeToName(typeId2)}</option>;
+    return <></>
   }
 
   return (
@@ -58,7 +78,6 @@ const QaObjectForm = (props) => {
 
         <SelectField
           name="typeId"
-          disabled={!!typeId}
           defaultValue={props.qaObject?.typeId}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
@@ -75,17 +94,17 @@ const QaObjectForm = (props) => {
             },
           }}
         >
-          <option value={0}>Please select object type</option>
-          <option value={1}>Collection</option>
-          <option value={2}>Server</option>
-          <option value={3}>Suite</option>
-          <option value={4}>Case</option>
-          <option value={5}>Body</option>
-          <option value={6}>Test</option>
-          <option value={7}>Replace</option>
-          <option value={8}>Remove</option>
-          <option value={9}>Result</option>
-          <option value={10}>Response</option>
+          { !props.qaObject?.typeId && <option value={0}>Please select object type</option> }
+          { renderOption(props.qaObject?.typeId,COLLECTION) }
+          { renderOption(props.qaObject?.typeId,SERVER) }
+          { renderOption(props.qaObject?.typeId,SUITE) }
+          { renderOption(props.qaObject?.typeId,CASE) }
+          { renderOption(props.qaObject?.typeId,BODY) }
+          { renderOption(props.qaObject?.typeId,TEST) }
+          { renderOption(props.qaObject?.typeId,REPLACE) }
+          { renderOption(props.qaObject?.typeId,REMOVE) }
+          { renderOption(props.qaObject?.typeId,RESULT) }
+          { renderOption(props.qaObject?.typeId,RESPONSE) }
         </SelectField>
 
 
@@ -129,6 +148,11 @@ const QaObjectForm = (props) => {
         {typeId===COLLECTION?<CollectionForm qaObject={props}/>:<></>}
         {typeId===SUITE?<SuiteForm qaObject={props}/>:<></>}
         {typeId===CASE?<CaseForm qaObject={props}/>:<></>}
+        {typeId===BODY?<BodyForm qaObject={props}/>:<></>}
+        {typeId===REPLACE?<ReplaceForm qaObject={props}/>:<></>}
+        {typeId===REMOVE?<ReplaceForm qaObject={props}/>:<></>}
+        {typeId===RESULT?<ResultForm qaObject={props}/>:<></>}
+        {typeId===RESPONSE?<ReplaceForm qaObject={props}/>:<></>}
 
         { typeId ?
           <>
@@ -140,7 +164,64 @@ const QaObjectForm = (props) => {
               Children
             </Label>
             <br/>
-            <QaObjectsFindByTypeCell parentId={props.qaObject?.id} typeId={ getChildrenTypeIdByParentTypeId(typeId) } multiple={true}/>
+            {(() => {
+              const childrenTypeIdArray: Array<number> = getChildrenTypeIdByParentTypeId(typeId);
+              switch(typeId) {
+                case CASE:
+                  const ARRAY_ID_BODY:number = 0;
+                  const ARRAY_ID_TEST:number = 1;
+                  return (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Body</th>
+                          <th>Test</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><QaObjectsFindByTypeCell name={`children${BODY}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_BODY] } multiple={false}/></td>
+                          <td><QaObjectsFindByTypeCell name={`children${TEST}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_TEST] } multiple={true}/></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  )
+                case TEST:
+                  const ARRAY_ID_REPLACE:number = 0;
+                  const ARRAY_ID_REMOVE:number = 1;
+                  const ARRAY_ID_RESULT:number = 2;
+                  const ARRAY_ID_RESPONSE:number = 3;
+                  return (
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Replace</th>
+                          <th>Remove</th>
+                          <th>Result</th>
+                          <th>Response</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><QaObjectsFindByTypeCell name={`children${REPLACE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_REPLACE] } multiple={false}/></td>
+                          <td><QaObjectsFindByTypeCell name={`children${REMOVE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_REMOVE] } multiple={false}/></td>
+                          <td><QaObjectsFindByTypeCell name={`children${RESULT}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_RESULT] } multiple={false}/></td>
+                          <td><QaObjectsFindByTypeCell name={`children${RESPONSE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_RESPONSE] } multiple={false}/></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  )
+                case BODY:
+                case REPLACE:
+                case REMOVE:
+                case RESULT:
+                case RESPONSE:
+                  return <div>This object type can not have children</div>
+                default:
+                  return <QaObjectsFindByTypeCell name="children" parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[0] } multiple={true}/>
+              }
+            })()}
+
           </>
           : <></>
         }

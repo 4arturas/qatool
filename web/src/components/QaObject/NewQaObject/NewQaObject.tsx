@@ -2,6 +2,16 @@ import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 import { navigate, routes } from '@redwoodjs/router'
 import QaObjectForm from 'src/components/QaObject/QaObjectForm'
+import {
+  BODY,
+  getChildrenFromInput,
+  getChildrenTypeIdByParentTypeId,
+  REMOVE,
+  REPLACE,
+  RESPONSE,
+  RESULT,
+  TEST
+} from "src/global";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
   mutation CreateQaObjectMutation($input: CreateQaObjectInput!) {
@@ -37,18 +47,20 @@ const NewQaObject = () => {
     },
   })
 
-  const onSave = (input) => {
-    const children = input.children;
-    delete input.children;
 
-    const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
+
+  const onSave = (input) => {
+    const typeId: number = parseInt(input.typeId);
+    const children: Array<number> = getChildrenFromInput(input);
+
+    const castInput = Object.assign(input, { typeId: typeId, batchId: parseInt(input.batchId), })
     const data = createQaObject({ variables: { input: castInput } });
     data.then( (ret) => {
       const createQaObject = ret.data.createQaObject;
       const parentId: number = createQaObject.id;
 
       children.map( async (childrenId) => {
-        const castInput = { parentId: parentId, childrenId: parseInt(childrenId) };
+        const castInput = { parentId: parentId, childrenId: childrenId };
         const ret = await createQaObjectRelationship({ variables: { input: castInput } });
         const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
       });

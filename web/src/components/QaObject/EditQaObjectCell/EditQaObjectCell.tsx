@@ -8,6 +8,7 @@ import {toast, Toaster} from '@redwoodjs/web/toast'
 import QaObjectForm from 'src/components/QaObject/QaObjectForm'
 import {useState} from "react";
 import {navigate, routes} from "@redwoodjs/router";
+import {getChildrenFromInput} from "src/global";
 
 export const QUERY = gql`
   query EditQaObjectById($id: Int!) {
@@ -124,8 +125,8 @@ export const Success = ({ qaObject }: CellSuccessProps<EditQaObjectById>) => {
   })
 
   const onSave = (input, id) => {
-    setChildren(input.children);
-    delete input.children;
+    const childrenFromInput: Array<number> = getChildrenFromInput(input);
+    setChildren( childrenFromInput );
 
     setParentId(id);
     const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
