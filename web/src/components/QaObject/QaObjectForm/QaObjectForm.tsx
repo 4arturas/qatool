@@ -121,7 +121,7 @@ const QaObjectForm = (props) => {
           defaultValue={props.qaObject?.description}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
-          validation={{ required: true }}
+          validation={{ required: false }}
         />
 
         <FieldError name="description" className="rw-field-error" />
