@@ -20,8 +20,22 @@ export const objectTypeToName = (typeId: number) =>
       return 'Server';
     case SUITE:
       return 'Suite';
+    case CASE:
+      return 'Case';
+    case BODY:
+      return 'Body';
+    case TEST:
+      return 'Test';
+    case REPLACE:
+      return 'Replace';
+    case REMOVE:
+      return 'Remove';
+    case RESULT:
+      return 'Result';
+    case RESPONSE:
+      return 'Response';
     default:
-      return 'Undefined ObjectType';
+      return 'Undefined ObjectType - TODO: add name for the Object type';
   }
 }
 
