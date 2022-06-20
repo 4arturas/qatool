@@ -12,6 +12,7 @@ import QaLayout from "src/layouts/QaLayout/QaLayout";
 import QaObjectsLayout from "src/layouts/QaObjectsLayout";
 import HomePage from "src/pages/HomePage/HomePage";
 import QaTreesPage from './pages/QaTreesPage/QaTreesPage';
+import QaTreeLayout from "src/layouts/QaTreeLayout/QaTreeLayout";
 
 const Routes = () => {
   return (
@@ -24,6 +25,9 @@ const Routes = () => {
           <Route path="/qa-objects/{id:Int}/edit" page={QaObjectEditQaObjectPage} name="editQaObject" />
           <Route path="/qa-objects/{id:Int}" page={QaObjectQaObjectPage} name="qaObject" />
           <Route path="/qa-objects" page={QaObjectQaObjectsPage} name="qaObjects" />
+        </Set>
+
+        <Set wrap={QaTreeLayout}>
           <Route path="/qa-trees" page={QaTreesPage} name="qaTrees" />
         </Set>
 
