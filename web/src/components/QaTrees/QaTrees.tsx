@@ -8,7 +8,7 @@ const QaTrees = ({typeId}) => {
       <QaTree typeId={typeId}/>
       {
         childTypeId.map( (childTypeId) =>
-          <div key={`${childTypeId}div`} style={{marginLeft:'30px'}}>
+          <div key={`${childTypeId}div`} style={{marginLeft:'10px', whiteSpace:'nowrap'}}>
             <QaTrees typeId={childTypeId}/>
           </div>
         )
