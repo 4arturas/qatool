@@ -29,6 +29,7 @@ const Routes = () => {
 
         <Set wrap={QaTreeLayout}>
           <Route path="/qa-trees" page={QaTreesPage} name="qaTrees" />
+          <Route path="/qa-tree/{typeId}/new" page={QaTreesNewPage} name="qaTreeNew" />
         </Set>
 
         <Route path="/" page={HomePage} name="home" />

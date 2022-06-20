@@ -35,7 +35,7 @@ const QaObjectForm = (props) => {
 
   const formMethods = useForm()
 
-  const [typeId,setTypeId] = useState(props?.qaObject?.typeId);
+  const [typeId,setTypeId] = useState(props?.qaObject?.typeId || (props.typeId&&parseInt(props.typeId)));
   const onSubmit = (data) => {
     props.onSave(data, props?.qaObject?.id)
   }

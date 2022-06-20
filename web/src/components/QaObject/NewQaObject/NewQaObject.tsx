@@ -28,7 +28,7 @@ const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
   }
 `
 
-const NewQaObject = () => {
+const NewQaObject = ({typeId}) => {
 
   const [createQaObject, { loading, error }] = useMutation(CREATE_QA_OBJECT_MUTATION, {
     onCompleted: () => {
@@ -70,7 +70,7 @@ const NewQaObject = () => {
     });
   }
 
-  return <QaObjectForm onSave={onSave} loading={loading} error={error} />
+  return <QaObjectForm onSave={onSave} loading={loading} error={error} typeId={typeId}/>
 }
 
 export default NewQaObject
