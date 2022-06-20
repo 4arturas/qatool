@@ -1,4 +1,4 @@
-import QaTrees from "src/components/QaTrees/QaTrees";
+import QaTrees from "src/components/Tree/QaTrees/QaTrees";
 import {COLLECTION, SERVER} from "src/global";
 
 type QaTreeLayoutProps = {

@@ -1,5 +1,5 @@
 import {getChildrenTypeIdByParentTypeId} from "src/global";
-import QaTree from "src/components/QaTree/QaTree";
+import QaTree from "src/components/Tree/QaTree/QaTree";
 
 const QaTrees = ({typeId}) => {
   const childTypeId: Array<number> = getChildrenTypeIdByParentTypeId(typeId);
