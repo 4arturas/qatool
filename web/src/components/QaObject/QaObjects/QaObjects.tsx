@@ -102,7 +102,9 @@ const QaObjectsList = ({ qaObjects }) => {
             <tr key={qaObject.id}>
               <td>{truncate(qaObject.id)}</td>
               <td>{truncate(objectTypeToName(qaObject.typeId))}</td>
-              <td>{truncate(qaObject.name)}</td>
+              <td>
+                <a href={`/relationship/${qaObject.id}`}>{truncate(qaObject.name)}</a>
+              </td>
               <td>{truncate(qaObject.description)}</td>
               <td>{truncate(qaObject.batchId)}</td>
               <td>{truncate(qaObject.threads)}</td>
