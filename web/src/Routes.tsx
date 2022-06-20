@@ -11,10 +11,12 @@ import { Router, Route, Set } from '@redwoodjs/router'
 import QaLayout from "src/layouts/QaLayout/QaLayout";
 import QaObjectsLayout from "src/layouts/QaObjectsLayout";
 import HomePage from "src/pages/HomePage/HomePage";
+import QaObjectsTreePage from './pages/QaObjectsTreePage/QaObjectsTreePage';
 
 const Routes = () => {
   return (
     <Router>
+
       <Set wrap={QaLayout}>
 
         <Set wrap={QaObjectsLayout}>
@@ -22,6 +24,7 @@ const Routes = () => {
           <Route path="/qa-objects/{id:Int}/edit" page={QaObjectEditQaObjectPage} name="editQaObject" />
           <Route path="/qa-objects/{id:Int}" page={QaObjectQaObjectPage} name="qaObject" />
           <Route path="/qa-objects" page={QaObjectQaObjectsPage} name="qaObjects" />
+          <Route path="/qa-objects-tree" page={QaObjectsTreePage} name="qaObjectsTree" />
         </Set>
 
         <Route path="/" page={HomePage} name="home" />

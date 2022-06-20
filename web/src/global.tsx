@@ -51,6 +51,8 @@ export const getChildrenTypeIdByParentTypeId = (parentTypeId: number) : Array<nu
       return [BODY,TEST];
     case TEST:
       return [REPLACE,REMOVE,RESULT,RESPONSE]
+    case SERVER:
+      return [];
     default:
       return [];
   }
