@@ -11,7 +11,7 @@ const QaObjectsByTypeIdPage = ({ typeId }: QaObjectsByTypeIdPageProps) => {
     <>
       <MetaTags title="QaObjectsByTypeId" description="QaObjectsByTypeId page" />
 
-      <QaObjectsByTypeIdCell typeId={typeId}/>
+      <QaObjectsByTypeIdCell typeId={parseInt(typeId)}/>
     </>
   )
 }
