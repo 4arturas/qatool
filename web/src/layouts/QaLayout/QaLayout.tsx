@@ -17,7 +17,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
           <Link to={routes.qaObjects()} className="rw-link">QA Objects</Link>
         </li>
         <li style={{display:'inline', marginRight: "20px"}}>
-          <Link to={routes.qaObjectsTree()} className="rw-link">QA Objects Tree</Link>
+          <Link to={routes.qaTrees()} className="rw-link">QA Objects Tree</Link>
         </li>
       </ul>
     </header>
