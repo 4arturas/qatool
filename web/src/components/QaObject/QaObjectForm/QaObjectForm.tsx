@@ -79,7 +79,7 @@ const QaObjectForm = (props) => {
 
         <SelectField
           name="typeId"
-          defaultValue={props.qaObject?.typeId}
+          defaultValue={typeId}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
           onChange={onSelect}
@@ -95,17 +95,17 @@ const QaObjectForm = (props) => {
             },
           }}
         >
-          { !props.qaObject?.typeId && <option value={0}>Please select object type</option> }
-          { renderOption(props.qaObject?.typeId,COLLECTION) }
-          { renderOption(props.qaObject?.typeId,SERVER) }
-          { renderOption(props.qaObject?.typeId,SUITE) }
-          { renderOption(props.qaObject?.typeId,CASE) }
-          { renderOption(props.qaObject?.typeId,BODY) }
-          { renderOption(props.qaObject?.typeId,TEST) }
-          { renderOption(props.qaObject?.typeId,REPLACE) }
-          { renderOption(props.qaObject?.typeId,REMOVE) }
-          { renderOption(props.qaObject?.typeId,RESULT) }
-          { renderOption(props.qaObject?.typeId,RESPONSE) }
+          { !typeId && <option value={0}>Please select object type</option> }
+          { renderOption(typeId,COLLECTION) }
+          { renderOption(typeId,SERVER) }
+          { renderOption(typeId,SUITE) }
+          { renderOption(typeId,CASE) }
+          { renderOption(typeId,BODY) }
+          { renderOption(typeId,TEST) }
+          { renderOption(typeId,REPLACE) }
+          { renderOption(typeId,REMOVE) }
+          { renderOption(typeId,RESULT) }
+          { renderOption(typeId,RESPONSE) }
         </SelectField>
 
 
