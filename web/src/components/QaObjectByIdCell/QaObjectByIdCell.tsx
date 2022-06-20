@@ -6,7 +6,19 @@ export const QUERY = gql`
   query FindQaObjectByIdQuery($id: Int!) {
     qaObject: qaObject(id: $id) {
       id
+      typeId
       name
+      description
+      batchId
+      threads
+      loops
+      json
+      jsonata
+      address
+      method
+      header
+      createdAt
+      updatedAt
     }
   }
 `
@@ -22,5 +34,5 @@ export const Failure = ({
 )
 
 export const Success = ({ qaObject, }: CellSuccessProps<FindQaObjectByIdQuery, FindQaObjectByIdQueryVariables>) => {
-  return <QaObjectById qaObject={qaObject}/>
+  return <QaObjectById key={qaObject.id} qaObject={qaObject}/>
 }

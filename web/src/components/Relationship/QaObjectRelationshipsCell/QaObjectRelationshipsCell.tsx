@@ -1,7 +1,7 @@
 import type { FindQaObjectRelationshipQueryByParentId } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import QaObjectByIdCell from 'src/components/QaObjectByIdCell'
-
+import QaObjectRelationshipsCell from '../QaObjectRelationshipsCell'
 
 export const QUERY = gql`
   query FindQaObjectRelationshipQueryByParentId($parentId: Int!) {
@@ -22,12 +22,14 @@ export const Failure = ({ error }: CellFailureProps) => (
 )
 
 export const Success = ({ qaObjectRelationshipsWithTheSameParentId }: CellSuccessProps<FindQaObjectRelationshipQueryByParentId>) => {
+
   return (
     <>
+
       { (qaObjectRelationshipsWithTheSameParentId.length>0) && <QaObjectByIdCell id={qaObjectRelationshipsWithTheSameParentId[0]?.parentId}/> }
 
       {qaObjectRelationshipsWithTheSameParentId.map((item) =>
-        <div style={{marginLeft:'20px'}}><QaObjectByIdCell id={item.childrenId}/></div>
+        <div key={item.id} style={{marginLeft:'20px'}}><QaObjectRelationshipsCell parentId={item.childrenId}/></div>
       )}
     </>
   )

@@ -28,7 +28,7 @@ const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
   }
 `
 
-const NewQaObject = ({typeId}) => {
+const NewQaObject = ({typeId, parentId}) => {
 
   const [createQaObject, { loading, error }] = useMutation(CREATE_QA_OBJECT_MUTATION, {
     onCompleted: () => {
@@ -57,13 +57,20 @@ const NewQaObject = ({typeId}) => {
     const data = createQaObject({ variables: { input: castInput } });
     data.then( (ret) => {
       const createQaObject = ret.data.createQaObject;
-      const parentId: number = createQaObject.id;
+      const childParentId: number = createQaObject.id;
 
       children.map( async (childrenId) => {
-        const castInput = { parentId: parentId, childrenId: childrenId };
+        const castInput = { parentId: childParentId, childrenId: childrenId };
         const ret = await createQaObjectRelationship({ variables: { input: castInput } });
         const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
       });
+
+      if ( parentId )
+      {
+        const castInput = { parentId: parentId, childrenId: childParentId };
+        const ret = /*await*/ createQaObjectRelationship({ variables: { input: castInput } });
+        // const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
+      }
 
       toast.success('QaObject created')
       navigate(routes.qaObjects())
