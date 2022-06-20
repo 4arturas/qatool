@@ -21,6 +21,7 @@ export const schema = gql`
     qaObjects: [QaObject!]! @requireAuth
     qaObject(id: Int!): QaObject @requireAuth
     getQaObjectsByType(typeId: Int!): [QaObject] @requireAuth
+    qaObjectsByTypeId(typeId: Int!): [QaObject] @requireAuth
   }
 
   input CreateQaObjectInput {

@@ -21,6 +21,12 @@ export const getQaObjectsByType: QueryResolvers['getQaObjectsByType'] = ({ typeI
   })
 }
 
+export const qaObjectsByTypeId: QueryResolvers['qaObjectsByTypeId'] = ({ typeId }) => {
+  return db.qaObject.findMany({
+    where: { typeId },
+  })
+}
+
 export const createQaObject: MutationResolvers['createQaObject'] = ({
   input,
 }) => {
