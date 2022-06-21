@@ -37,6 +37,7 @@ const Routes = () => {
         <Set wrap={QaObjectRelationshipLayout}>
           <Route path="/relationship/{id:Int}" page={QaObjectRelationshipPage} name="qaObjectRelationship" />
           <Route path="/relationship/{parentId:Int}/new/{typeId:Int}/type" page={QaObjectRelationshipNewPage} name="qaObjectRelationshipNew" />
+          <Route path="/qa-object-merge/{parentId:Int}" page={QaObjectMergePage} name="qaObjectMerge" />
         </Set>
 
         <Route path="/" page={HomePage} name="home" />

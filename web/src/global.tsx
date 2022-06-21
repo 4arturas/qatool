@@ -107,3 +107,12 @@ export const typeIdToColor = (typeId: number) =>
       return 'black';
   }
 }
+
+export const merge = (body, replace, remove) =>
+{
+  Object.keys(replace).map( (r) => body[r] = replace[r] );
+
+  remove.map( (r) => delete body[r] );
+
+  return body;
+}

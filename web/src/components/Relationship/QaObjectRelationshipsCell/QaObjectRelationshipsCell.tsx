@@ -74,7 +74,9 @@ export const Success = ({ qaObject, qaObjectRelationshipsWithTheSameParentId }: 
 
 
       </span>
-      &nbsp;{qaObject.typeId===CASE && <span>Merge</span>}
+      &nbsp;{qaObject.typeId===CASE && <span>
+      <Link to={routes.qaObjectMerge( {parentId: qaObject.id})}>Merge</Link>
+      </span>}
       <br/>
       <br/>
       <br/>
