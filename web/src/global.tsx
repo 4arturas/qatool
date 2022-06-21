@@ -78,3 +78,32 @@ export const getChildrenFromInput = (input) : Array<number> => {
 
   return children;
 }
+
+export const typeIdToColor = (typeId: number) =>
+{
+  switch ( typeId )
+  {
+    case COLLECTION:
+      return '#BEEBE9';
+    case SERVER:
+      return '#F4DADA';
+    case SUITE:
+      return '#8AF0CE';
+    case CASE:
+      return '#F7B385';
+    case BODY:
+      return '#FFFFFF';
+    case TEST:
+      return '#FFFFFF';
+    case REPLACE:
+      return '#F7EAE1';
+    case REMOVE:
+      return '#FFFFFF';
+    case RESULT:
+      return '#D7DDD5';
+    case RESPONSE:
+      return '#EBEAF0';
+    default:
+      return 'black';
+  }
+}

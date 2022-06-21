@@ -3,7 +3,7 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import QaObjectByIdCell from 'src/components/QaObjectByIdCell'
 import QaObjectRelationshipsCell from '../QaObjectRelationshipsCell'
 import {Link, routes} from "@redwoodjs/router";
-import {getChildrenTypeIdByParentTypeId} from "src/global";
+import {getChildrenTypeIdByParentTypeId, typeIdToColor} from "src/global";
 
 export const QUERY = gql`
   query FindQaObjectRelationshipQueryByParentId($parentId: Int!) {
@@ -46,17 +46,20 @@ export const Success = ({ qaObject, qaObjectRelationshipsWithTheSameParentId }: 
 
   return (
     <>
-      <div style={{marginBottom: '10px'}}>
-        {qaObject.name}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span style={{ whiteSpace: 'nowrap', width:'10px', borderRadius:'15px', border: '1px solid black', padding: '20px', marginBottom: '40px', backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
+        <strong>{qaObject.name}</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <Link to={routes.qaObjectRelationshipNew({ parentId: qaObject.id, typeId: getChildrenTypeIdByParentTypeId(qaObject.typeId) } ) }>
           Add Child
         </Link>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <Link to={routes.editQaObject({id:qaObject.id} ) }>
           Edit
         </Link>
-      </div>
+      </span>
+      <br/>
+      <br/>
+      <br/>
       {qaObjectRelationshipsWithTheSameParentId.map((item) =>
-        <div key={item.id} style={{marginLeft:'20px'}}><QaObjectRelationshipsCell parentId={item.childrenId}/></div>
+        <div key={item.id} style={{marginLeft:'60px'}}><QaObjectRelationshipsCell parentId={item.childrenId}/></div>
       )}
     </>
   )

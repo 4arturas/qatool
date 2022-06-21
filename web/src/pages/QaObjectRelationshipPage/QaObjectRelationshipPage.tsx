@@ -10,7 +10,12 @@ const QaObjectRelationshipPage = ({ id }: QaObjectRelationshipPageProps) => {
     <>
       <MetaTags title="QaObjectRelationship" description="QaObjectRelationship page" />
 
+
+
+      <br/>
+      <div style={{margin:'auto', maxWidth:'500px'}}>
       <QaObjectRelationshipsCell parentId={id}/>
+      </div>
     </>
   )
 }
