@@ -1,5 +1,4 @@
 import { MetaTags } from '@redwoodjs/web'
-import QaObjectMergeCell from "src/components/QaObjectMergeCell/QaObjectMergeCell";
 import { useApolloClient } from '@apollo/client';
 import {useEffect, useState} from "react";
 import {BODY, CASE, merge, objectTypeToName, REMOVE, REPLACE, TEST, typeIdToColor} from "src/global";
@@ -11,29 +10,6 @@ type QaObjectMergePageProps = {
 }
 
 const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
-
-
-
-
-  const oldCode = `
-const a = 10
-const b = 10
-const c = () => console.log('foo')
-
-if(a > 10) {
-  console.log('bar')
-}
-
-console.log('done')
-`
-  const newCode = `
-const a = 10
-const boo = 10
-
-if(a === 10) {
-  console.log('bar')
-}
-`
 
   const client = useApolloClient();
 
