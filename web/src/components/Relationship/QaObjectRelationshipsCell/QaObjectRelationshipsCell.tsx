@@ -44,6 +44,8 @@ export const Failure = ({ error }: CellFailureProps) => (
 
 export const Success = ({ qaObject, qaObjectRelationshipsWithTheSameParentId }: CellSuccessProps<FindQaObjectRelationshipQueryByParentId>) => {
 
+  const childrenIdArr: Array<number> = getChildrenTypeIdByParentTypeId(qaObject.typeId);
+
   return (
     <>
       <span style={{ whiteSpace: 'nowrap', width:'10px', borderRadius:'15px', border: '1px solid black', padding: '20px', marginBottom: '40px', backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
@@ -54,11 +56,21 @@ export const Success = ({ qaObject, qaObjectRelationshipsWithTheSameParentId }: 
           Edit
         </Link>
 
-        {getChildrenTypeIdByParentTypeId(qaObject.typeId).map( (tId) => (
-          <Link key={tId} to={routes.qaObjectRelationshipNew({ parentId: qaObject.id, typeId: tId } ) } style={{marginRight: '10px'}}>
-            Add New Children <span style={{backgroundColor: `${typeIdToColor(tId)}`, border: '1px solid black', padding: '3px', borderRadius: '15px'}}>{objectTypeToName(tId)}</span>
-          </Link>
-        ))}
+        {childrenIdArr.length > 0 && <span>Add New Children </span>}
+        {childrenIdArr.length > 0 &&
+            childrenIdArr.map((tId) => (
+              <Link key={tId} to={routes.qaObjectRelationshipNew({parentId: qaObject.id, typeId: tId})}
+                    style={{marginRight: '10px'}}>
+                <span style={{
+                backgroundColor: `${typeIdToColor(tId)}`,
+                border: '1px solid black',
+                padding: '3px',
+                borderRadius: '15px'
+              }}>{objectTypeToName(tId)}</span>
+              </Link>
+            ))
+
+        }
 
       </span>
       <br/>
