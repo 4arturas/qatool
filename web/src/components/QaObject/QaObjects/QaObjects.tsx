@@ -112,7 +112,7 @@ const QaObjectsList = ({ qaObjects }) => {
               <td>{truncate(qaObject.batchId)}</td>
               <td>{truncate(qaObject.threads)}</td>
               <td>{truncate(qaObject.loops)}</td>
-              <td>{truncate(qaObject.json)}</td>
+              <td>{truncate((qaObject.json && qaObject.json.length > 10) ? ( qaObject.json.substring(0, 10) + '...') : qaObject.json)}</td>
               <td>{truncate(qaObject.jsonata)}</td>
               <td>{truncate(qaObject.address)}</td>
               <td>{truncate(qaObject.method)}</td>
