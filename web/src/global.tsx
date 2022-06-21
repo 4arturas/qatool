@@ -39,6 +39,35 @@ export const typeIdToName = (typeId: number) =>
   }
 }
 
+export const typeIdToColor = (typeId: number) =>
+{
+  switch ( typeId )
+  {
+    case COLLECTION:
+      return '#BEEBE9';
+    case SERVER:
+      return '#F4DADA';
+    case SUITE:
+      return '#8AF0CE';
+    case CASE:
+      return '#F7B385';
+    case BODY:
+      return '#CDC2AE';
+    case TEST:
+      return '#F9CEEE';
+    case REPLACE:
+      return '#EFDAD7';
+    case REMOVE:
+      return '#FFF89A';
+    case RESULT:
+      return '#D7DDD5';
+    case RESPONSE:
+      return '#EBEAF0';
+    default:
+      return 'black';
+  }
+}
+
 export const getChildrenTypeIdByParentTypeId = (parentTypeId: number) : Array<number>=>
 {
   switch ( parentTypeId )
@@ -77,35 +106,6 @@ export const getChildrenFromInput = (input) : Array<number> => {
   });
 
   return children;
-}
-
-export const typeIdToColor = (typeId: number) =>
-{
-  switch ( typeId )
-  {
-    case COLLECTION:
-      return '#BEEBE9';
-    case SERVER:
-      return '#F4DADA';
-    case SUITE:
-      return '#8AF0CE';
-    case CASE:
-      return '#F7B385';
-    case BODY:
-      return '#CDC2AE';
-    case TEST:
-      return '#F9CEEE';
-    case REPLACE:
-      return '#EFDAD7';
-    case REMOVE:
-      return '#FFF89A';
-    case RESULT:
-      return '#D7DDD5';
-    case RESPONSE:
-      return '#EBEAF0';
-    default:
-      return 'black';
-  }
 }
 
 export const merge = (body, replace, remove) =>
