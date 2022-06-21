@@ -6,7 +6,7 @@ import {
   NumberField,
   TextField,
   CheckboxField,
-  Submit, SelectField, useForm,
+  Submit, SelectField, useForm, TextAreaField,
 } from '@redwoodjs/forms'
 import {useEffect} from "react";
 
@@ -25,12 +25,13 @@ const SuiteForm = (props) => {
           JSon
         </Label>
 
-        <TextField
+        <TextAreaField
           name="json"
           defaultValue={props.qaObject.qaObject?.json}
           className="rw-input"
           errorClassName="rw-input rw-input-error"
           validation={{ required: true }}
+          rows={35}
         />
 
 
