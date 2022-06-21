@@ -60,7 +60,7 @@ const SuiteForm = (props) => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          Threads
+          Loops
         </Label>
 
         <NumberField
