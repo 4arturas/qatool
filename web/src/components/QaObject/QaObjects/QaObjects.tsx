@@ -5,7 +5,7 @@ import { toast } from '@redwoodjs/web/toast'
 import { Link, routes } from '@redwoodjs/router'
 
 import { QUERY } from 'src/components/QaObject/QaObjectsCell'
-import {objectTypeToName} from "src/global";
+import {objectTypeToName, typeIdToColor} from "src/global";
 
 const DELETE_QA_OBJECT_MUTATION = gql`
   mutation DeleteQaObjectMutation($id: Int!) {
@@ -103,7 +103,9 @@ const QaObjectsList = ({ qaObjects }) => {
               <td>{truncate(qaObject.id)}</td>
               <td>{truncate(objectTypeToName(qaObject.typeId))}</td>
               <td>
-                <a href={`/relationship/${qaObject.id}`}>{truncate(qaObject.name)}</a>
+                <Link to={routes.qaObjectRelationship({id:qaObject.id})} className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
+                  {truncate(qaObject.name)}
+                </Link>
               </td>
               <td>{truncate(qaObject.description)}</td>
               <td>{truncate(qaObject.batchId)}</td>

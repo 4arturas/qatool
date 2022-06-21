@@ -30,8 +30,8 @@ const Routes = () => {
 
         <Set wrap={QaTreeLayout}>
           <Route path="/qa-trees" page={QaTreesPage} name="qaTrees" />
-          <Route path="/qa-trees/{typeId:Int}" page={QaObjectsByTypeIdPage} name="qaObjectsByTypeId" />
-          <Route path="/qa-trees/{typeId}/new" page={QaTreesNewPage} name="qaTreeNew" />
+          <Route path="/qa-trees/{typeId:Int}/show" page={QaObjectsByTypeIdPage} name="qaObjectsByTypeId" />
+          <Route path="/qa-trees/{typeId:Int}/new" page={QaTreesNewPage} name="qaTreeNew" />
         </Set>
 
         <Set wrap={QaObjectRelationshipLayout}>
