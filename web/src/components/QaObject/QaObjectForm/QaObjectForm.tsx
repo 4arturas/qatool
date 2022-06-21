@@ -182,8 +182,8 @@ const QaObjectForm = (props) => {
                       </thead>
                       <tbody>
                         <tr>
-                          <td><QaObjectsFindByTypeCell name={`children${BODY}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_BODY] } multiple={false}/></td>
-                          <td><QaObjectsFindByTypeCell name={`children${TEST}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_TEST] } multiple={true}/></td>
+                          <td style={{verticalAlign:'top'}}><QaObjectsFindByTypeCell name={`children${BODY}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_BODY] } multiple={false}/></td>
+                          <td style={{verticalAlign:'top'}}><QaObjectsFindByTypeCell name={`children${TEST}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_TEST] } multiple={true}/></td>
                         </tr>
                       </tbody>
                     </table>
@@ -205,10 +205,10 @@ const QaObjectForm = (props) => {
                       </thead>
                       <tbody>
                         <tr>
-                          <td><QaObjectsFindByTypeCell name={`children${REPLACE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_REPLACE] } multiple={false}/></td>
-                          <td><QaObjectsFindByTypeCell name={`children${REMOVE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_REMOVE] } multiple={false}/></td>
-                          <td><QaObjectsFindByTypeCell name={`children${RESULT}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_RESULT] } multiple={false}/></td>
-                          <td><QaObjectsFindByTypeCell name={`children${RESPONSE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_RESPONSE] } multiple={false}/></td>
+                          <td style={{verticalAlign:'top'}}><QaObjectsFindByTypeCell name={`children${REPLACE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_REPLACE] } multiple={false}/></td>
+                          <td style={{verticalAlign:'top'}}><QaObjectsFindByTypeCell name={`children${REMOVE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_REMOVE] } multiple={false}/></td>
+                          <td style={{verticalAlign:'top'}}><QaObjectsFindByTypeCell name={`children${RESULT}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_RESULT] } multiple={false}/></td>
+                          <td style={{verticalAlign:'top'}}><QaObjectsFindByTypeCell name={`children${RESPONSE}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_RESPONSE] } multiple={false}/></td>
                         </tr>
                       </tbody>
                     </table>
