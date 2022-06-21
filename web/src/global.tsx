@@ -92,13 +92,13 @@ export const typeIdToColor = (typeId: number) =>
     case CASE:
       return '#F7B385';
     case BODY:
-      return '#FFFFFF';
+      return '#CDC2AE';
     case TEST:
-      return '#FFFFFF';
+      return '#F9CEEE';
     case REPLACE:
-      return '#F7EAE1';
+      return '#EFDAD7';
     case REMOVE:
-      return '#FFFFFF';
+      return '#FFF89A';
     case RESULT:
       return '#D7DDD5';
     case RESPONSE:

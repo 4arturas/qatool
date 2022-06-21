@@ -56,7 +56,7 @@ export const Success = ({ qaObject, qaObjectRelationshipsWithTheSameParentId }: 
 
         {getChildrenTypeIdByParentTypeId(qaObject.typeId).map( (tId) => (
           <Link key={tId} to={routes.qaObjectRelationshipNew({ parentId: qaObject.id, typeId: tId } ) } style={{marginRight: '10px'}}>
-            Add New Children {objectTypeToName(tId)}
+            Add New Children <span style={{backgroundColor: `${typeIdToColor(tId)}`, border: '1px solid black', padding: '3px', borderRadius: '15px'}}>{objectTypeToName(tId)}</span>
           </Link>
         ))}
 
