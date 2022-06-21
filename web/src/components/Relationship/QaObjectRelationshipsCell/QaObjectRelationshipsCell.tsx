@@ -3,7 +3,7 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import QaObjectByIdCell from 'src/components/QaObjectByIdCell'
 import QaObjectRelationshipsCell from '../QaObjectRelationshipsCell'
 import {Link, routes} from "@redwoodjs/router";
-import {CASE, getChildrenTypeIdByParentTypeId, objectTypeToName, typeIdToColor} from "src/global";
+import {CASE, getChildrenTypeIdByParentTypeId, typeIdToName, typeIdToColor} from "src/global";
 
 export const QUERY = gql`
   query FindQaObjectRelationshipQueryByParentId($parentId: Int!) {
@@ -66,7 +66,7 @@ export const Success = ({ qaObject, qaObjectRelationshipsWithTheSameParentId }: 
                 border: '1px solid black',
                 padding: '3px',
                 borderRadius: '15px'
-              }}>{objectTypeToName(tId)}</span>
+              }}>{typeIdToName(tId)}</span>
               </Link>
             ))
 

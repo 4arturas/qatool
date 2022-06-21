@@ -3,7 +3,7 @@ import humanize from 'humanize-string'
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 import { Link, routes, navigate } from '@redwoodjs/router'
-import {objectTypeToName} from "src/global";
+import {typeIdToName} from "src/global";
 
 const DELETE_QA_OBJECT_MUTATION = gql`
   mutation DeleteQaObjectMutation($id: Int!) {
@@ -76,7 +76,7 @@ const QaObject = ({ qaObject }) => {
               <td>{qaObject.id}</td>
             </tr><tr>
               <th>Type id</th>
-              <td>{objectTypeToName(qaObject.typeId)}</td>
+              <td>{typeIdToName(qaObject.typeId)}</td>
             </tr><tr>
               <th>Name</th>
               <td>{qaObject.name}</td>

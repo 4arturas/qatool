@@ -15,7 +15,7 @@ import {
   BODY,
   CASE,
   COLLECTION,
-  getChildrenTypeIdByParentTypeId, objectTypeToName,
+  getChildrenTypeIdByParentTypeId, typeIdToName,
   REMOVE,
   REPLACE, RESPONSE,
   RESULT, SERVER,
@@ -47,7 +47,7 @@ const QaObjectForm = (props) => {
   const renderOption = (typeId1, typeId2) => {
     const render: boolean = !typeId1 || typeId1 === typeId2;
     if (render)
-      return <option value={typeId2}>{objectTypeToName(typeId2)}</option>;
+      return <option value={typeId2}>{typeIdToName(typeId2)}</option>;
     return <></>
   }
 

@@ -1,5 +1,5 @@
 import {Link, routes} from "@redwoodjs/router";
-import {getChildrenTypeIdByParentTypeId, objectTypeToName} from "src/global";
+import {getChildrenTypeIdByParentTypeId, typeIdToName} from "src/global";
 
 const QaObjectById = ({qaObject}) => {
   const childTypeIdArr: Array<number> = getChildrenTypeIdByParentTypeId(qaObject.typeId);
@@ -9,7 +9,7 @@ const QaObjectById = ({qaObject}) => {
       <h2 key={qaObject.id} style={{display:'inline', marginRight: '10px'}}>{qaObject.name}</h2>
       {
         childTypeIdArr.map((typeId) => <a key={`${typeId}`} href={`/relationship/${qaObject.id}/new/${typeId}/type`} style={{marginRight:'10px'}}>
-          [New {objectTypeToName(typeId)}]
+          [New {typeIdToName(typeId)}]
         </a> )
       }
 

@@ -1,7 +1,7 @@
 import { MetaTags } from '@redwoodjs/web'
 import { useApolloClient } from '@apollo/client';
 import {useEffect, useState} from "react";
-import {BODY, CASE, merge, objectTypeToName, REMOVE, REPLACE, TEST, typeIdToColor} from "src/global";
+import {BODY, CASE, merge, typeIdToName, REMOVE, REPLACE, TEST, typeIdToColor} from "src/global";
 import ReactDiffViewer from 'react-diff-viewer'
 import {Link, routes} from "@redwoodjs/router";
 
@@ -100,7 +100,7 @@ const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
   }, []);
 
   const wrap = (typeId) => {
-    return <span className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(typeId)}`}}>{objectTypeToName(typeId)}</span>
+    return <span className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(typeId)}`}}>{typeIdToName(typeId)}</span>
   }
 
   const wrap2 = (qaObject) => {

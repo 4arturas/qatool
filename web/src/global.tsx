@@ -10,7 +10,7 @@ export const REMOVE = 8;
 export const RESULT = 9;
 export const RESPONSE = 10;
 
-export const objectTypeToName = (typeId: number) =>
+export const typeIdToName = (typeId: number) =>
 {
   switch ( typeId )
   {
