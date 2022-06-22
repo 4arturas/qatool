@@ -68,6 +68,36 @@ export const typeIdToColor = (typeId: number) =>
   }
 }
 
+export const typeIdMargin = (typeId: number) : number =>
+{
+  const step: number = 20;
+  switch ( typeId )
+  {
+    case COLLECTION:
+      return 0 * step;
+    case SERVER:
+      return 0 * step;
+    case SUITE:
+      return 1 * step;
+    case CASE:
+      return 2 * step;
+    case BODY:
+      return 3 * step;
+    case TEST:
+      return 3 * step;
+    case REPLACE:
+      return 4 * step;
+    case REMOVE:
+      return 4 * step;
+    case RESULT:
+      return 4 * step;
+    case RESPONSE:
+      return 4 * step;
+    default:
+      return 400 * step;
+  }
+}
+
 export const getChildrenTypeIdByParentTypeId = (parentTypeId: number) : Array<number>=>
 {
   switch ( parentTypeId )

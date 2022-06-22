@@ -5,7 +5,7 @@ import { toast } from '@redwoodjs/web/toast'
 import { Link, routes } from '@redwoodjs/router'
 
 import { QUERY } from 'src/components/QaObject/QaObjectsCell'
-import {CASE, typeIdToName, typeIdToColor} from "src/global";
+import {CASE, typeIdToName, typeIdToColor, typeIdMargin} from "src/global";
 
 const DELETE_QA_OBJECT_MUTATION = gql`
   mutation DeleteQaObjectMutation($id: Int!) {
@@ -103,7 +103,7 @@ const QaObjectsList = ({ qaObjects }) => {
               <td>{truncate(qaObject.id)}</td>
               <td>{truncate(typeIdToName(qaObject.typeId))}</td>
               <td style={{whiteSpace:'nowrap'}}>
-                <Link to={routes.qaObjectRelationship({id:qaObject.id})} className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
+                <Link to={routes.qaObjectRelationship({id:qaObject.id})} className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`, marginLeft: `${typeIdMargin(qaObject.typeId)}px`}}>
                   {truncate(qaObject.name)}
                 </Link>
                 { qaObject.typeId===CASE && <Link to={routes.qaObjectMerge({parentId:qaObject.id})} style={{marginLeft:'10px'}}>Merge</Link>}
