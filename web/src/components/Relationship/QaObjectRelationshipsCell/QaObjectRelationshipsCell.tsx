@@ -72,6 +72,8 @@ export const Success = ({ qaObject, qaObjectRelationshipsWithTheSameParentId }: 
 
         }
 
+        <span>Detach This id={qaObject.id} Parent Id={}</span>
+
 
       </span>
       &nbsp;{qaObject.typeId===CASE && <span>
