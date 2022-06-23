@@ -70,7 +70,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
 
         {childrenIdArr.map((tId: number, idx: number) => {
 
-            if ( qaObject.typeId === TEST )
+            if ( qaObject.typeId === CASE || qaObject.typeId === TEST )
             {
               const alreadyAddedThisTypeOfObject = qaObject.children.find((c) => c.typeId === tId);
               if (alreadyAddedThisTypeOfObject)
