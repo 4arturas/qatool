@@ -1,4 +1,4 @@
-import {CASE, getChildrenTypeIdByParentTypeId, typeIdToColor, typeIdToName} from "src/global";
+import {CASE, getChildrenTypeIdByParentTypeId, TEST, typeIdToColor, typeIdToName} from "src/global";
 import {Link, navigate, routes} from "@redwoodjs/router";
 import {useState} from "react";
 import ReactDOM from "react-dom";
@@ -9,6 +9,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
   const detachComponent = async (e) =>
   {
     const a = e.target;
+
     const newText = 'Detaching...'
     const newTextDetached = 'Detached'
     if ( a.innerHTML === newText || a.in === newTextDetached )
@@ -67,12 +68,16 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
           </span>
         }
 
-        {childrenIdArr.length > 0 &&
-          childrenIdArr.map((tId: number, idx: number) => {
-            const alreadyAddedThisTypeOfObject = qaObject.children.find( (c) => c.typeId === tId );
-            if ( alreadyAddedThisTypeOfObject ) return <></>
+        {childrenIdArr.map((tId: number, idx: number) => {
 
-            return <Link key={`${qaObject.id}${uniqueId++}${idx}`} to={routes.qaObjectRelationshipNew({parentId: qaObject.id, typeId: tId})} style={{marginLeft: '10px', marginRight: '10px'}}>
+            if ( qaObject.typeId === TEST )
+            {
+              const alreadyAddedThisTypeOfObject = qaObject.children.find((c) => c.typeId === tId);
+              if (alreadyAddedThisTypeOfObject)
+                return <></>
+            }
+
+            return <Link key={`${qaObject.id}${uniqueId++}${idx}`} to={routes.qaObjectRelationshipNew({parentId: qaObject.id, typeId: tId})} style={{marginLeft: '10px'}}>
                 <span key={`${qaObject.id}${uniqueId++}${idx}`} style={{
                   backgroundColor: `${typeIdToColor(tId)}`,
                   border: '1px solid black',
