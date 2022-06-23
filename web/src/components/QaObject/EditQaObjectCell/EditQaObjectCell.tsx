@@ -135,6 +135,9 @@ export const Success = ({ qaObject }: CellSuccessProps<EditQaObjectById>) => {
     setChildren( childrenFromInput );
 
     setParentId(id);
+
+    input.json = input.json ? JSON.stringify(JSON.parse(input.json)) : input.json;
+
     const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
     updateQaObject({ variables: { id, input: castInput } })
   }

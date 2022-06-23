@@ -53,6 +53,8 @@ const NewQaObject = ({typeId, parentId}) => {
     const typeId: number = parseInt(input.typeId);
     const children: Array<number> = getChildrenFromInput(input);
 
+    input.json = input.json ? JSON.stringify(JSON.parse(input.json)) : input.json;
+
     const castInput = Object.assign(input, { typeId: typeId, batchId: parseInt(input.batchId), })
     const data = createQaObject({ variables: { input: castInput } });
     data.then( (ret) => {
