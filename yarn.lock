@@ -16179,6 +16179,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonata@npm:^1.8.6":
+  version: 1.8.6
+  resolution: "jsonata@npm:1.8.6"
+  checksum: 27577a8fbc80063a468d06f2b3cfd96685aac3cf1ad8c4aeb1d12b0c9bdcb2d9a21a39ed4f69e2ef1d3853dddd45a27bdec9173fc4efccdbb42296b3b3db890b
+  languageName: node
+  linkType: hard
+
 "jsonfile@npm:^6.0.1":
   version: 6.1.0
   resolution: "jsonfile@npm:6.1.0"
@@ -23956,6 +23963,7 @@ __metadata:
     "@redwoodjs/forms": 1.5.2
     "@redwoodjs/router": 1.5.2
     "@redwoodjs/web": 1.5.2
+    jsonata: ^1.8.6
     prop-types: 15.8.1
     react: 17.0.2
     react-diff-viewer: ^3.1.1

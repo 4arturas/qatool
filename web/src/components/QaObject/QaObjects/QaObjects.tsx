@@ -5,7 +5,8 @@ import { toast } from '@redwoodjs/web/toast'
 import { Link, routes } from '@redwoodjs/router'
 
 import { QUERY } from 'src/components/QaObject/QaObjectsCell'
-import {CASE, typeIdToName, typeIdToColor, typeIdMargin} from "src/global";
+import {CASE, typeIdToName, typeIdToColor, typeIdMargin, RESULT} from "src/global";
+import jsonata from "jsonata";
 
 const DELETE_QA_OBJECT_MUTATION = gql`
   mutation DeleteQaObjectMutation($id: Int!) {
@@ -75,6 +76,14 @@ const QaObjectsList = ({ qaObjects }) => {
     }
   }
 
+  const checkJSONata = (jsonStr:string,jsonataStr:string):boolean =>
+  {
+    const json = JSON.parse(jsonStr);
+    const expression = jsonata(jsonataStr);
+    const result = expression.evaluate(json);
+    return result;
+  }
+
   return (
     <div className="rw-segment rw-table-wrapper-responsive">
       <table className="rw-table">
@@ -88,7 +97,7 @@ const QaObjectsList = ({ qaObjects }) => {
             <th>Threads</th>
             <th>Loops</th>
             <th>Json</th>
-            <th>Jsonata</th>
+            <th>JSONata</th>
             <th>Address</th>
             <th>Method</th>
             <th>Header</th>
@@ -115,7 +124,12 @@ const QaObjectsList = ({ qaObjects }) => {
               <td>{truncate(qaObject.threads)}</td>
               <td>{truncate(qaObject.loops)}</td>
               <td>{truncate((qaObject.json && qaObject.json.length > 10) ? ( qaObject.json.substring(0, 10) + '...') : qaObject.json)}</td>
-              <td>{truncate(qaObject.jsonata)}</td>
+              <td>
+                { qaObject.typeId === RESULT &&
+                  <span style={{color:( checkJSONata(qaObject.json, qaObject.jsonata)? 'green':'red' )}}>
+                    {truncate((qaObject.jsonata && qaObject.jsonata.length > 10) ? ( qaObject.jsonata.substring(0, 10) + '...') : qaObject.jsonata)}
+                  </span> }
+              </td>
               <td>{truncate(qaObject.address)}</td>
               <td>{truncate(qaObject.method)}</td>
               <td>{truncate(qaObject.header)}</td>
