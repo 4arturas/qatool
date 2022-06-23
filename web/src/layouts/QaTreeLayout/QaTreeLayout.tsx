@@ -10,7 +10,7 @@ const QaTreeLayout = ({ children }: QaTreeLayoutProps) => {
   <table style={{width:'100%'}}>
     <tbody>
     <tr>
-      <td style={{verticalAlign:'top', width:'200px'}}>
+      <td style={{verticalAlign:'top', width:'200px', paddingTop: '20px'}}>
         <div><QaTrees typeId={SERVER}/></div>
         <div><QaTrees typeId={COLLECTION}/></div>
       </td>

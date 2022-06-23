@@ -29,6 +29,7 @@ const Routes = () => {
         </Set>
 
         <Set wrap={QaTreeLayout}>
+          <Route path="/" page={HomePage} name="home" />
           <Route path="/qa-trees" page={QaTreesPage} name="qaTrees" />
           <Route path="/qa-trees/{typeId:Int}/show" page={QaObjectsByTypeIdPage} name="qaObjectsByTypeId" />
           <Route path="/qa-trees/{typeId:Int}/new" page={QaTreesNewPage} name="qaTreeNew" />
@@ -40,7 +41,7 @@ const Routes = () => {
           <Route path="/qa-object-merge/{parentId:Int}" page={QaObjectMergePage} name="qaObjectMerge" />
         </Set>
 
-        <Route path="/" page={HomePage} name="home" />
+
       </Set>
       <Route notfound page={NotFoundPage} />
     </Router>

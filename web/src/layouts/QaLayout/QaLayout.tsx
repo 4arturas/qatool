@@ -13,12 +13,6 @@ const QaLayout = ({ children }: QaLayoutProps) => {
         <li style={{display:'inline', marginRight: "20px"}}>
           <Link to={routes.home()} className="rw-link">Home</Link>
         </li>
-        <li style={{display:'inline', marginRight: "20px"}}>
-          <Link to={routes.qaObjects()} className="rw-link">QA Objects</Link>
-        </li>
-        <li style={{display:'inline', marginRight: "20px"}}>
-          <Link to={routes.qaTrees()} className="rw-link">QA Objects Tree</Link>
-        </li>
       </ul>
     </header>
     <main>{children}</main>

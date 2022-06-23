@@ -1,11 +1,11 @@
-import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
-import QaObjectTypeForm from "src/components/QaObjectType/QaObjectTypeForm/QaObjectTypeForm";
+import QaTreesPage from "src/pages/QaTreesPage/QaTreesPage";
 
 const HomePage = () => {
   return (
     <>
       <MetaTags title="Home" description="Home page" />
+      <QaTreesPage/>
     </>
   )
 }
