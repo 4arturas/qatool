@@ -47,14 +47,14 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
               border: '1px solid black',
               padding: '5px',
               marginBottom: '5px',
-              backgroundColor: `${typeIdToColor(qaObject.typeId)}`
+              backgroundColor: `${typeIdToColor(qaObject.typeId)}`, color: 'black'
             }}
 
       >
 
         <strong key={`${qaObject.id}${uniqueId++}`} style={{marginRight: '10px'}}>{qaObject.name}</strong>
 
-        <Link key={`${qaObject.id}${uniqueId++}`} to={routes.editQaObject({id: qaObject.id})} style={{marginRight: '10px'}}>
+        <Link key={`${qaObject.id}${uniqueId++}`} to={routes.editQaObject({id: qaObject.id})} style={{marginRight: '10px', textDecoration: 'none', color: 'black'}}>
           Edit
         </Link>
 
@@ -62,7 +62,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
 
         {qaObject.typeId===CASE &&
           <span key={`${qaObject.id}${uniqueId++}`} style={{marginLeft:'10px'}}>
-            <Link key={`${qaObject.id}${uniqueId++}`} to={routes.qaObjectMerge( {parentId: qaObject.id})}>
+            <Link key={`${qaObject.id}${uniqueId++}`} to={routes.qaObjectMerge( {parentId: qaObject.id})} style={{textDecoration:'none', color:'black'}}>
               Merge
             </Link>
           </span>
@@ -77,7 +77,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
                 return <></>
             }
 
-            return <Link key={`${qaObject.id}${uniqueId++}${idx}`} to={routes.qaObjectRelationshipNew({parentId: qaObject.id, typeId: tId})} style={{marginLeft: '10px'}}>
+            return <Link key={`${qaObject.id}${uniqueId++}${idx}`} to={routes.qaObjectRelationshipNew({parentId: qaObject.id, typeId: tId})} style={{marginLeft: '10px', textDecoration:'none', color:'black'}}>
                 <span key={`${qaObject.id}${uniqueId++}${idx}`} style={{
                   backgroundColor: `${typeIdToColor(tId)}`,
                   border: '1px solid black',
