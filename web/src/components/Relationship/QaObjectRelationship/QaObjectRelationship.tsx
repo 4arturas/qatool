@@ -1,10 +1,41 @@
 import {CASE, getChildrenTypeIdByParentTypeId, typeIdToColor, typeIdToName} from "src/global";
-import {Link, routes} from "@redwoodjs/router";
+import {Link, navigate, routes} from "@redwoodjs/router";
+import {useState} from "react";
+import ReactDOM from "react-dom";
+import {toast, Toaster} from "@redwoodjs/web/toast";
 
 const QaObjectRelationship = ({qaObject, uniqueId}) => {
 
+  const detachComponent = async (e) =>
+  {
+    const a = e.target;
+    const newText = 'Detaching...'
+    const newTextDetached = 'Detached'
+    if ( a.innerHTML === newText || a.in === newTextDetached )
+      return;
+    const oldText = 'Detach'
+
+    a.innerHTML = newText;
+
+    fetch(`/.redwood/functions/relationshipDetach?id=${qaObject.relationshipId}`)
+      .then( async (response) => {
+        const data = (await response.json()).data;
+        console.log(data);
+        toast.success(`"${qaObject.name}" was detached`)
+
+        a.innerHTML = newTextDetached;
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000 );
+
+      })
+      .catch((reason => {
+        a.innerHTML = oldText;
+        toast.error(reason.message);
+      }));
+  }
+
   const childrenIdArr: Array<number> = getChildrenTypeIdByParentTypeId(qaObject.typeId);
-  let ctx = 1;
 
   return (
     <>
@@ -16,7 +47,9 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
               padding: '5px',
               marginBottom: '5px',
               backgroundColor: `${typeIdToColor(qaObject.typeId)}`
-            }}>
+            }}
+
+      >
 
         <strong key={`${qaObject.id}${uniqueId++}`} style={{marginRight: '10px'}}>{qaObject.name}</strong>
 
@@ -24,7 +57,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
           Edit
         </Link>
 
-        { qaObject.parentId && <a key={`${qaObject.id}${uniqueId++}`}>Detach</a> }
+        { qaObject.parentId && <span key={`${qaObject.id}${uniqueId++}`} id={qaObject.relationshipId} onClick={detachComponent} style={{cursor:'pointer'}}>Detach</span> }
 
         {qaObject.typeId===CASE &&
           <span key={`${qaObject.id}${uniqueId++}`} style={{marginLeft:'10px'}}>
