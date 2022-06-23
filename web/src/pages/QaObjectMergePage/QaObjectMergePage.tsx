@@ -117,7 +117,7 @@ const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
         <table style={{width:'100%'}}>
           <tbody>
           <tr>
-            <td style={{paddingBottom: '30px'}}>Data in {wrap2(body)} was removed using {wrap2(remove)} and replaced with data from {wrap2(replace)}</td>
+            <td style={{paddingBottom: '30px'}}>Data in {wrap2(body)} was removed using {wrap2(remove)} and replaced with data from {wrap2(replace)} on {wrap2(test)}</td>
           </tr>
           <tr>
             <td>
