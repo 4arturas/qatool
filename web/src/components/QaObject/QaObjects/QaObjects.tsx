@@ -101,9 +101,11 @@ const QaObjectsList = ({ qaObjects }) => {
           {qaObjects.map((qaObject) => (
             <tr key={qaObject.id}>
               <td>{truncate(qaObject.id)}</td>
-              <td>{truncate(typeIdToName(qaObject.typeId))}</td>
+              <td>
+                <span className='qaObjectTypeClass' style={{marginLeft: `${typeIdMargin(qaObject.typeId)}px`, backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>{truncate(typeIdToName(qaObject.typeId))}</span>
+              </td>
               <td style={{whiteSpace:'nowrap'}}>
-                <Link to={routes.qaObjectRelationship({id:qaObject.id})} className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`, marginLeft: `${typeIdMargin(qaObject.typeId)}px`}}>
+                <Link to={routes.qaObjectRelationship({id:qaObject.id})} className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
                   {truncate(qaObject.name)}
                 </Link>
                 { qaObject.typeId===CASE && <Link to={routes.qaObjectMerge({parentId:qaObject.id})} style={{marginLeft:'10px'}}>Merge</Link>}
