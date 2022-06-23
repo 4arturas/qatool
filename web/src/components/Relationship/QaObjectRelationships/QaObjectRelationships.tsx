@@ -9,8 +9,8 @@ const QaObjectRelationships = ({id}) => {
   useEffect(() => {
     async function fetchTree()
     {
-      const serverTime = await fetch(`/.redwood/functions/relationshipTree?id=${id}`);
-      setTree((await serverTime.json()).data);
+      const treeData = await fetch(`/.redwood/functions/relationshipTree?id=${id}`);
+      setTree((await treeData.json()).data);
     }
     fetchTree();
   },[]);
