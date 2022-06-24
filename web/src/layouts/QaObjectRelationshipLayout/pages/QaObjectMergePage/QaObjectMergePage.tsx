@@ -146,7 +146,11 @@ const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
   }
 
   const wrap2 = (qaObject) => {
-    return <Link to={routes.editQaObject({id:qaObject.id})} className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>{qaObject.name}</Link>
+    return <Link to={routes.editQaObject({id:qaObject.id})}
+                 className='qaObjectTypeClass'
+                 style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
+      <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - "{qaObject.name}"
+    </Link>
   }
 
   return (
