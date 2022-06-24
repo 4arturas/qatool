@@ -75,6 +75,7 @@ const CollectionForm = (props) => {
         className="rw-input"
         errorClassName="rw-input rw-input-error"
         validation={{ required: true }}
+        rows={35}
       />
 
 
