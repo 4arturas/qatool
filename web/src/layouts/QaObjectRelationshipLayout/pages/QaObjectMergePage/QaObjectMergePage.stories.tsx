@@ -4,4 +4,4 @@ export const generated = () => {
   return <QaObjectMergePage parentId={42} />
 }
 
-export default { title: 'Pages/QaObjectMergePage' }
+export default { title: 'Layouts/QaObjectRelationshipLayout/QaObjectMergePage' }

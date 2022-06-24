@@ -14,6 +14,7 @@ import HomePage from "src/pages/HomePage/HomePage";
 import QaTreesPage from './pages/QaTreesPage/QaTreesPage';
 import QaTreeLayout from "src/layouts/QaTreeLayout/QaTreeLayout";
 import QaObjectRelationshipLayout from "src/layouts/QaObjectRelationshipLayout/QaObjectRelationshipLayout";
+import QaObjectMergePage from './layouts/QaObjectRelationshipLayout/pages/QaObjectMergePage/QaObjectMergePage';
 
 const Routes = () => {
   return (

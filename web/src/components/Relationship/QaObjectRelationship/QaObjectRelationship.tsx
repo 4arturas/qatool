@@ -21,7 +21,6 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
     fetch(`/.redwood/functions/relationshipDetach?id=${qaObject.relationshipId}`)
       .then( async (response) => {
         const data = (await response.json()).data;
-        console.log(data);
         toast.success(`"${qaObject.name}" was detached`)
 
         a.innerHTML = newTextDetached;
