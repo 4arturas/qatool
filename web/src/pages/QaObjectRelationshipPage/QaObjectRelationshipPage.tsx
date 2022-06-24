@@ -1,7 +1,7 @@
 import { MetaTags } from '@redwoodjs/web'
-import QaObjectRelationshipsCell from "src/components/Relationship/QaObjectRelationshipsCell";
+import QaObjectRelationshipsCell from "src/layouts/QaObjectRelationshipLayout/pages/components/Relationship/QaObjectRelationshipsCell";
 import {useEffect} from "react";
-import QaObjectRelationships from "src/components/Relationship/QaObjectRelationships/QaObjectRelationships";
+import QaObjectRelationships from "src/layouts/QaObjectRelationshipLayout/pages/components/Relationship/QaObjectRelationships/QaObjectRelationships";
 
 type QaObjectRelationshipPageProps = {
   id: string

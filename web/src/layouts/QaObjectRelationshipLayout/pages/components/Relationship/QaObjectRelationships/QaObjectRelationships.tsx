@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import QaObjectRelationship from "src/components/Relationship/QaObjectRelationship/QaObjectRelationship";
+import QaObjectRelationship from "src/layouts/QaObjectRelationshipLayout/pages/components/Relationship/QaObjectRelationship/QaObjectRelationship";
 import {Toaster} from "@redwoodjs/web/toast";
 
 const QaObjectRelationships = ({id}) => {

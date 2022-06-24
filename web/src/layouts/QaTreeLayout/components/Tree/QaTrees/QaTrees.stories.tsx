@@ -1,5 +1,5 @@
 import {COLLECTION, SERVER} from "src/global";
-import QaTrees from "src/components/Tree/QaTrees/QaTrees";
+import QaTrees from "src/layouts/QaTreeLayout/components/Tree/QaTrees/QaTrees";
 
 export const generated = () => {
   return <>

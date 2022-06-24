@@ -1,7 +1,7 @@
 import type { FindQaObjectRelationshipQueryByParentId } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import QaObjectByIdCell from 'src/components/QaObjectByIdCell'
-import QaObjectRelationshipsCell from '../QaObjectRelationshipsCell'
+import QaObjectRelationshipsCell from './'
 import {Link, routes} from "@redwoodjs/router";
 import {CASE, getChildrenTypeIdByParentTypeId, typeIdToName, typeIdToColor} from "src/global";
 
