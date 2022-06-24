@@ -1,4 +1,5 @@
 import {Link, routes} from "@redwoodjs/router";
+import 'antd/dist/antd.css';
 
 type QaLayoutProps = {
   children?: React.ReactNode
