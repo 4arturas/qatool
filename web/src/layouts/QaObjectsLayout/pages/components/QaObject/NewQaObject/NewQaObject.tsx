@@ -1,7 +1,7 @@
 import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 import { navigate, routes } from '@redwoodjs/router'
-import QaObjectForm from 'src/components/QaObject/QaObjectForm'
+import QaObjectForm from 'src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm'
 import {
   BODY,
   getChildrenFromInput,

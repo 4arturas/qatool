@@ -3,7 +3,7 @@ import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 
 import { Link, routes } from '@redwoodjs/router'
 
-import QaObjects from 'src/components/QaObject/QaObjects'
+import QaObjects from 'src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjects'
 
 export const QUERY = gql`
   query FindQaObjects {

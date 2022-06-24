@@ -1,4 +1,4 @@
-import EditQaObjectCell from 'src/components/QaObject/EditQaObjectCell'
+import EditQaObjectCell from 'src/layouts/QaObjectsLayout/pages/components/QaObject/EditQaObjectCell'
 
 type QaObjectPageProps = {
   id: number

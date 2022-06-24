@@ -1,4 +1,4 @@
-import QaObjectCell from 'src/components/QaObject/QaObjectCell'
+import QaObjectCell from 'src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectCell'
 
 type QaObjectPageProps = {
   id: number

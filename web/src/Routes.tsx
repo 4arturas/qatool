@@ -9,10 +9,17 @@
 
 import { Router, Route, Set } from '@redwoodjs/router'
 import QaLayout from "src/layouts/QaLayout/QaLayout";
+
+import QaObjectNewQaObjectPage from "src/layouts/QaObjectsLayout/pages/QaObject/NewQaObjectPage";
+import QaObjectEditQaObjectPage from "src/layouts/QaObjectsLayout/pages/QaObject/EditQaObjectPage";
+import QaObjectQaObjectPage from "src/layouts/QaObjectsLayout/pages/QaObject/QaObjectsPage";
+import QaObjectQaObjectsPage from "src/layouts/QaObjectsLayout/pages/QaObject/QaObjectPage";
 import QaObjectsLayout from "src/layouts/QaObjectsLayout";
+
 import HomePage from "src/pages/HomePage/HomePage";
 import QaTreesPage from './pages/QaTreesPage/QaTreesPage';
 import QaTreeLayout from "src/layouts/QaTreeLayout/QaTreeLayout";
+
 import QaObjectRelationshipLayout from "src/layouts/QaObjectRelationshipLayout/QaObjectRelationshipLayout";
 import QaObjectMergePage from './layouts/QaObjectRelationshipLayout/pages/QaObjectMergePage/QaObjectMergePage';
 

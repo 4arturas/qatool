@@ -5,7 +5,7 @@ import {useMutation, useQuery} from '@redwoodjs/web'
 import {useLazyQuery} from '@apollo/client'
 import {toast, Toaster} from '@redwoodjs/web/toast'
 
-import QaObjectForm from 'src/components/QaObject/QaObjectForm'
+import QaObjectForm from 'src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm'
 import {useState} from "react";
 import {navigate, routes} from "@redwoodjs/router";
 import {getChildrenFromInput} from "src/global";

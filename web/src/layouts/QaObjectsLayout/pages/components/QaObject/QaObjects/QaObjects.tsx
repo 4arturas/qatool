@@ -4,7 +4,7 @@ import { useMutation } from '@redwoodjs/web'
 import { toast } from '@redwoodjs/web/toast'
 import { Link, routes } from '@redwoodjs/router'
 
-import { QUERY } from 'src/components/QaObject/QaObjectsCell'
+import { QUERY } from 'src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectsCell'
 import {CASE, typeIdToName, typeIdToColor, typeIdMargin, RESULT} from "src/global";
 import jsonata from "jsonata";
 

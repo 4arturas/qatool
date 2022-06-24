@@ -10,7 +10,7 @@ import {
 } from '@redwoodjs/forms'
 import {useEffect, useState} from "react";
 import CollectionForm from "./CollectionForm";
-import SuiteForm from "src/components/QaObject/QaObjectForm/SuiteForm";
+import SuiteForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm/SuiteForm";
 import {
   BODY,
   CASE,
@@ -22,12 +22,12 @@ import {
   SUITE,
   TEST
 } from "src/global";
-import QaObjectsFindByTypeCell from "src/components/QaObject/QaObjectsFindByTypeCell";
-import CaseForm from "src/components/QaObject/QaObjectForm/CaseForm";
-import BodyForm from "src/components/QaObject/QaObjectForm/BodyForm";
-import ReplaceForm from "src/components/QaObject/QaObjectForm/ReplaceForm";
-import ResultForm from "src/components/QaObject/QaObjectForm/ResultForm";
-import ServerForm from "src/components/QaObject/QaObjectForm/ServerForm";
+import QaObjectsFindByTypeCell from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectsFindByTypeCell";
+import CaseForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm/CaseForm";
+import BodyForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm/BodyForm";
+import ReplaceForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm/ReplaceForm";
+import ResultForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm/ResultForm";
+import ServerForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm/ServerForm";
 
 
 

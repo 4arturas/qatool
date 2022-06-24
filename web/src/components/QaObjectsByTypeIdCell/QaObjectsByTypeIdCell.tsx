@@ -1,7 +1,7 @@
 import type { FindQaObjectsByTypeIdQuery, FindQaObjectsByTypeIdQueryVariables } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import QaObject from "src/components/QaObject/QaObject";
-import QaObjects from "src/components/QaObject/QaObjects";
+import QaObject from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObject";
+import QaObjects from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjects";
 
 export const QUERY = gql`
   query FindQaObjectsByTypeIdQuery($typeId: Int!) {
