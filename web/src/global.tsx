@@ -138,7 +138,7 @@ export const getChildrenFromInput = (input) : Array<number> => {
   return children;
 }
 
-export const merge = (body, replace, remove) =>
+export const mergeObjectsFromTestObject = (body, replace, remove) =>
 {
   Object.keys(replace).map( (r) => body[r] = replace[r] );
 

@@ -41,3 +41,14 @@ model QaObjectRelationship {
   childrenId Int
   @@unique([parentId, childrenId])
 }
+
+model Message {
+  id              Int           @id @default(autoincrement())
+  type            Int
+  request         String?
+  response        String?
+  requestDate     DateTime?
+  responseDate    DateTime?
+  httpCode        Int?
+  txnId           String?
+}

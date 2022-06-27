@@ -1,11 +1,24 @@
 import { MetaTags } from '@redwoodjs/web'
 import { useApolloClient } from '@apollo/client';
 import React, {useEffect, useState} from "react";
-import {BODY, CASE, merge, typeIdToName, REMOVE, REPLACE, TEST, typeIdToColor, SERVER, RESULT} from "src/global";
+import {
+  BODY,
+  CASE,
+  merge,
+  typeIdToName,
+  REMOVE,
+  REPLACE,
+  TEST,
+  typeIdToColor,
+  SERVER,
+  RESULT,
+  mergeObjectsFromTestObject
+} from "src/global";
 import ReactDiffViewer from 'react-diff-viewer'
 import {Link, routes} from "@redwoodjs/router";
 import {Button, Select} from "antd";
 import jsonata from "jsonata";
+import TestRun from "src/components/TestRun/TestRun";
 const { Option } = Select;
 
 type QaObjectMergePageProps = {
@@ -157,85 +170,18 @@ const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
     <>
       <MetaTags title="QaObjectMerge" description="QaObjectMerge page" />
 
-      {((!parent||!body||!test||!replace||!remove)) && <div>In order to show diff, {wrap(CASE)} must have {wrap(BODY)} and {wrap(TEST)}. {wrap(TEST)} must have {wrap(REPLACE)} and {wrap(REMOVE)}</div>}
+      {((!parent||!body||!test||!replace||!remove||!result)) && <div>In order to show diff, {wrap(CASE)} must have {wrap(BODY)} and {wrap(TEST)}. {wrap(TEST)} must have {wrap(REPLACE)}, {wrap(REMOVE)} and {wrap(RESULT)}</div>}
 
-      { (parent&&body&&test&&replace&&remove) &&
+      { (parent&&body&&test&&replace&&remove&&result) &&
         <table style={{width:'100%'}}>
           <tbody>
 
           <tr>
             <td style={{padding: '5px'}}>
-              Data in {wrap2(body)} was removed using {wrap2(remove)} and replaced with data from {wrap2(replace)} on {wrap2(test)}.
-            </td>
-          </tr>
-
-          <tr>
-            <td style={{padding:'5px'}}>
-              Make a request
-              <Select defaultValue="-1"
-                      onChange={(e) => setServer( servers.find( (s) => s.id === e ) ) }
-                      style={{marginLeft:'10px'}}
-              >
-                <Option key={-1} value="-1">Select server</Option>
-                {servers.map(d => <Option key={d.id} value={d.id}>{d.name}</Option>)}
-              </Select>
-              <Button
-                disabled={!server}
-                style={{marginLeft:'10px'}}
-                onClick={ async () => {
-                  const tmpServer = server;
-                  setServer(null);
-                  setResponse(null)
-                  try {
-                    const res = await fetch(`/.redwood/functions/runTest`,
-                      {
-                        headers: {
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json'
-                        },
-                        method: "POST",
-                        body: JSON.stringify({
-                          server: server.id,
-                          body: body.id,
-                          test: test.id,
-                          replace: replace.id,
-                          remove: remove.id
-                        })
-                      });
-                    const data = (await res.json()).data;
-                    setResponse(JSON.stringify(data, undefined, 2));
-                    setServer(tmpServer);
-                  }
-                  catch ( error )
-                  {
-                    setResponse(error);
-                  }
-                }}
-              >
-                Run
-              </Button>
-            </td>
-          </tr>
-
-          <tr>
-            <td style={{padding:'5px'}}>
-              <table>
-                <tbody>
-                <tr>
-                  <td>
-                    {response &&
-                      <ReactDiffViewer
-                        oldValue={response}
-                        newValue={response}
-                        splitView={false}
-                      />}
-                  </td>
-                  <td>
-                    <strong>JSONata:</strong> {response ? <span style={{color:jsonata(result.jsonata).evaluate(JSON.parse(response))?'green':'red'}}>{result.jsonata}</span> : <span>{result?.jsonata}</span> }
-                  </td>
-                </tr>
-                </tbody>
-              </table>
+              Data in {wrap2(body)} was removed using {wrap2(remove)} and replaced with data from {wrap2(replace)}, response will be checked width {wrap2(result)} on {wrap2(test)}.
+              <span style={{marginLeft:'20px'}}>
+                <TestRun test={test} servers={servers} remove={remove} replace={replace} result={result} body={body}/>
+              </span>
             </td>
           </tr>
 
@@ -243,7 +189,7 @@ const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
             <td style={{padding:'5px'}}>
               <ReactDiffViewer
                 oldValue={JSON.stringify(JSON.parse(body.json), undefined, 2 )}
-                newValue={JSON.stringify(merge(JSON.parse(body.json), JSON.parse(replace.json),  JSON.parse(remove.json)), undefined, 2 )}
+                newValue={JSON.stringify(mergeObjectsFromTestObject(JSON.parse(body.json), JSON.parse(replace.json),  JSON.parse(remove.json)), undefined, 2 )}
                 splitView={true}
               />
             </td>

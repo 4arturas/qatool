@@ -1,6 +1,9 @@
 import type { APIGatewayEvent, Context } from 'aws-lambda'
 import { logger } from 'src/lib/logger'
 import {db} from "src/lib/db";
+import {MSG_OUTGOING} from "../global";
+import {createMessage, messageByTxnId} from "src/services/messages/messages";
+import {Message} from "src/models";
 
 /**
  * The handler function is your code that processes http request events.
@@ -36,15 +39,40 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
 
   const changedBody = merge( JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json) );
 
-  try {
+  try
+  {
+    const requestDate: Date = new Date();
     const response = await postData(server.address, JSON.parse(server.header), changedBody);
+    const responseDate: Date = new Date();
+
+    const responseJSon = await response.json();
+
+    const messageOutgoing = {
+      type:           MSG_OUTGOING,
+      request:        JSON.stringify(changedBody),
+      response:       JSON.stringify(responseJSon),
+      requestDate:    requestDate.toISOString(),
+      responseDate:   responseDate.toISOString(),
+      httpCode:       response.status,
+      txnId:          responseJSon?.txnId
+    };
+
+    const dbResult = await createMessage({
+      input: messageOutgoing
+    });
+
+    const messageIncoming = messageOutgoing.txnId && await Message.first({txnId:messageOutgoing.txnId});
+
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        data: response,
+        data: {
+          messageOutgoing: messageOutgoing,
+          messageIncoming: messageIncoming
+        },
       }),
     }
   }
@@ -67,7 +95,7 @@ async function postData(url, headers, data) {
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     body: JSON.stringify(data) // body data type must match "Content-Type" header
   });
-  return response.json(); // parses JSON response into native JavaScript objects
+  return response; // parses JSON response into native JavaScript objects
 }
 
 const merge = (body, replace, remove) =>
