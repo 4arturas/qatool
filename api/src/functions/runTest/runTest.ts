@@ -2,7 +2,7 @@ import type { APIGatewayEvent, Context } from 'aws-lambda'
 import { logger } from 'src/lib/logger'
 import {db} from "src/lib/db";
 import {generatePaymentId, MSG_OUTGOING} from "../global";
-import {createMessage, messageByTxnId} from "src/services/messages/messages";
+import {createMessage} from "src/services/messages/messages";
 import {Message} from "src/models";
 
 /**
