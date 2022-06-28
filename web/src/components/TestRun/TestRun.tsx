@@ -47,6 +47,8 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
       console.log('data',data);
       setMessageOutgoing(data.messageOutgoing);
       setMessageIncoming(data.messageIncoming);
+      console.log( 'data.messageOutgoing', data.messageOutgoing );
+      console.log('data.messageIncoming', data.messageIncoming);
       setServer(tmpServer);
     }
     catch ( error )
@@ -95,7 +97,7 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
                 allowClear
                 enterButton={''}
                 style={{ width: 400 }}
-                defaultValue={'QA-' + new Date().getTime()}
+                defaultValue={'QAOUT' + new Date().getTime()}
               />
             </td>
           </tr>
