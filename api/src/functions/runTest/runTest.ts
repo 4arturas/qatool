@@ -1,7 +1,7 @@
 import type { APIGatewayEvent, Context } from 'aws-lambda'
 import { logger } from 'src/lib/logger'
 import {db} from "src/lib/db";
-import {MSG_OUTGOING} from "../global";
+import {generatePaymentId, MSG_OUTGOING} from "../global";
 import {createMessage, messageByTxnId} from "src/services/messages/messages";
 import {Message} from "src/models";
 
@@ -100,7 +100,7 @@ async function postData(url, headers, data) {
 
 const merge = (body, replace, remove) =>
 {
-  replace.paymentId = 'paymentId' + new Date().getTime();
+  replace.paymentId = generatePaymentId('QA-OUT');
   Object.keys(replace).map( (r) => body[r] = replace[r] );
 
   remove.map( (r) => delete body[r] );

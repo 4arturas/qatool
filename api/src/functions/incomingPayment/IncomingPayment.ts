@@ -1,6 +1,6 @@
 import type { APIGatewayEvent, Context } from 'aws-lambda'
 import { logger } from 'src/lib/logger'
-import {getGlobalPaymentId, MSG_INCOMING} from "../global";
+import {generatePaymentId, MSG_INCOMING} from "../global";
 import {createMessage} from "src/services/messages/messages";
 import {CreateMessageInput} from "web/types/graphql";
 
@@ -44,7 +44,7 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      "paymentId": 'paymentId' + new Date().getTime(),
+      "paymentId": generatePaymentId('QA-INC'),
       "canAccept": true
     }),/*
     body: JSON.stringify({
