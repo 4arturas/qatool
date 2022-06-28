@@ -1,10 +1,12 @@
 import type { MessagesQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import {Alert, Pagination, Table, Tag} from "antd";
-import {messageTypeToColor, messageTypeToNameShort, TABLE_PAGE_SIZE} from "src/global";
+import {Alert, Button, Modal, Pagination, Space, Table, Tag} from "antd";
+import {messageTypeToColor, messageTypeToNameShort, MSG_INCOMING,MSG_OUTGOING} from "src/global";
 import moment from "moment";
 import {navigate, routes} from "@redwoodjs/router";
 import jsonata from "jsonata";
+import Timeline from "src/components/Timeline/Timeline";
+import React, {useState} from "react";
 
 
 export const QUERY = gql`
@@ -97,11 +99,37 @@ const columns = [
     render: (_, record: { key: React.Key }) =>
       <ShowJSONata rec={record}/>
   },
+  {
+    title: 'Action',
+    key: 'action',
+    render: (_, record) => (
+      <Space size="middle">
+        <ShowTimeline rec={record} />
+      </Space>
+    ),
+  },
 ];
 
-const mySubstr = (str:string, num:number) =>
-{
-  return str.substring(0, num) + ' ... ' + str.substring(str.length-num, str.length);
+const mySubstr = (str:string, num:number) => str.substring(0, num) + ' ... ' + str.substring(str.length-num, str.length);
+
+const ShowTimeline = ({rec}) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  return <>
+    <Button type="primary" onClick={()=>setIsModalVisible(true)}>
+      Timeline
+    </Button>
+    <Modal
+      visible={isModalVisible}
+      onOk={()=>setIsModalVisible(false)}
+      onCancel={()=>setIsModalVisible(false)}
+      width='50%'
+      style={{ top: 5 }}
+    >
+      <Timeline outgoing={rec.type === MSG_OUTGOING?rec:null} incoming={rec.type === MSG_INCOMING?rec:null} JSONata={rec.jsonata} />
+    </Modal>
+  </>
+
 }
 
 const ShowJSONata = (({rec}) => {

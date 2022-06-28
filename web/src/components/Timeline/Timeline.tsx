@@ -42,12 +42,12 @@ const Timeline = ( {incoming, outgoing, JSONata} ) => {
   ];
 
   const rows = [
-    ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
-    incoming && ["Incoming", new Date(outgoing.requestDate), new Date(incoming.responseDate)],
+    outgoing && ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
+    incoming && ["Incoming", outgoing ? new Date(outgoing.requestDate) : new Date(incoming.responseDate), new Date(incoming.responseDate)],
   ];
 
   const data = [columns, ...rows];
-
+console.log(data);
   return (
     <div style={{backgroundColor: 'whitesmoke'}}>
 
@@ -55,20 +55,20 @@ const Timeline = ( {incoming, outgoing, JSONata} ) => {
              data={data}
              width="100%" height="135px"
              options={{
-               colors: [`${colorOutgoing}`, incoming && `${colorIncoming}`],
+               colors: [ outgoing && `${colorOutgoing}`, incoming && `${colorIncoming}`],
              }}/>
 
       <VerticalTimeline>
 
-        <VTE title={'Outgoing request'} color={colorOutgoing} date={outgoing.requestDate} json={outgoing.request} position={'left'} JSONata={null}
-              icon={<LoginOutlined style={{marginLeft:'23px', marginTop: '30px'}}/>}/>
+        { outgoing && <VTE title={'Outgoing request'} color={colorOutgoing} date={outgoing.requestDate} json={outgoing.request} position={'left'} JSONata={null}
+              icon={<LoginOutlined style={{marginLeft:'23px', marginTop: '30px'}}/>}/> }
 
         { incoming &&
           <VTE title={'Incoming response'} color={colorIncoming} date={incoming.responseDate} json={incoming.response} position={'right'} JSONata={null}
               icon={<LogoutOutlined style={{marginLeft:'23px', marginTop: '30px'}}/>}/> }
 
-        <VTE title={'Outgoing response'} color={colorOutgoing} date={outgoing.responseDate} json={outgoing.response} position={'right'} JSONata={JSONata}
-              icon={<LogoutOutlined style={{marginLeft:'23px', marginTop: '30px'}}/>}/>
+        { outgoing && <VTE title={'Outgoing response'} color={colorOutgoing} date={outgoing.responseDate} json={outgoing.response} position={'right'} JSONata={JSONata}
+              icon={<LogoutOutlined style={{marginLeft:'23px', marginTop: '30px'}}/>}/> }
 
       </VerticalTimeline>
 
