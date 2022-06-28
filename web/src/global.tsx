@@ -170,3 +170,10 @@ export function messageTypeToColor(type:number):string
     default: return colorOutgoing;
   }
 }
+export function messageTypeToNameShort(type:number):string
+{
+  switch (type) {
+    case MSG_INCOMING: return 'INC';
+    default: return 'OUT';
+  }
+}
