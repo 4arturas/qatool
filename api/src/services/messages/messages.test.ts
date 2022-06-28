@@ -28,20 +28,20 @@ describe('messages', () => {
 
   scenario('creates a message', async () => {
     const result = await createMessage({
-      input: { type: 7423910 },
+      input: { type: 5061664 },
     })
 
-    expect(result.type).toEqual(7423910)
+    expect(result.type).toEqual(5061664)
   })
 
   scenario('updates a message', async (scenario: StandardScenario) => {
     const original = await message({ id: scenario.message.one.id })
     const result = await updateMessage({
       id: original.id,
-      input: { type: 9370079 },
+      input: { type: 9819898 },
     })
 
-    expect(result.type).toEqual(9370079)
+    expect(result.type).toEqual(9819898)
   })
 
   scenario('deletes a message', async (scenario: StandardScenario) => {

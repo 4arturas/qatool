@@ -27,7 +27,6 @@ const Routes = () => {
   return (
     <Router>
 
-      <Route path="/messages" page={MessagesPage} name="messages" />
 
       <Set wrap={QaLayout}>
 
@@ -43,6 +42,7 @@ const Routes = () => {
           <Route path="/qa-trees" page={QaTreesPage} name="qaTrees" />
           <Route path="/qa-trees/{typeId:Int}/show" page={QaObjectsByTypeIdPage} name="qaObjectsByTypeId" />
           <Route path="/qa-trees/{typeId:Int}/new" page={QaTreesNewPage} name="qaTreeNew" />
+          <Route path="/messages/{page:Int}/{pageSize:Int}" page={MessagesPage} name="messages" />
         </Set>
 
         <Set wrap={QaObjectRelationshipLayout}>
