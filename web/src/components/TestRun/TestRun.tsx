@@ -39,7 +39,8 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
             body: body.id,
             test: test.id,
             replace: replace.id,
-            remove: remove.id
+            remove: remove.id,
+            result: result.id
           })
         });
 

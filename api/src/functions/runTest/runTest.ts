@@ -24,20 +24,22 @@ import {Message} from "src/models";
 export const handler = async (event: APIGatewayEvent, context: Context) => {
   logger.info('Invoked runTest function')
 
-  const bodyRequest = JSON.parse(event.body);
-  const serverId = bodyRequest.server;
-  const bodyId = bodyRequest.body;
-  const testId = bodyRequest.test;
-  const replaceId = bodyRequest.replace;
-  const removeId = bodyRequest.remove;
+  const bodyRequest   = JSON.parse(event.body);
+  const serverId      = bodyRequest.server;
+  const bodyId        = bodyRequest.body;
+  const testId        = bodyRequest.test;
+  const replaceId     = bodyRequest.replace;
+  const removeId      = bodyRequest.remove;
+  const resultId      = bodyRequest.result;
 
-  const server = await db.qaObject.findUnique({where: {id:serverId}});
-  const body = await db.qaObject.findUnique({where: {id:bodyId}});
-  const test = await db.qaObject.findUnique({where: {id:testId}});
-  const replace = await db.qaObject.findUnique({where: {id:replaceId}});
-  const remove = await db.qaObject.findUnique({where: {id:removeId}});
+  const server        = await db.qaObject.findUnique({where: {id:serverId}});
+  const body          = await db.qaObject.findUnique({where: {id:bodyId}});
+  const test          = await db.qaObject.findUnique({where: {id:testId}});
+  const replace       = await db.qaObject.findUnique({where: {id:replaceId}});
+  const remove        = await db.qaObject.findUnique({where: {id:removeId}});
+  const result        = await db.qaObject.findUnique({where: {id:resultId}});
 
-  const changedBody = merge( JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json) );
+  const changedBody   = merge( JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json) );
 
   try
   {
@@ -54,7 +56,8 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
       requestDate:    requestDate.toISOString(),
       responseDate:   responseDate.toISOString(),
       httpCode:       response.status,
-      txnId:          responseJSon?.txnId
+      txnId:          responseJSon?.txnId,
+      jsonata:        result.jsonata
     };
 
     const dbResult = await createMessage({

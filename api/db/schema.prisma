@@ -51,4 +51,5 @@ model Message {
   responseDate    DateTime?
   httpCode        Int?
   txnId           String?
+  jsonata         String?
 }

@@ -1,9 +1,10 @@
 import type { MessagesQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import {Pagination, Table, Tag} from "antd";
+import {Alert, Pagination, Table, Tag} from "antd";
 import {messageTypeToColor, messageTypeToNameShort, TABLE_PAGE_SIZE} from "src/global";
 import moment from "moment";
 import {navigate, routes} from "@redwoodjs/router";
+import jsonata from "jsonata";
 
 
 export const QUERY = gql`
@@ -18,6 +19,7 @@ export const QUERY = gql`
         responseDate
         httpCode
         txnId
+        jsonata
       }
       count
       page
@@ -88,10 +90,30 @@ const columns = [
     render: (_, record: { key: React.Key }) =>
       <>{record.txnId}</>
   },
+  {
+    title: 'JSONata',
+    dataIndex: 'jsonata',
+    key: 'jsonata',
+    render: (_, record: { key: React.Key }) =>
+      <ShowJSONata rec={record}/>
+  },
 ];
 
+const mySubstr = (str:string, num:number) =>
+{
+  return str.substring(0, num) + ' ... ' + str.substring(str.length-num, str.length);
+}
+
+const ShowJSONata = (({rec}) => {
+  return (!rec.response||!rec.jsonata) ?
+    <></> :
+    jsonata(rec.jsonata).evaluate(JSON.parse(rec.response)) ?
+      <Alert showIcon={true} type={"success"} message={mySubstr(rec.jsonata,5)}/> :
+      <Alert showIcon={true} type={"error"} message={mySubstr(rec.jsonata,5)}/>
+})
+
 const ViewJSon = ({JSon}) => {
-  return <>{JSon && JSon.substring(0, 10) + ' ... ' + JSon.substring(JSon.length-10, JSon.length)}</>
+  return <>{JSon && mySubstr(JSon,10)}</>
 }
 
 const ViewDate = ({date}) => <>{ date && moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss') }</>

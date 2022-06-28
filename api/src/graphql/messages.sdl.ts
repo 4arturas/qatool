@@ -8,6 +8,7 @@ export const schema = gql`
     responseDate: DateTime
     httpCode: Int
     txnId: String
+    jsonata: String
   }
 
   type MessagePage {
@@ -31,6 +32,7 @@ export const schema = gql`
     responseDate: DateTime
     httpCode: Int
     txnId: String
+    jsonata: String
   }
 
   input UpdateMessageInput {
@@ -41,6 +43,7 @@ export const schema = gql`
     responseDate: DateTime
     httpCode: Int
     txnId: String
+    jsonata: String
   }
 
   type Mutation {
