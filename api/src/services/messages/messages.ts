@@ -35,8 +35,18 @@ export const deleteMessage: MutationResolvers['deleteMessage'] = ({ id }) => {
   })
 }
 
-export const messageByTxnId: QueryResolvers['messageByTxnId'] = ({ txnId }) => {
-  return db.message.findUnique({
-    where: { txnId }
-  })
+export const messagePage = ({ page, pageSize }) => {
+
+  const offset = (page - 1) * pageSize
+
+  return {
+    messages: db.message.findMany({
+      take: pageSize,
+      skip: offset,
+      orderBy: { responseDate: 'desc' },
+    }),
+    count: db.message.count(),
+    page: page,
+    pageSize: pageSize
+  }
 }
