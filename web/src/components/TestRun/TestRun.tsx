@@ -1,14 +1,13 @@
 import React, {useState} from "react";
-import {Button, Input, Modal, Select, Spin} from "antd";
-import ReactDiffViewer from "react-diff-viewer";
-import jsonata from "jsonata";
-import {mergeObjectsFromTestObject} from "src/global";
-import Title from "antd/lib/typography/Title";
+import {Button, Modal, Select, Spin} from "antd";
 import Search from "antd/lib/input/Search";
+import Timeline from "src/components/Timeline/Timeline";
+import {generatePaymentId} from "src/global";
 const { Option } = Select;
 
 const TestRun = ({body, test, replace, remove, result, servers}) => {
   const [server, setServer] = useState(null);
+  const [paymentId, setPaymentId] = useState(generatePaymentId('QA-OUT'));
   const [messageOutgoing, setMessageOutgoing] = useState(null);
   const [messageIncoming, setMessageIncoming] = useState(null);
 
@@ -20,7 +19,9 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
   };
 
   const handleOk = async () => {
-    // setModalText('The modal will be closed after two seconds');
+    setMessageOutgoing(null);
+    setMessageIncoming(null);
+
     setConfirmLoading(true);
     const tmpServer = server;
     setServer(null);
@@ -41,14 +42,10 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
             remove: remove.id
           })
         });
-      const response = await res;
-      console.log('response', response);
+
       const data = (await res.json()).data;
-      console.log('data',data);
       setMessageOutgoing(data.messageOutgoing);
       setMessageIncoming(data.messageIncoming);
-      console.log( 'data.messageOutgoing', data.messageOutgoing );
-      console.log('data.messageIncoming', data.messageIncoming);
       setServer(tmpServer);
     }
     catch ( error )
@@ -73,9 +70,11 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
-        okButtonProps={{ disabled: !server }}
+        okButtonProps={{ disabled: (!server || paymentId.length===0) }}
         cancelButtonProps={{ disabled: confirmLoading }}
         width='50%'
+        closable={!confirmLoading}
+        style={{ top: 5 }}
       >
         <table style={{width:'100%'}}>
           <tbody>
@@ -97,63 +96,16 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
                 allowClear
                 enterButton={''}
                 style={{ width: 400 }}
-                defaultValue={'QAOUT' + new Date().getTime()}
+                defaultValue={paymentId}
+                disabled={confirmLoading}
+                onChange={(e)=>setPaymentId(e.target.value)}
               />
-            </td>
-          </tr>
-
-          <tr>
-            <td><b>Request:</b></td>
-          </tr>
-          <tr>
-            <td>
-              <div style={{maxWidth: '100%', maxHeight: '200px', overflow: "auto"}}>
-                <ReactDiffViewer
-                  newValue={JSON.stringify(mergeObjectsFromTestObject(JSON.parse(body.json), JSON.parse(replace.json),  JSON.parse(remove.json)), undefined, 2 )}
-                  splitView={false}/>
-              </div>
             </td>
           </tr>
 
           <tr><td style={{paddingTop:'10px'}}>{confirmLoading&&<Spin/>}</td></tr>
 
-
-          {messageIncoming &&
-            <>
-              <tr>
-                <td><b>Incoming Payment:</b></td>
-              </tr>
-              <tr>
-                <td>
-                  <div style={{maxWidth: '100%', maxHeight: '200px', overflow: "auto"}}>
-                    <ReactDiffViewer newValue={JSON.stringify(JSON.parse(messageIncoming.response), null, 2)}
-                                     splitView={false}/>
-                  </div>
-                </td>
-              </tr>
-            </>
-          }
-          {messageOutgoing &&
-            <>
-              <tr>
-                <td>
-                  <b>Response:</b>
-                  <div>
-                    <strong>JSONata:</strong> {messageOutgoing ? <span style={{color:jsonata(result.jsonata).evaluate(JSON.parse(messageOutgoing.response))?'green':'red'}}>{result.jsonata}</span> : <span>{result?.jsonata}</span> }
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div style={{maxWidth: '100%', maxHeight: '200px', overflow: "auto"}}>
-                    <ReactDiffViewer newValue={JSON.stringify(JSON.parse(messageOutgoing.response), null, 2)}
-                                     splitView={false}/>
-                  </div>
-                </td>
-              </tr>
-            </>
-          }
-
+          {(messageOutgoing) && <Timeline outgoing={messageOutgoing} incoming={messageIncoming} JSONata={result.jsonata}/> }
 
           </tbody>
         </table>

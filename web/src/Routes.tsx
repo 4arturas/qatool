@@ -27,6 +27,8 @@ const Routes = () => {
   return (
     <Router>
 
+      <Route path="/messages" page={MessagesPage} name="messages" />
+
       <Set wrap={QaLayout}>
 
         <Set wrap={QaObjectsLayout}>
