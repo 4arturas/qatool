@@ -177,3 +177,5 @@ export function messageTypeToNameShort(type:number):string
     default: return 'OUT';
   }
 }
+
+export const TABLE_PAGE_SIZE = 15;
