@@ -5,6 +5,7 @@ import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
 import moment from "moment";
 import jsonata from "jsonata";
 import {Chart} from "react-google-charts";
+import {colorIncoming, colorOutgoing} from "src/global";
 
 const VTE = ( {title, color, date, json, position, JSONata, icon} ) =>
 {
@@ -46,9 +47,6 @@ const Timeline = ( {incoming, outgoing, JSONata} ) => {
   ];
 
   const data = [columns, ...rows];
-
-  const colorOutgoing = '#D7EEFF';
-  const colorIncoming = '#FAFFC7';
 
   return (
     <div style={{backgroundColor: 'whitesmoke'}}>

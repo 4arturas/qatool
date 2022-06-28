@@ -158,3 +158,15 @@ export function generatePaymentId(prefix:string):string
   const random = getRandomIntInclusive(1000,9999);
   return `${prefix}-${new Date().getTime()}-${random}`;
 }
+
+export const MSG_OUTGOING:number = 1;
+export const MSG_INCOMING:number = 2;
+export const colorOutgoing = '#D7EEFF';
+export const colorIncoming = '#FAFFC7';
+export function messageTypeToColor(type:number):string
+{
+  switch (type) {
+    case MSG_INCOMING: return colorIncoming;
+    default: return colorOutgoing;
+  }
+}
