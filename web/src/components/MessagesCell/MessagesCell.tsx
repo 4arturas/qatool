@@ -151,10 +151,6 @@ const ViewHttpCode = ({httpCode}) => <>{ httpCode && <Tag color={httpCode===200?
 export const Success = ({ messagePage }: CellSuccessProps<MessagesQuery>) => {
 
   return <>
-
-  <div>Count: {messagePage.count}</div>
-  <div>page: {messagePage.page}</div>
-  <div>pageSize: {messagePage.pageSize}</div>
     <table style={{width:'100%'}} cellPadding={0} cellSpacing={0}>
       <tbody>
         <tr>
