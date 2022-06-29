@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Pagination, Table, Tag} from "antd";
 import {
+  getChildrenTypeIdByParentTypeId,
   mySubstr,
   typeIdMargin,
   typeIdToColor,
@@ -118,7 +119,17 @@ const QaObjects = ({qaObjects, page, pageSize, count}) => {
     <tbody>
     <tr>
       <td>
-        <Table dataSource={qaObjects} columns={columns} pagination={false} loading={loading} bordered rowKey={'id'}/>
+        <Table
+          dataSource={qaObjects}
+          columns={columns}
+          pagination={false}
+          loading={loading}
+          bordered
+          expandable={{
+            expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
+            rowExpandable: record => (getChildrenTypeIdByParentTypeId(record.typeId).length>0),
+          }}
+          rowKey={'id'}/>
       </td>
     </tr>
     <tr>
