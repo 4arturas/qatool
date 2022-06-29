@@ -9,7 +9,7 @@ import {
 } from "src/global";
 import {navigate, routes} from "@redwoodjs/router";
 
-import EditObject, {EDIT_OBJECT_CLONE, EDIT_OBJECT_UPDATE} from "src/components/EditObject/EditObject";
+import EditObject, {EDIT_OBJECT_CLONE, EDIT_OBJECT_NEW, EDIT_OBJECT_UPDATE} from "src/components/EditObject/EditObject";
 import DeleteObject from "src/components/DeleteObject/DeleteObject";
 
 const QaObjects = ({qaObjects, page, pageSize, count}) => {
@@ -119,6 +119,7 @@ const QaObjects = ({qaObjects, page, pageSize, count}) => {
     <tbody>
     <tr>
       <td>
+        <div style={{marginBottom:'5px'}}><EditObject object={null} type={EDIT_OBJECT_NEW}/></div>
         <Table
           dataSource={qaObjects}
           columns={columns}

@@ -4,12 +4,13 @@ import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
 import {getChildrenFromInput} from "src/global";
 import {CopyOutlined, EditOutlined} from "@ant-design/icons";
-import {Modal} from "antd";
+import {Button, Modal} from "antd";
 import QaObjectForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm";
 import {navigate, routes} from "@redwoodjs/router";
 
 export const EDIT_OBJECT_UPDATE   = 1;
 export const EDIT_OBJECT_CLONE    = 2;
+export const EDIT_OBJECT_NEW      = 3;
 
 const EditObject = ({ object, type }) => {
   const UPDATE_QA_OBJECT_MUTATION = gql`
@@ -177,10 +178,12 @@ const EditObject = ({ object, type }) => {
       {
         (type===EDIT_OBJECT_UPDATE) ?
         <EditOutlined onClick={showModal} style={{fontSize:'20px'}}/> :
-        <CopyOutlined onClick={showModal} style={{fontSize:'20px'}} />
+          (type===EDIT_OBJECT_CLONE) ?
+        <CopyOutlined onClick={showModal} style={{fontSize:'20px'}} /> :
+            <Button type="primary" onClick={showModal}>New Object</Button>
       }
       <Modal
-        title=""
+        title={ (type===EDIT_OBJECT_UPDATE) ? 'Update' : ( type===EDIT_OBJECT_CLONE) ? 'Clone' : 'Create' }
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
@@ -191,7 +194,7 @@ const EditObject = ({ object, type }) => {
           onSave={(type===EDIT_OBJECT_UPDATE)?onUpdate:onSave}
           error={(type===EDIT_OBJECT_UPDATE)?errorUpdateQaObject:errorSavingNew}
           loading={(type===EDIT_OBJECT_UPDATE)?loadingUpdateQaObject:loadingSaveNew}
-          submitName={(type===EDIT_OBJECT_UPDATE)?'Update':'Clone'}/>
+          submitName={ (type===EDIT_OBJECT_UPDATE) ? 'Update' : ( type===EDIT_OBJECT_CLONE) ? 'Clone' : 'Create' } />
       </Modal>
     </>
   );
