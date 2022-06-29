@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const HAS_NO_PARENT = 0;
 export const COLLECTION = 1;
 export const SERVER = 2;
@@ -180,4 +182,6 @@ export function messageTypeToNameShort(type:number):string
 
 export const TABLE_PAGE_SIZE = 15;
 
-export const mySubstr = (str:string, num:number) => (str.length <= num) ? str : str.substring(0, num) + ' ... ' + str.substring(str.length-num, str.length);
+export const mySubstr = (str:string, num:number) => !str ? str : (str.length <= num) ? str : str.substring(0, num) + ' ... ' + str.substring(str.length-num, str.length);
+
+export const dateFormatYYYYMMDDHHmmss = (date:string) => moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss')
