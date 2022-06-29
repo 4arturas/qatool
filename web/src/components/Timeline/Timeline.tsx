@@ -2,10 +2,9 @@ import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timel
 import 'react-vertical-timeline-component/style.min.css';
 import React from "react";
 import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
-import moment from "moment";
 import jsonata from "jsonata";
 import {Chart} from "react-google-charts";
-import {colorIncoming, colorOutgoing} from "src/global";
+import {colorIncoming, colorOutgoing, dateFormatYYYYMMDDHHmmss} from "src/global";
 
 const VTE = ( {title, color, date, json, position, JSONata, icon} ) =>
 {
@@ -15,7 +14,7 @@ const VTE = ( {title, color, date, json, position, JSONata, icon} ) =>
     className="vertical-timeline-element--work"
     contentStyle={{ background: `${color}`}}
     contentArrowStyle={{ borderRight: `7px solid  ${color}` }}
-    date={moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss')}
+    date={dateFormatYYYYMMDDHHmmss(date)}
     iconStyle={{ background: `${color}`, color: '#000' }}
     icon={icon}
     position={position}

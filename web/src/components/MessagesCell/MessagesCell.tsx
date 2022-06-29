@@ -1,7 +1,14 @@
 import type { MessagesQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import {Alert, Button, Modal, Pagination, Space, Table, Tag} from "antd";
-import {messageTypeToColor, messageTypeToNameShort, MSG_INCOMING, MSG_OUTGOING, mySubstr} from "src/global";
+import {
+  dateFormatYYYYMMDDHHmmss,
+  messageTypeToColor,
+  messageTypeToNameShort,
+  MSG_INCOMING,
+  MSG_OUTGOING,
+  mySubstr
+} from "src/global";
 import moment from "moment";
 import {navigate, routes} from "@redwoodjs/router";
 import jsonata from "jsonata";
@@ -144,7 +151,7 @@ const ViewJSon = ({JSon}) => {
   return <>{JSon && mySubstr(JSon,10)}</>
 }
 
-const ViewDate = ({date}) => <>{ date && moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss') }</>
+const ViewDate = ({date}) => <>{ date && dateFormatYYYYMMDDHHmmss(date) }</>
 
 const ViewHttpCode = ({httpCode}) => <>{ httpCode && <Tag color={httpCode===200?'green':'volcano'}>{httpCode}</Tag>} </>
 
