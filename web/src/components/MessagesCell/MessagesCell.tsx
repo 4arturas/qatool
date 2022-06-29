@@ -155,7 +155,7 @@ export const Success = ({ messagePage }: CellSuccessProps<MessagesQuery>) => {
       <tbody>
         <tr>
           <td>
-            <Table dataSource={messagePage.messages} columns={columns} pagination={false}/>
+            <Table dataSource={messagePage.messages} columns={columns} pagination={false} rowKey={'id'}/>
           </td>
         </tr>
         <tr>
