@@ -3,7 +3,7 @@ import {Pagination, Table, Tag} from "antd";
 import {
   getChildrenTypeIdByParentTypeId,
   mySubstr,
-  typeIdMargin,
+  typeIdMargin, typeIdTagMargin,
   typeIdToColor,
   typeIdToName
 } from "src/global";
@@ -21,9 +21,7 @@ const QaObjects = ({qaObjects, page, pageSize, count}) => {
       key: 'typeId',
       width: 170,
       render: (_, record: { key: React.Key }) =>
-        <Tag color={typeIdToColor(record.typeId)} style={{marginLeft: `${typeIdMargin(record.typeId)}px`, color:'black'}}>
-          {typeIdToName(record.typeId)}
-        </Tag>
+        typeIdTagMargin(record.typeId)
     },
     {
       title: 'Name',
