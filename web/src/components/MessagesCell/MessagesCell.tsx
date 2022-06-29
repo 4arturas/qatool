@@ -1,7 +1,7 @@
 import type { MessagesQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import {Alert, Button, Modal, Pagination, Space, Table, Tag} from "antd";
-import {messageTypeToColor, messageTypeToNameShort, MSG_INCOMING,MSG_OUTGOING} from "src/global";
+import {messageTypeToColor, messageTypeToNameShort, MSG_INCOMING, MSG_OUTGOING, mySubstr} from "src/global";
 import moment from "moment";
 import {navigate, routes} from "@redwoodjs/router";
 import jsonata from "jsonata";
@@ -110,7 +110,7 @@ const columns = [
   },
 ];
 
-const mySubstr = (str:string, num:number) => str.substring(0, num) + ' ... ' + str.substring(str.length-num, str.length);
+
 
 const ShowTimeline = ({rec}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
