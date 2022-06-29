@@ -8,7 +8,7 @@ type QaObjectLayoutProps = {
 const QaObjectsLayout = ({ children }: QaObjectLayoutProps) => {
   return (
     <div className="rw-scaffold">
-      <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
+      <Toaster toastOptions={{ className: 'rw-toast', duration: 3000 }} />
       <header className="rw-header">
         <h1 className="rw-heading rw-heading-primary">
           <Link
