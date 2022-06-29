@@ -4,6 +4,7 @@ import type {
   MutationResolvers,
   QaObjectResolvers,
 } from 'types/graphql'
+import {QaObjectRelationship} from "src/models";
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
   return db.qaObject.findMany()
@@ -50,6 +51,31 @@ export const deleteQaObject: MutationResolvers['deleteQaObject'] = ({ id }) => {
     where: { id },
   })
 }
+
+export const qaObjectsPage = ({ page, pageSize }) => {
+
+  const offset = (page - 1) * pageSize
+
+  return {
+    qaObjects: db.qaObject.findMany({
+      take: pageSize,
+      skip: offset,
+      // orderBy: { id: 'desc' },
+    }),
+    count: db.qaObject.count(),
+    page: page,
+    pageSize: pageSize
+  };
+}
+
+export const deleteQaObjectWithChildren = async ({ id }) => {
+
+  const children = await QaObjectRelationship.where({ parentId: id});
+  children.map( c => c.destroy({ throw: true }) );
+
+  return deleteQaObject( { id: id } );
+}
+
 
 export const QaObject: QaObjectResolvers = {
   type: (_obj, { root }) =>

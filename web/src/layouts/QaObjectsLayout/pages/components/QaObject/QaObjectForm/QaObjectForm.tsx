@@ -3,12 +3,10 @@ import {
   FormError,
   FieldError,
   Label,
-  NumberField,
   TextField,
-  CheckboxField,
   Submit, SelectField, useForm,
 } from '@redwoodjs/forms'
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import CollectionForm from "./CollectionForm";
 import SuiteForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm/SuiteForm";
 import {
@@ -235,7 +233,7 @@ const QaObjectForm = (props) => {
               disabled={props.loading}
               className="rw-button rw-button-blue"
             >
-              Save
+              {props.submitName}
             </Submit>
           </div>:<></>}
 

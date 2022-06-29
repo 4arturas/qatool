@@ -27,7 +27,6 @@ const Routes = () => {
   return (
     <Router>
 
-
       <Set wrap={QaLayout}>
 
         <Set wrap={QaObjectsLayout}>
@@ -35,6 +34,8 @@ const Routes = () => {
           <Route path="/qa-objects/{id:Int}/edit" page={QaObjectEditQaObjectPage} name="editQaObject" />
           <Route path="/qa-objects/{id:Int}" page={QaObjectQaObjectPage} name="qaObject" />
           <Route path="/qa-objects" page={QaObjectQaObjectsPage} name="qaObjects" />
+
+          <Route path="/tmp-qa-object/{page:Int}/{pageSize:Int}" page={TmpQaObjectPage} name="tmpQaObject" />
         </Set>
 
         <Set wrap={QaTreeLayout}>

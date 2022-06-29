@@ -17,12 +17,22 @@ export const schema = gql`
     updatedAt: DateTime!
   }
 
+  type QaObjectPage {
+    qaObjects: [QaObject]
+    count: Int!
+    page: Int!
+    pageSize: Int
+  }
+
   type Query {
     qaObjects: [QaObject!]! @requireAuth
     qaObject(id: Int!): QaObject @requireAuth
     getQaObjectsByType(typeId: Int!): [QaObject] @requireAuth
     qaObjectsByTypeId(typeId: Int!): [QaObject] @requireAuth
+    qaObjectsPage(page: Int, pageSize: Int): QaObjectPage @requireAuth
   }
+
+
 
   input CreateQaObjectInput {
     typeId: Int!
@@ -57,5 +67,6 @@ export const schema = gql`
     updateQaObject(id: Int!, input: UpdateQaObjectInput!): QaObject!
       @requireAuth
     deleteQaObject(id: Int!): QaObject! @requireAuth
+    deleteQaObjectWithChildren(id: Int!): QaObject! @requireAuth
   }
 `

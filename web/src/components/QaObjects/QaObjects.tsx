@@ -1,110 +1,111 @@
 import React, {useEffect, useState} from "react";
 import {Pagination, Table, Tag} from "antd";
 import {
-  dateFormatYYYYMMDDHHmmss, messageTypeToColor, messageTypeToNameShort,
   mySubstr,
   typeIdMargin,
   typeIdToColor,
   typeIdToName
 } from "src/global";
 import {navigate, routes} from "@redwoodjs/router";
-import {CopyOutlined, DeleteOutlined, EditOutlined} from "@ant-design/icons";
 
-const columns = [
-  {
-    title: 'Type',
-    dataIndex: 'typeId',
-    key: 'typeId',
-    render: (_, record: { key: React.Key }) =>
-      <Tag color={typeIdToColor(record.typeId)} style={{marginLeft: `${typeIdMargin(record.typeId)}px`, color:'black'}}>
-        {typeIdToName(record.typeId)}
-      </Tag>
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name'
-  },
-  {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
-    render: (_, record: { key: React.Key }) =>
-      mySubstr(record.description, 10)
-  },
-  {
-    title: 'BatchId',
-    dataIndex: 'batchId',
-    key: 'batchId'
-  },
-  {
-    title: 'Threads',
-    dataIndex: 'threads',
-    key: 'threads'
-  },
-  {
-    title: 'Loops',
-    dataIndex: 'loops',
-    key: 'loops'
-  },
-  {
-    title: 'Json',
-    dataIndex: 'json',
-    key: 'json',
-    render: (_, record: { key: React.Key }) =>
-      mySubstr(record.json, 10)
-  },
-  {
-    title: 'JSONata',
-    dataIndex: 'jsonata',
-    key: 'jsonata',
-    render: (_, record: { key: React.Key }) =>
-      mySubstr(record.jsonata, 10)
-  },
-  {
-    title: 'Address',
-    dataIndex: 'address',
-    key: 'address',
-    render: (_, record: { key: React.Key }) =>
-      mySubstr(record.address, 10)
-  },
-  {
-    title: 'Method',
-    dataIndex: 'method',
-    key: 'method'
-  },
-  {
-    title: 'Header',
-    dataIndex: 'header',
-    key: 'header',
-    render: (_, record: { key: React.Key }) =>
-      mySubstr(record.header, 10)
-  },
-  {
-    title: 'Created At',
-    dataIndex: 'createdAt',
-    key: 'createdAt',
-    render: (_, record: { key: React.Key }) =>
-      dateFormatYYYYMMDDHHmmss(record.createdAt)
-  },
-  {
-    title: 'Updated At',
-    dataIndex: 'updatedAt',
-    key: 'updatedAt',
-    render: (_, record: { key: React.Key }) =>
-      dateFormatYYYYMMDDHHmmss(record.updatedAt)
-  },
-  {
-    title: 'Action',
-    key: 'action',
-    width: 90,
-    render: (_, record) => (
-      <><EditOutlined/> <CopyOutlined /> <DeleteOutlined/></>
-    ),
-  },
-];
+import EditObject, {EDIT_OBJECT_CLONE, EDIT_OBJECT_UPDATE} from "src/components/EditObject/EditObject";
+import DeleteObject from "src/components/DeleteObject/DeleteObject";
 
 const QaObjects = ({qaObjects, page, pageSize, count}) => {
+
+  const columns = [
+    {
+      title: 'Type',
+      dataIndex: 'typeId',
+      key: 'typeId',
+      width: 170,
+      render: (_, record: { key: React.Key }) =>
+        <Tag color={typeIdToColor(record.typeId)} style={{marginLeft: `${typeIdMargin(record.typeId)}px`, color:'black'}}>
+          {typeIdToName(record.typeId)}
+        </Tag>
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      width:300,
+    },
+    {
+      title: 'Description',
+      dataIndex: 'description',
+      key: 'description',
+      width: 200,
+      render: (_, record: { key: React.Key }) =>
+        mySubstr(record.description, 9)
+    },
+    {
+      title: 'BatchId',
+      dataIndex: 'batchId',
+      key: 'batchId',
+      width: 50
+    },
+    {
+      title: 'Threads',
+      dataIndex: 'threads',
+      key: 'threads',
+      width: 50
+    },
+    {
+      title: 'Loops',
+      dataIndex: 'loops',
+      key: 'loops',
+      width: 50
+    },
+    {
+      title: 'Json',
+      dataIndex: 'json',
+      key: 'json',
+      width: 200,
+      render: (_, record: { key: React.Key }) =>
+        mySubstr(record.json, 10)
+    },
+    {
+      title: 'JSONata',
+      dataIndex: 'jsonata',
+      key: 'jsonata',
+      width: 200,
+      render: (_, record: { key: React.Key }) =>
+        mySubstr(record.jsonata, 10)
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+      width: 200,
+      render: (_, record: { key: React.Key }) =>
+        mySubstr(record.address, 10)
+    },
+    {
+      title: 'Method',
+      dataIndex: 'method',
+      key: 'method',
+      width: 50
+    },
+    {
+      title: 'Header',
+      dataIndex: 'header',
+      key: 'header',
+      width: 200,
+      render: (_, record: { key: React.Key }) =>
+        mySubstr(record.header, 10)
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <>
+          <EditObject object={record} type={EDIT_OBJECT_UPDATE}/>&nbsp;&nbsp;&nbsp;
+          <EditObject object={record} type={EDIT_OBJECT_CLONE}/>&nbsp;&nbsp;&nbsp;
+          <DeleteObject id={record.id} />
+        </>
+      ),
+    },
+  ];
 
   const [loading,setLoading] = useState(true);
 

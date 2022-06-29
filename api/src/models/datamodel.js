@@ -454,6 +454,59 @@ module.exports = {
           type: "String",
           isGenerated: false,
           isUpdatedAt: false
+        },
+        {
+          name: "jsonata",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
+          isGenerated: false,
+          isUpdatedAt: false
+        }
+      ],
+      primaryKey: null,
+      uniqueFields: [],
+      uniqueIndexes: [],
+      isGenerated: false
+    },
+    {
+      name: "Mytest",
+      dbName: null,
+      fields: [
+        {
+          name: "id",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: true,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "Int",
+          default: {
+            name: "autoincrement",
+            args: []
+          },
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "name",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
+          isGenerated: false,
+          isUpdatedAt: false
         }
       ],
       primaryKey: null,
