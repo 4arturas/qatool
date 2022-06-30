@@ -4,7 +4,6 @@ import {
   COLLECTION,
   getChildrenTypeIdByParentTypeId,
   mySubstr, SERVER,
-  typeIdTagMargin,
   typeIdToColor,
   typeIdToName, typeIdToTag,
   TYPES
@@ -16,6 +15,7 @@ import DeleteObject from "src/components/DeleteObject/DeleteObject";
 import QaTrees from "src/layouts/QaTreeLayout/components/Tree/QaTrees/QaTrees";
 import {SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
+import BelongingsCell from 'src/components/BelongingsCell'
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int) {
@@ -259,7 +259,7 @@ const SearchQaObjects = ({page, pageSize}) => {
                 loading={loadingData}
                 bordered
                 expandable={{
-                  expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
+                  expandedRowRender: record => <BelongingsCell parentId={record.id} />,
                   rowExpandable: record => (getChildrenTypeIdByParentTypeId(record.typeId).length>0),
                 }}
                 rowKey={'id'}/>

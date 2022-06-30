@@ -36,6 +36,7 @@ export const schema = gql`
     qaObjectsByTypeId(typeId: Int!): [QaObject] @requireAuth
     qaObjectsPage(page: Int, pageSize: Int): QaObjectPage @requireAuth
     searchQaObjects(searchCriteria: QaObjectSearchCriteria, page: Int, pageSize: Int): QaObjectPage @requireAuth
+    belongings(parentId: Int): [QaObject] @requireAuth
   }
 
 

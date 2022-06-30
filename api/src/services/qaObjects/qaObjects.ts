@@ -122,6 +122,12 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize } ) =>
   };
 }
 
+export const belongings = async ( { parentId} ) =>
+{
+  const children = await QaObjectRelationship.where({ parentId: parentId});
+  return db.qaObject.findMany( { where: { id: { in: children.map( c => c.childrenId ) } } } );
+}
+
 
 export const QaObject: QaObjectResolvers = {
   type: (_obj, { root }) =>
