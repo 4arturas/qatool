@@ -14,6 +14,19 @@ export const REMOVE = 8;
 export const RESULT = 9;
 export const RESPONSE = 10;
 
+export const TYPES = [
+  COLLECTION,
+  SERVER,
+  SUITE,
+  CASE,
+  BODY,
+  TEST,
+  REPLACE,
+  REMOVE,
+  RESULT,
+  RESPONSE
+];
+
 export const typeIdToName = (typeId: number) =>
 {
   switch ( typeId )
@@ -74,7 +87,7 @@ export const typeIdToColor = (typeId: number) =>
 
 export const typeIdMargin = (typeId: number) : number =>
 {
-  const step: number = 20;
+  const step: number = 10;
   switch ( typeId )
   {
     case COLLECTION:
@@ -188,6 +201,9 @@ export const mySubstr = (str:string, num:number) => !str ? str : (str.length <= 
 
 export const dateFormatYYYYMMDDHHmmss = (date:string) => moment(new Date(date)).format('YYYY-MM-DD HH:mm:ss')
 
+export const typeIdToTag = ( typeId ) =>  <Tag color={typeIdToColor(typeId)} style={{color:'black'}}>
+                                                {typeIdToName(typeId)}
+                                              </Tag>
 export const typeIdTagMargin = ( typeId ) =>  <Tag color={typeIdToColor(typeId)} style={{marginLeft: `${typeIdMargin(typeId)}px`, color:'black'}}>
                                                 {typeIdToName(typeId)}
                                               </Tag>

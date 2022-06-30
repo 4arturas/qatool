@@ -3,7 +3,7 @@ import {useLazyQuery} from "@apollo/client";
 import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
 import {getChildrenFromInput} from "src/global";
-import {CopyOutlined, EditOutlined} from "@ant-design/icons";
+import {CopyOutlined, EditOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import {Button, Modal} from "antd";
 import QaObjectForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm";
 import {navigate, routes} from "@redwoodjs/router";
@@ -179,8 +179,9 @@ const EditObject = ({ object, type }) => {
         (type===EDIT_OBJECT_UPDATE) ?
         <EditOutlined onClick={showModal} style={{fontSize:'20px'}}/> :
           (type===EDIT_OBJECT_CLONE) ?
-        <CopyOutlined onClick={showModal} style={{fontSize:'20px'}} /> :
-            <Button type="primary" onClick={showModal}>New Object</Button>
+            <CopyOutlined onClick={showModal} style={{fontSize:'20px'}} /> :
+            <PlusCircleOutlined onClick={showModal} style={{fontSize:'20px'}} />
+
       }
       <Modal
         title={ (type===EDIT_OBJECT_UPDATE) ? 'Update' : ( type===EDIT_OBJECT_CLONE) ? 'Clone' : 'Create' }

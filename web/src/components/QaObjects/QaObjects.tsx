@@ -1,18 +1,16 @@
 import React, {useEffect, useState} from "react";
-import {Pagination, Table, Tag} from "antd";
+import {Button, Col, Form, InputNumber, Pagination, Select, Table, Tag} from "antd";
 import {
   getChildrenTypeIdByParentTypeId,
   mySubstr,
-  typeIdMargin, typeIdTagMargin,
-  typeIdToColor,
-  typeIdToName
+  typeIdTagMargin,
 } from "src/global";
 import {navigate, routes} from "@redwoodjs/router";
 
 import EditObject, {EDIT_OBJECT_CLONE, EDIT_OBJECT_NEW, EDIT_OBJECT_UPDATE} from "src/components/EditObject/EditObject";
 import DeleteObject from "src/components/DeleteObject/DeleteObject";
 
-const QaObjects = ({qaObjects, page, pageSize, count}) => {
+const QaObjects = ({qaObjects, page, pageSize, count, loadingData}) => {
 
   const columns = [
     {
@@ -113,16 +111,17 @@ const QaObjects = ({qaObjects, page, pageSize, count}) => {
     }, [] );
 
 
+
+
   return <table style={{width:'100%'}} cellPadding={0} cellSpacing={0}>
     <tbody>
     <tr>
       <td>
-        <div style={{marginBottom:'5px'}}><EditObject object={null} type={EDIT_OBJECT_NEW}/></div>
         <Table
           dataSource={qaObjects}
           columns={columns}
           pagination={false}
-          loading={loading}
+          loading={loadingData}
           bordered
           expandable={{
             expandedRowRender: record => <p style={{ margin: 0 }}>{record.description}</p>,
@@ -131,8 +130,9 @@ const QaObjects = ({qaObjects, page, pageSize, count}) => {
           rowKey={'id'}/>
       </td>
     </tr>
+
     <tr>
-      <td style={{paddingTop:'5px'}}>
+      <td style={{paddingTop:'5px', display: 'flex'}}>
         <Pagination
           defaultPageSize={pageSize}
           defaultCurrent={page}
@@ -151,6 +151,7 @@ const QaObjects = ({qaObjects, page, pageSize, count}) => {
         />
       </td>
     </tr>
+
     </tbody>
   </table>
 }
