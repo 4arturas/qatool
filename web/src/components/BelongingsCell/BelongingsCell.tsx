@@ -79,7 +79,7 @@ export const Success = ({ belongings }: CellSuccessProps<BelongingsQuery>) => {
   const backgroundColor = children.length === 0 ? 'black' : typeIdToColor( children[0].typeId );
 
   return (
-  <div style={{marginLeft: '20px', width:'90%', textAlign: 'center'}}>
+  <div style={{marginLeft: '20px', marginRight:'20px', textAlign: 'center'}}>
     <Table
       style={ { border: '1px solid '+backgroundColor }}
       columns={columns}
