@@ -261,7 +261,7 @@ const SearchQaObjects = ({page, pageSize}) => {
         <table style={{width:'100%'}} cellPadding={0} cellSpacing={0}>
           <tbody>
           <tr>
-            <td style={{verticalAlign:'top', paddingTop: '20px'}}>
+            <td style={{verticalAlign:'top', paddingTop: '20px', paddingLeft: '5px'}}>
               <div><QaTrees typeId={SERVER}/></div>
               <div><QaTrees typeId={COLLECTION}/></div>
             </td>
