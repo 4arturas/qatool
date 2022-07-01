@@ -64,6 +64,7 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
           onOk={()=>setIsModalVisible(false)}
           onCancel={()=>setIsModalVisible(false)}
           footer={null}
+          width={'50%'}
         >
           <QaObjectForm
             qaObject={{typeId: typeId}}

@@ -91,6 +91,7 @@ const ObjectClone = ({parentId, qaObject, beforeSave, afterSave}) => {
         onOk={()=>setIsModalVisible(false)}
         onCancel={()=>setIsModalVisible(false)}
         footer={null}
+        width={'50%'}
       >
         <QaObjectForm
           qaObject={qaObject}
