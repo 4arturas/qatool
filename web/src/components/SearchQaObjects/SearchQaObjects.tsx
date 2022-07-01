@@ -1,6 +1,7 @@
-import {Badge, Button, Form, Input, Pagination, Select, Table, Tag} from "antd";
+import {Badge, Button, Form, Input, Pagination, Select, Table, Tag, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import {
+  CASE,
   COLLECTION,
   getChildrenTypeIdByParentTypeId,
   mySubstr, SERVER,
@@ -70,7 +71,14 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
           <Link to={routes.qaObjectRelationship({id:record.id})}>
             {record.name}
           </Link>
-          <ExperimentOutlined style={{float:'right'}}/>
+          {
+            record.typeId === CASE &&
+            <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
+              <Link to={routes.qaObjectMerge( {parentId: record.id})} style={{float:'right', color: 'black'}}>
+                <ExperimentOutlined style={{fontSize:'20px'}}/>
+              </Link>
+            </Tooltip>
+          }
         </div>
     },
     {
