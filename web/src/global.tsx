@@ -1,6 +1,7 @@
 import moment from "moment";
 import {Tag} from "antd";
 import React from "react";
+import jsonata from "jsonata";
 
 export const HAS_NO_PARENT = 0;
 export const COLLECTION = 1;
@@ -208,6 +209,7 @@ export const typeIdTagMargin = ( typeId ) =>  <Tag color={typeIdToColor(typeId)}
                                                 {typeIdToName(typeId)}
                                               </Tag>
 
+export const validateJSONata = ( jSONata: string, jSon: string ) : boolean => jsonata(jSONata).evaluate( JSON.parse(jSon) );
 
 export const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
   mutation CreateQaObjectRelationshipMutation($input: CreateQaObjectRelationshipInput!) {
