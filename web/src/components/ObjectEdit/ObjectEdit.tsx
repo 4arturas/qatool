@@ -65,11 +65,11 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
     },
   })
 
-  const [loadChildren, { called, loading: l, data }] = useLazyQuery(FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID, {
+  const [loadChildren, { called, loading: l, data: loadChildrenData }] = useLazyQuery(FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID, {
     variables: { parentId },
   });
 
-  const [updateQaObject, { loading: loadingUpdateQaObject, error: errorUpdateQaObject }] = useMutation(UPDATE_QA_OBJECT_MUTATION, {
+  const [updateQaObject, { loading: loadingUpdateQaObject, error: errorUpdateQaObject, data }] = useMutation(UPDATE_QA_OBJECT_MUTATION, {
 
     onCompleted: async () => {
       const queryResult = await loadChildren();
@@ -85,8 +85,9 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
       });
 
       toast.success('QaObject updated')
+
       setIsModalVisible(false);
-      afterSave();
+
     },
     onError: (error) => {
       toast.error(error.message)
@@ -114,7 +115,7 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
       >
         <QaObjectForm
           qaObject={qaObject}
-          onSave={(input, id) => {
+          onSave={ async (input, id) => {
               beforeSave();
               const childrenFromInput: Array<number> = getChildrenFromInput(input);
               setChildren( childrenFromInput );
@@ -122,7 +123,9 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
               setParentId(id);
 
               const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
-              updateQaObject({ variables: { id, input: castInput } })
+              const data = await updateQaObject({ variables: { id, input: castInput } })
+              const qaObject = data.data.updateQaObject;
+              afterSave( qaObject );
             }
           }
           error={errorUpdateQaObject}
