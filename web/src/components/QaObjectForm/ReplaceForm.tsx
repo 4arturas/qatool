@@ -31,7 +31,7 @@ const SuiteForm = (props) => {
           className="rw-input"
           errorClassName="rw-input rw-input-error"
           validation={{ required: true }}
-          rows={35}
+          rows={15}
         />
 
 
