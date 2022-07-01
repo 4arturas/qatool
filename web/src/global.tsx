@@ -196,7 +196,7 @@ export function messageTypeToNameShort(type:number):string
   }
 }
 
-export const TABLE_PAGE_SIZE = 15;
+export const DEFAULT_TABLE_PAGE_SIZE = 15;
 
 export const mySubstr = (str:string, num:number) => !str ? str : (str.length <= num) ? str : str.substring(0, num) + ' ... ' + str.substring(str.length-num, str.length);
 

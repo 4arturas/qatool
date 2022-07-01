@@ -1,6 +1,6 @@
 import { NavLink, routes} from "@redwoodjs/router";
 import 'antd/dist/antd.css';
-import {TABLE_PAGE_SIZE} from "src/global";
+import {DEFAULT_TABLE_PAGE_SIZE} from "src/global";
 
 type QaLayoutProps = {
   children?: React.ReactNode
@@ -28,7 +28,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                 </li>
                 <li style={{display:'inline', marginRight: "20px"}}>
                   <NavLink
-                    to={routes.qaObjects( {page:1, pageSize: TABLE_PAGE_SIZE} )}
+                    to={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE} )}
                     className="rw-link"
                     // activeMatchParams
                     activeClassName="activeLink">
@@ -37,7 +37,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                 </li>
                 <li style={{display:'inline', marginRight: "20px"}}>
                   <NavLink
-                    to={routes.messages({page:1, pageSize: TABLE_PAGE_SIZE})}
+                    to={routes.messages({page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE})}
                     className="rw-link"
                     activeClassName="activeLink">
                     Messages
