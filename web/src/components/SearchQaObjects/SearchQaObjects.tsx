@@ -9,14 +9,12 @@ import {
   TYPES
 } from "src/global";
 import {useLazyQuery} from "@apollo/client";
-import EditObject, {EDIT_OBJECT_CLONE, EDIT_OBJECT_NEW, EDIT_OBJECT_UPDATE} from "src/components/EditObject/EditObject";
+import EditObject, { EDIT_OBJECT_NEW } from "src/components/EditObject/EditObject";
 import {Link, navigate, routes} from "@redwoodjs/router";
-import DeleteObject from "src/components/DeleteObject/DeleteObject";
 import QaTrees from "src/layouts/QaTreeLayout/components/Tree/QaTrees/QaTrees";
 import {ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
 import BelongingsCell from 'src/components/BelongingsCell'
-import NewObject from "src/components/NewObject/NewObject";
 import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
@@ -48,7 +46,7 @@ export const QUERY = gql`
   }
 `
 
-const SearchQaObjects = ({page, pageSize}) => {
+const SearchQaObjects = ({currentPage, pageSize}) => {
 
   const [form] = Form.useForm();
   const columns = [
@@ -196,7 +194,7 @@ const SearchQaObjects = ({page, pageSize}) => {
   };
 
   useEffect(() => {
-    searchQaObjects({variables: { searchCriteria: {}, page: page, pageSize: pageSize }});
+    searchQaObjects({variables: { searchCriteria: {}, page: currentPage, pageSize: pageSize }});
   }, [] );
 
   return <>
@@ -213,7 +211,8 @@ const SearchQaObjects = ({page, pageSize}) => {
             onFinish={ (values: any) => {
               setSearchCriteria( values );
               setLoadingData( true );
-              searchQaObjects({variables: { searchCriteria: values, page: page, pageSize: pageSize }});
+              navigate(routes.tmpQaObject({page:1, pageSize:pageSize}));
+              searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize }});
             }}
             onFinishFailed={(errorInfo: any) => {
               console.log('Failed:', errorInfo);
@@ -289,7 +288,7 @@ const SearchQaObjects = ({page, pageSize}) => {
                 <div>
                 <Pagination
                   defaultPageSize={pageSize}
-                  defaultCurrent={page}
+                  defaultCurrent={currentPage}
                   onChange={ ( p) => {
                     setLoadingData(true);
                     searchQaObjects({variables: { searchCriteria: searchCriteria, page: p, pageSize: pageSize }});
