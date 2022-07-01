@@ -15,10 +15,11 @@ import {
   mergeObjectsFromTestObject
 } from "src/global";
 import ReactDiffViewer from 'react-diff-viewer'
-import {Link, routes} from "@redwoodjs/router";
+import {Link, navigate, routes} from "@redwoodjs/router";
 import {Button, Select} from "antd";
 import jsonata from "jsonata";
 import TestRun from "src/components/TestRun/TestRun";
+import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 const { Option } = Select;
 
 type QaObjectMergePageProps = {
@@ -159,11 +160,15 @@ const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
   }
 
   const wrap2 = (qaObject) => {
-    return <Link to={routes.editQaObject({id:qaObject.id})}
-                 className='qaObjectTypeClass'
-                 style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
-      <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - "{qaObject.name}"
-    </Link>
+    return <span
+      className='qaObjectTypeClass'
+      style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
+              <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - "{qaObject.name}"
+              <ObjectEdit qaObject={qaObject} beforeSave={() => {
+              }} afterSave={() => {
+                window.location.href = (routes.qaObjectMerge({parentId: parentId}));
+              }}/>
+          </span>
   }
 
   return (
