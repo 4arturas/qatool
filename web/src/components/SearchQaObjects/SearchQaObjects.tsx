@@ -48,6 +48,7 @@ export const QUERY = gql`
 
 const SearchQaObjects = ({currentPage, pageSize}) => {
 
+  const [page, setPage] = useState(currentPage);
   const [form] = Form.useForm();
   const columns = [
     {
@@ -194,7 +195,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
   };
 
   useEffect(() => {
-    searchQaObjects({variables: { searchCriteria: {}, page: currentPage, pageSize: pageSize }});
+    searchQaObjects({variables: { searchCriteria: {}, page: page, pageSize: pageSize }});
   }, [] );
 
   return <>
@@ -212,6 +213,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
               setSearchCriteria( values );
               setLoadingData( true );
               navigate(routes.tmpQaObject({page:1, pageSize:pageSize}));
+              setPage(1);
               searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize }});
             }}
             onFinishFailed={(errorInfo: any) => {
@@ -288,7 +290,8 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
                 <div>
                 <Pagination
                   defaultPageSize={pageSize}
-                  defaultCurrent={currentPage}
+                  // defaultCurrent={page}
+                  current={page}
                   onChange={ ( p) => {
                     setLoadingData(true);
                     searchQaObjects({variables: { searchCriteria: searchCriteria, page: p, pageSize: pageSize }});
