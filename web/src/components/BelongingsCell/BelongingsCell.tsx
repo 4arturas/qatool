@@ -1,12 +1,14 @@
 import type { BelongingsQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import React from "react";
-import {getChildrenTypeIdByParentTypeId, typeIdToColor, typeIdToTag} from "src/global";
+import React, {useState} from "react";
+import {COLLECTION, getChildrenTypeIdByParentTypeId, SERVER, typeIdToColor, typeIdToTag} from "src/global";
 import {Link, routes} from "@redwoodjs/router";
 import {Table} from "antd";
 import BelongingsCell from "./BelongingsCell";
-import EditObject, {EDIT_OBJECT_CLONE, EDIT_OBJECT_NEW, EDIT_OBJECT_UPDATE} from "src/components/EditObject/EditObject";
-import DeleteObject from "src/components/DeleteObject/DeleteObject";
+import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
+import ObjectClone from "src/components/ObjectClone/ObjectClone";
+import ObjectNew from "src/components/ObjectNew/ObjectNew";
+import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 
 
 export const QUERY = gql`
@@ -28,6 +30,7 @@ export const Failure = ({ error }: CellFailureProps) => (
 )
 
 export const Success = ({ belongings }: CellSuccessProps<BelongingsQuery>) => {
+  const [children, setChildren] = useState([...belongings]);
   const columns = [
     {
       title: 'Type',
@@ -51,30 +54,36 @@ export const Success = ({ belongings }: CellSuccessProps<BelongingsQuery>) => {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-        <>
-          <EditObject key={`update${record.id}`} object={record} type={EDIT_OBJECT_UPDATE}/>&nbsp;&nbsp;&nbsp;
-          <EditObject key={`clone${record.id}`} object={record} type={EDIT_OBJECT_CLONE}/>&nbsp;&nbsp;&nbsp;
-          <DeleteObject key={`delete${record.id}`} id={record.id} />&nbsp;&nbsp;&nbsp;
+        <span id={`edibBlock${record.id}${record.typeId}`}>
+          <ObjectEdit qaObject={record} beforeSave={()=>{}} afterSave={()=>{}}/>&nbsp;&nbsp;&nbsp;
+          <ObjectClone parentId={(record.typeId===COLLECTION || record.typeId===SERVER) ? null : record.id} qaObject={record} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
+          <ObjectDelete key={`delete${record.id}`}
+                        id={record.id}
+                        beforeSave={()=>{}}
+                        afterSave={(id)=> {
+                          document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
+                        }
+                        }/>&nbsp;&nbsp;&nbsp;
           {
             getChildrenTypeIdByParentTypeId(record.typeId).map( (typeId, i) =>
               <span key={`new${i}${record.id}${typeId}`}>
-                <EditObject object={{ id:record.id, typeId: typeId }} type={EDIT_OBJECT_NEW}/> {typeIdToTag(typeId)}
+                <ObjectNew typeId={typeId} parentId={record.id} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>
               </span>
             )
           }
-        </>
+        </span>
       ),
-    }
+    },
   ];
 
-  const backgroundColor = belongings.length === 0 ? 'black' : typeIdToColor( belongings[0].typeId );
+  const backgroundColor = children.length === 0 ? 'black' : typeIdToColor( children[0].typeId );
 
   return (
   <div style={{marginLeft: '20px', width:'90%', textAlign: 'center'}}>
     <Table
       style={ { border: '1px solid '+backgroundColor }}
       columns={columns}
-      dataSource={belongings}
+      dataSource={children}
       pagination={false}
       expandable={{
         expandedRowRender: record => <BelongingsCell parentId={record.id} />,

@@ -207,3 +207,11 @@ export const typeIdToTag = ( typeId ) =>  <Tag color={typeIdToColor(typeId)} sty
 export const typeIdTagMargin = ( typeId ) =>  <Tag color={typeIdToColor(typeId)} style={{marginLeft: `${typeIdMargin(typeId)}px`, color:'black'}}>
                                                 {typeIdToName(typeId)}
                                               </Tag>
+
+
+export const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
+  mutation CreateQaObjectRelationshipMutation($input: CreateQaObjectRelationshipInput!) {
+    createQaObjectRelationship(input: $input) {
+      id
+    }
+  }`;

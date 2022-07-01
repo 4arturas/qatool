@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {useLazyQuery} from "@apollo/client";
 import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
-import {getChildrenFromInput} from "src/global";
+import {CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, getChildrenFromInput} from "src/global";
 import {CopyOutlined, EditOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import {Button, Modal} from "antd";
 import QaObjectForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm";
@@ -12,7 +12,7 @@ export const EDIT_OBJECT_UPDATE   = 1;
 export const EDIT_OBJECT_CLONE    = 2;
 export const EDIT_OBJECT_NEW      = 3;
 
-const EditObject = ({ object, type }) => {
+const EditObject = ({ object, type, afterUpdated, afterSaved }) => {
   const UPDATE_QA_OBJECT_MUTATION = gql`
   mutation UpdateQaObjectMutation($id: Int!, $input: UpdateQaObjectInput!) {
     updateQaObject(id: $id, input: $input) {
@@ -34,13 +34,6 @@ const EditObject = ({ object, type }) => {
   }
 `
 
-  const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
-  mutation CreateQaObjectRelationshipMutation($input: CreateQaObjectRelationshipInput!) {
-    createQaObjectRelationship(input: $input) {
-      id
-    }
-  }
-`
 
   const DELETE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
   mutation DeleteQaObjectRelationshipMutation($id: Int!) {
@@ -105,6 +98,7 @@ const EditObject = ({ object, type }) => {
 
       toast.success('QaObject updated')
       setIsModalVisible(false);
+      afterUpdated();
     },
     onError: (error) => {
       toast.error(error.message)
@@ -113,6 +107,7 @@ const EditObject = ({ object, type }) => {
 
   const [createQaObjectRelationship, { loading: loadingQaObjectRelationship, error: errorQaObjectRelationship }] = useMutation(CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, {
     onCompleted: () => {
+
     },
     onError: (error) => {
       toast.error(error.message)
@@ -130,47 +125,8 @@ const EditObject = ({ object, type }) => {
   }
 
 
-  const CREATE_QA_OBJECT_MUTATION = gql`
-  mutation CreateQaObjectMutation($input: CreateQaObjectInput!) {
-    createQaObject(input: $input) {
-      id
-    }
-  }
-  `
-  const [createQaObject, { loading: loadingSaveNew, error: errorSavingNew }] = useMutation(CREATE_QA_OBJECT_MUTATION, {
-    onCompleted: () => {
-
-    },
-    onError: (error) => {
-      toast.error(error.message)
-    },
-  })
-
   const onSave = (input) => {
-    const typeId: number = parseInt(input.typeId);
-    const children: Array<number> = getChildrenFromInput(input);
 
-    const castInput = Object.assign(input, { typeId: typeId, batchId: parseInt(input.batchId), })
-    const data = createQaObject({ variables: { input: castInput } });
-    data.then( (ret) => {
-      const createQaObject = ret.data.createQaObject;
-      const childParentId: number = createQaObject.id;
-
-      children.map( async (childrenId) => {
-        const castInput = { parentId: childParentId, childrenId: (childrenId*1) };
-        const ret = await createQaObjectRelationship({ variables: { input: castInput } });
-      });
-
-      if ( parentId )
-      {
-        const castInput = { parentId: parentId, childrenId: childParentId };
-        const ret = /*await*/ createQaObjectRelationship({ variables: { input: castInput } });
-        // const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
-      }
-
-      toast.success('QaObject created')
-      setIsModalVisible(false);
-    });
   }
 
   return (
@@ -193,8 +149,8 @@ const EditObject = ({ object, type }) => {
         <QaObjectForm
           qaObject={object}
           onSave={(type===EDIT_OBJECT_UPDATE)?onUpdate:onSave}
-          error={(type===EDIT_OBJECT_UPDATE)?errorUpdateQaObject:errorSavingNew}
-          loading={(type===EDIT_OBJECT_UPDATE)?loadingUpdateQaObject:loadingSaveNew}
+          error={(type===EDIT_OBJECT_UPDATE)?errorUpdateQaObject:null}
+          loading={(type===EDIT_OBJECT_UPDATE)?loadingUpdateQaObject:null}
           submitName={ (type===EDIT_OBJECT_UPDATE) ? 'Update' : ( type===EDIT_OBJECT_CLONE) ? 'Clone' : 'Create' } />
       </Modal>
     </>

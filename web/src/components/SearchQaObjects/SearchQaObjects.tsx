@@ -13,9 +13,14 @@ import EditObject, {EDIT_OBJECT_CLONE, EDIT_OBJECT_NEW, EDIT_OBJECT_UPDATE} from
 import {Link, navigate, routes} from "@redwoodjs/router";
 import DeleteObject from "src/components/DeleteObject/DeleteObject";
 import QaTrees from "src/layouts/QaTreeLayout/components/Tree/QaTrees/QaTrees";
-import {SearchOutlined} from "@ant-design/icons";
+import {ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
 import BelongingsCell from 'src/components/BelongingsCell'
+import NewObject from "src/components/NewObject/NewObject";
+import ObjectClone from "src/components/ObjectClone/ObjectClone";
+import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
+import ObjectNew from "src/components/ObjectNew/ObjectNew";
+import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int) {
@@ -61,9 +66,12 @@ const SearchQaObjects = ({page, pageSize}) => {
       key: 'name',
       width:300,
       render: (_, record: { key: React.Key }) =>
-        <Link to={routes.qaObjectRelationship({id:record.id})}>
-          {record.name}
-        </Link>
+        <div>
+          <Link to={routes.qaObjectRelationship({id:record.id})}>
+            {record.name}
+          </Link>
+          <ExperimentOutlined style={{float:'right'}}/>
+        </div>
     },
     {
       title: 'Description',
@@ -133,18 +141,24 @@ const SearchQaObjects = ({page, pageSize}) => {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-        <>
-          <EditObject key={`update${record.id}`} object={record} type={EDIT_OBJECT_UPDATE}/>&nbsp;&nbsp;&nbsp;
-          <EditObject key={`clone${record.id}`} object={record} type={EDIT_OBJECT_CLONE}/>&nbsp;&nbsp;&nbsp;
-          <DeleteObject key={`delete${record.id}`} id={record.id} />&nbsp;&nbsp;&nbsp;
+        <span id={`edibBlock${record.id}${record.typeId}`}>
+          <ObjectEdit qaObject={record} beforeSave={()=>{}} afterSave={()=>{}}/>&nbsp;&nbsp;&nbsp;
+          <ObjectClone parentId={(record.typeId===COLLECTION || record.typeId===SERVER) ? null : record.id} qaObject={record} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
+          <ObjectDelete key={`delete${record.id}`}
+                        id={record.id}
+                        beforeSave={()=>{}}
+                        afterSave={(id)=> {
+                          document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
+                        }
+                      }/>&nbsp;&nbsp;&nbsp;
           {
             getChildrenTypeIdByParentTypeId(record.typeId).map( (typeId, i) =>
               <span key={`new${i}${record.id}${typeId}`}>
-                <EditObject object={{ id:record.id, typeId: typeId }} type={EDIT_OBJECT_NEW}/> {typeIdToTag(typeId)}
+                <ObjectNew typeId={typeId} parentId={record.id} beforeSave={()=>{}} afterSave={(newObject)=>{ console.log(newObject); } }/>
               </span>
             )
           }
-        </>
+        </span>
       ),
     },
   ];

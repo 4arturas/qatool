@@ -1,14 +1,14 @@
 import { render } from '@redwoodjs/testing/web'
 
-import DeleteObject from './DeleteObject'
+import ObjectClone from './ObjectClone'
 
 //   Improve this test with help from the Redwood Testing Doc:
 //    https://redwoodjs.com/docs/testing#testing-components
 
-describe('DeleteObject', () => {
+describe('ObjectClone', () => {
   it('renders successfully', () => {
     expect(() => {
-      render(<DeleteObject />)
+      render(<ObjectClone />)
     }).not.toThrow()
   })
 })

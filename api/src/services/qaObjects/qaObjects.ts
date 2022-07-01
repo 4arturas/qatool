@@ -31,9 +31,9 @@ export const qaObjectsByTypeId: QueryResolvers['qaObjectsByTypeId'] = ({ typeId 
 export const createQaObject: MutationResolvers['createQaObject'] = ({
   input,
 }) => {
-  return db.qaObject.create({
+  return  db.qaObject.create({
     data: input,
-  })
+  });
 }
 
 export const updateQaObject: MutationResolvers['updateQaObject'] = ({
