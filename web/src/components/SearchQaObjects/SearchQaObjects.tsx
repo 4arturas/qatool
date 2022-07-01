@@ -1,4 +1,4 @@
-import {Button, Form, Input, Pagination, Select, Table, Tag} from "antd";
+import {Badge, Button, Form, Input, Pagination, Select, Table, Tag} from "antd";
 import React, {useEffect, useState} from "react";
 import {
   COLLECTION,
@@ -6,7 +6,7 @@ import {
   mySubstr, SERVER,
   typeIdToColor,
   typeIdToName, typeIdToTag,
-  TYPES
+  TYPES, validateJSONata
 } from "src/global";
 import {useLazyQuery} from "@apollo/client";
 import EditObject, { EDIT_OBJECT_NEW } from "src/components/EditObject/EditObject";
@@ -19,6 +19,7 @@ import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
+import {renderIntoDocument} from "react-dom/test-utils";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int) {
@@ -112,7 +113,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       key: 'jsonata',
       width: 200,
       render: (_, record: { key: React.Key }) =>
-        mySubstr(record.jsonata, 10)
+        <>{(record.json && record.jsonata) && (validateJSONata(record.jsonata, record.json) ? <Badge status="success" />:<Badge status="error" />)}{mySubstr(record.jsonata, 10)}</>
     },
     {
       title: 'Address',
