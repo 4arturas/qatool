@@ -209,7 +209,16 @@ export const typeIdTagMargin = ( typeId ) =>  <Tag color={typeIdToColor(typeId)}
                                                 {typeIdToName(typeId)}
                                               </Tag>
 
-export const validateJSONata = ( jSONata: string, jSon: string ) : boolean => jsonata(jSONata).evaluate( JSON.parse(jSon) );
+export const validateJSONata = ( jSONata: string, jSon: string ) : boolean => {
+  try
+  {
+    return jsonata(jSONata).evaluate( JSON.parse(jSon) );
+  }
+  catch ( e )
+  {
+    return false;
+  }
+}
 
 export const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
   mutation CreateQaObjectRelationshipMutation($input: CreateQaObjectRelationshipInput!) {
