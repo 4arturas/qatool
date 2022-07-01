@@ -1,6 +1,6 @@
 import {PlusCircleOutlined} from "@ant-design/icons";
 import {Modal} from "antd";
-import QaObjectForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm";
+import QaObjectForm from "src/components/QaObjectForm";
 import React, {useState} from "react";
 import {toast} from "@redwoodjs/web/toast";
 import {useMutation} from "@redwoodjs/web";

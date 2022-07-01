@@ -74,7 +74,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
           {
             record.typeId === CASE &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
-              <Link to={routes.qaObjectMerge( {parentId: record.id})} style={{float:'right', color: 'black'}}>
+              <Link to={routes.home( {parentId: record.id})} style={{float:'right', color: 'black'}}>
                 <ExperimentOutlined style={{fontSize:'20px'}}/>
               </Link>
             </Tooltip>
@@ -221,7 +221,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
             onFinish={ (values: any) => {
               setSearchCriteria( values );
               setLoadingData( true );
-              navigate(routes.tmpQaObject({page:1, pageSize:pageSize}));
+              navigate(routes.home({page:1, pageSize:pageSize}));
               setPage(1);
               searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize }});
             }}
@@ -304,13 +304,13 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
                   onChange={ ( p) => {
                     setLoadingData(true);
                     searchQaObjects({variables: { searchCriteria: searchCriteria, page: p, pageSize: pageSize }});
-                    navigate(routes.tmpQaObject({page: p, pageSize: pageSize}))
+                    navigate(routes.home({page: p, pageSize: pageSize}))
                     setLoadingData(false);
                   }
                   }
                   showSizeChanger
                   onShowSizeChange={ ( current, ps) =>
-                    window.location.replace(routes.tmpQaObject({page: 1, pageSize: ps}))
+                    window.location.replace(routes.home({page: 1, pageSize: ps}))
                   }
                   pageSizeOptions={[5, 10, 20, 50, 100]}
                   total={qaObjectPage.count}

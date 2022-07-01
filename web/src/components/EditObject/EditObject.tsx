@@ -5,7 +5,7 @@ import {toast} from "@redwoodjs/web/toast";
 import {CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, getChildrenFromInput} from "src/global";
 import {CopyOutlined, EditOutlined, PlusCircleOutlined} from "@ant-design/icons";
 import {Button, Modal} from "antd";
-import QaObjectForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm";
+import QaObjectForm from "src/components/QaObjectForm";
 import {navigate, routes} from "@redwoodjs/router";
 
 export const EDIT_OBJECT_UPDATE   = 1;

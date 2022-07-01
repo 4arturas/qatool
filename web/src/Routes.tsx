@@ -10,11 +10,6 @@
 import { Router, Route, Set } from '@redwoodjs/router'
 import QaLayout from "src/layouts/QaLayout/QaLayout";
 
-import QaObjectNewQaObjectPage from "src/layouts/QaObjectsLayout/pages/QaObject/NewQaObjectPage";
-import QaObjectEditQaObjectPage from "src/layouts/QaObjectsLayout/pages/QaObject/EditQaObjectPage";
-import QaObjectQaObjectPage from "src/layouts/QaObjectsLayout/pages/QaObject/QaObjectsPage";
-import QaObjectQaObjectsPage from "src/layouts/QaObjectsLayout/pages/QaObject/QaObjectPage";
-import QaObjectsLayout from "src/layouts/QaObjectsLayout";
 
 import HomePage from "src/pages/HomePage/HomePage";
 import QaTreesPage from './pages/QaTreesPage/QaTreesPage';
@@ -29,20 +24,19 @@ const Routes = () => {
 
       <Set wrap={QaLayout}>
 
-        <Set wrap={QaObjectsLayout}>
+        {/*<Set wrap={QaObjectsLayout}>
           <Route path="/qa-objects/new" page={QaObjectNewQaObjectPage} name="newQaObject" />
           <Route path="/qa-objects/{id:Int}/edit" page={QaObjectEditQaObjectPage} name="editQaObject" />
           <Route path="/qa-objects/{id:Int}" page={QaObjectQaObjectPage} name="qaObject" />
           <Route path="/qa-objects" page={QaObjectQaObjectsPage} name="qaObjects" />
 
-          <Route path="/tmp-qa-object/{page:Int}/{pageSize:Int}" page={TmpQaObjectPage} name="tmpQaObject" />
-        </Set>
+        </Set>*/}
 
         <Set wrap={QaTreeLayout}>
           <Route path="/" page={HomePage} name="home" />
           <Route path="/qa-trees" page={QaTreesPage} name="qaTrees" />
-          <Route path="/qa-trees/{typeId:Int}/show" page={QaObjectsByTypeIdPage} name="qaObjectsByTypeId" />
-          <Route path="/qa-trees/{typeId:Int}/new" page={QaTreesNewPage} name="qaTreeNew" />
+          {/*<Route path="/qa-trees/{typeId:Int}/show" page={QaObjectsByTypeIdPage} name="qaObjectsByTypeId" />*/}
+          {/*<Route path="/qa-trees/{typeId:Int}/new" page={QaTreesNewPage} name="qaTreeNew" />*/}
           <Route path="/messages/{page:Int}/{pageSize:Int}" page={MessagesPage} name="messages" />
         </Set>
 

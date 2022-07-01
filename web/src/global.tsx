@@ -217,3 +217,5 @@ export const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
       id
     }
   }`;
+
+export const DEFAULT_PAGE_SIZE:number = 15;

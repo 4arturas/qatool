@@ -1,6 +1,5 @@
-import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
-import NewQaObject from "src/layouts/QaObjectsLayout/pages/components/QaObject/NewQaObject";
+// import NewQaObject from "src/layouts/QaObjectsLayout/pages/components/QaObject/NewQaObject";
 
 type QaObjectRelationshipNewPageProps = {
   parentId: number,
@@ -12,7 +11,7 @@ const QaObjectRelationshipNewPage = ({ parentId, typeId }: QaObjectRelationshipN
     <>
       <MetaTags title="QaObjectRelationshipNew" description="QaObjectRelationshipNew page" />
 
-      <NewQaObject typeId={typeId} parentId={parentId}/>
+      {/*<NewQaObject typeId={typeId} parentId={parentId}/>*/}
     </>
   )
 }

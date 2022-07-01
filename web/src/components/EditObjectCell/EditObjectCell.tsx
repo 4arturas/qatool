@@ -1,6 +1,6 @@
 import type { EditQaObjectById } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import QaObjectForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm";
+import QaObjectForm from "src/components/QaObjectForm";
 import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
 import {navigate, routes} from "@redwoodjs/router";

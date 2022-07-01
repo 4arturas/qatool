@@ -1,5 +1,3 @@
-import {typeIdToName, typeIdToColor, typeIdTagMargin} from "src/global";
-import {Link, routes} from "@redwoodjs/router";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 
 const QaTree = ({typeId}) => {

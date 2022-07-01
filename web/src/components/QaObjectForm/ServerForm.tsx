@@ -9,8 +9,8 @@ import {
   Submit, SelectField, useForm, TextAreaField,
 } from '@redwoodjs/forms'
 import {useEffect} from "react";
-import QaObjectFindByTypeCell from 'src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectFindByTypeCell'
-import QaObjectsFindByTypeCell from 'src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectsFindByTypeCell'
+import QaObjectFindByTypeCell from 'src/components/QaObjectFindByTypeCell'
+import QaObjectsFindByTypeCell from 'src/components/QaObjectsFindByTypeCell'
 import {SUITE} from "src/global";
 
 

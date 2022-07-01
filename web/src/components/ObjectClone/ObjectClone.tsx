@@ -9,7 +9,7 @@ import {
 import {toast} from "@redwoodjs/web/toast";
 import {CopyOutlined} from "@ant-design/icons";
 import {Modal} from "antd";
-import QaObjectForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm";
+import QaObjectForm from "src/components/QaObjectForm";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
   mutation CreateQaObjectMutationCloneQaObject($input: CreateQaObjectInput!) {

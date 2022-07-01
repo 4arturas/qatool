@@ -7,7 +7,7 @@ import {
 } from "src/global";
 import { EditOutlined} from "@ant-design/icons";
 import {Modal} from "antd";
-import QaObjectForm from "src/layouts/QaObjectsLayout/pages/components/QaObject/QaObjectForm";
+import QaObjectForm from "src/components/QaObjectForm";
 import {useLazyQuery} from "@apollo/client";
 
 const UPDATE_QA_OBJECT_MUTATION = gql`

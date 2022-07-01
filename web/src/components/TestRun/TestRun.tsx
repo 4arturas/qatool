@@ -3,6 +3,7 @@ import {Button, Modal, Select, Spin} from "antd";
 import Search from "antd/lib/input/Search";
 import Timeline from "src/components/Timeline/Timeline";
 import {generatePaymentId} from "src/global";
+import {ExperimentOutlined} from "@ant-design/icons";
 const { Option } = Select;
 
 const TestRun = ({body, test, replace, remove, result, servers}) => {
@@ -62,11 +63,13 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
 
   return (
     <>
-      <Button type="primary" onClick={showModal}>
-        Run Test
+      <Button type="primary" onClick={showModal} icon={<ExperimentOutlined/>}>
+        Experiment
       </Button>
       <Modal
-        title="Run Test"
+        title={<><ExperimentOutlined/> <span>Run Experiment</span></>}
+        okText={<><ExperimentOutlined/> <span>Run Experiment</span></>}
+        cancelText={'Cancel Experiment'}
         visible={visible}
         onOk={handleOk}
         confirmLoading={confirmLoading}
