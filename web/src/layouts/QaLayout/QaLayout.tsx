@@ -14,18 +14,19 @@ const QaLayout = ({ children }: QaLayoutProps) => {
         <table>
           <tbody>
           <tr>
-            <td><h1 className="rw-heading rw-heading-primary">BBS QA Tool</h1></td>
+            <td>
+              <h1 className="rw-heading rw-heading-primary">
+                <NavLink
+                  to={routes.home()}
+                  className="rw-link"
+                  // activeMatchParams
+                  activeClassName="activeLink">
+                  BBS QA Tool
+                </NavLink>
+              </h1>
+            </td>
             <td style={{paddingLeft:'20px'}}>
               <ul>
-                <li style={{display:'inline', marginRight: "20px"}}>
-                  <NavLink
-                    to={routes.home()}
-                    className="rw-link"
-                    // activeMatchParams
-                    activeClassName="activeLink">
-                    Home
-                  </NavLink>
-                </li>
                 <li style={{display:'inline', marginRight: "20px"}}>
                   <NavLink
                     to={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE} )}
