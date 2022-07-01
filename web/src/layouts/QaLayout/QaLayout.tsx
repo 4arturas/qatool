@@ -28,6 +28,15 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                 </li>
                 <li style={{display:'inline', marginRight: "20px"}}>
                   <NavLink
+                    to={routes.qaObjects( {page:1, pageSize: TABLE_PAGE_SIZE} )}
+                    className="rw-link"
+                    // activeMatchParams
+                    activeClassName="activeLink">
+                    QA Objects
+                  </NavLink>
+                </li>
+                <li style={{display:'inline', marginRight: "20px"}}>
+                  <NavLink
                     to={routes.messages({page:1, pageSize: TABLE_PAGE_SIZE})}
                     className="rw-link"
                     activeClassName="activeLink">

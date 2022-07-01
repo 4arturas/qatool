@@ -227,8 +227,6 @@ export const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
     }
   }`;
 
-export const DEFAULT_PAGE_SIZE:number = 15;
-
 export const prettifyJSon = (json:string): string => {
   if ( json.length === 0 )
     return '';
