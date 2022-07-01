@@ -163,10 +163,29 @@ const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
     return <span
       className='qaObjectTypeClass'
       style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
-              <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - "{qaObject.name}"
+      <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - <span id={`objEditName${qaObject.id}`}>"{qaObject.name}"</span>
               <ObjectEdit qaObject={qaObject} beforeSave={() => {
-              }} afterSave={() => {
-                window.location.href = (routes.qaObjectMerge({parentId: parentId}));
+              }} afterSave={(obj) => {
+                document.getElementById(`objEditName${obj.id}`).innerHTML = obj.name;
+                switch ( obj.typeId )
+                {
+                  case BODY:
+                    setBody(obj);
+                    break;
+                  case TEST:
+                    setTest(obj);
+                    break;
+                  case REPLACE:
+                    setReplace( obj );
+                    break;
+                  case REMOVE:
+                    setRemove( obj );
+                    break;
+                  case RESULT:
+                    setResult( obj );
+                    break;
+                }
+
               }}/>
           </span>
   }
