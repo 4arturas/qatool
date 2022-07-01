@@ -74,7 +74,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
           {
             record.typeId === CASE &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
-              <Link to={routes.home( {parentId: record.id})} style={{float:'right', color: 'black'}}>
+              <Link to={routes.qaObjectMerge( {parentId: record.id})} style={{float:'right', color: 'black'}}>
                 <ExperimentOutlined style={{fontSize:'20px'}}/>
               </Link>
             </Tooltip>
