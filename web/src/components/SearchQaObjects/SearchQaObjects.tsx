@@ -302,6 +302,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
                   // defaultCurrent={page}
                   current={page}
                   onChange={ ( p) => {
+                    setPage(p);
                     setLoadingData(true);
                     searchQaObjects({variables: { searchCriteria: searchCriteria, page: p, pageSize: pageSize }});
                     navigate(routes.qaObjects({page: p, pageSize: pageSize}))
