@@ -8,14 +8,17 @@ import {
   CheckboxField,
   Submit, SelectField, useForm, TextAreaField,
 } from '@redwoodjs/forms'
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 import QaObjectFindByTypeCell from 'src/components/QaObjectFindByTypeCell'
 import QaObjectsFindByTypeCell from 'src/components/QaObjectsFindByTypeCell'
-import {SUITE} from "src/global";
+import {prettifyJSon, SUITE} from "src/global";
+import {Button} from "antd";
 
 
 
 const CollectionForm = (props) => {
+
+  const jSonRef = useRef();
 
   return (
     <>
@@ -76,7 +79,15 @@ const CollectionForm = (props) => {
         errorClassName="rw-input rw-input-error"
         validation={{ required: true }}
         rows={15}
+        ref={jSonRef}
       />
+
+      <Button style={{marginTop:'5px'}}
+              onClick={ () => {
+                jSonRef.current.value = prettifyJSon(jSonRef.current.value);
+              }}>
+        Prettify
+      </Button>
 
 
       <FieldError name="header" className="rw-field-error" />
