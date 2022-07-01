@@ -64,7 +64,7 @@ const TestRun = ({body, test, replace, remove, result, servers}) => {
   return (
     <>
       <Button type="primary" onClick={showModal} icon={<ExperimentOutlined/>}>
-        Experiment
+        Run Experiment
       </Button>
       <Modal
         title={<><ExperimentOutlined/> <span>Run Experiment</span></>}
