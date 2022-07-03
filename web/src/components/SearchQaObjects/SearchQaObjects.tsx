@@ -2,7 +2,7 @@ import {Badge, Button, Form, Input, Pagination, Select, Table, Tag, Tooltip} fro
 import React, {useEffect, useState} from "react";
 import {
   CASE,
-  COLLECTION,
+  COLLECTION, EXPERIMENT,
   getChildrenTypeIdByParentTypeId,
   mySubstr, SERVER,
   typeIdToColor,
@@ -272,8 +272,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
           <tbody>
           <tr>
             <td style={{verticalAlign:'top', paddingTop: '20px', paddingLeft: '5px'}}>
-              <div><QaTrees typeId={SERVER}/></div>
-              <div><QaTrees typeId={COLLECTION}/></div>
+              <div><QaTrees typeId={EXPERIMENT}/></div>
             </td>
             <td style={{verticalAlign:'top'}}>
               <Table

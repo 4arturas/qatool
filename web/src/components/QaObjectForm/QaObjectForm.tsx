@@ -18,7 +18,7 @@ import {
   REPLACE, RESPONSE,
   RESULT, SERVER,
   SUITE,
-  TEST
+  TEST, EXPERIMENT
 } from "src/global";
 import QaObjectsFindByTypeCell from "src/components/QaObjectsFindByTypeCell";
 import CaseForm from "src/components/QaObjectForm/CaseForm";
@@ -94,6 +94,7 @@ const QaObjectForm = (props) => {
           }}
         >
           { !typeId && <option value={0}>Please select object type</option> }
+          { renderOption(typeId,EXPERIMENT) }
           { renderOption(typeId,COLLECTION) }
           { renderOption(typeId,SERVER) }
           { renderOption(typeId,SUITE) }
@@ -167,6 +168,25 @@ const QaObjectForm = (props) => {
             {(() => {
               const childrenTypeIdArray: Array<number> = getChildrenTypeIdByParentTypeId(typeId);
               switch(typeId) {
+                case EXPERIMENT:
+                  const ARRAY_ID_SERVER:number = 0;
+                  const ARRAY_ID_COLLECTION:number = 1;
+                  return (
+                    <table>
+                      <thead>
+                      <tr>
+                        <th>Server</th>
+                        <th>Collection</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr>
+                        <td style={{verticalAlign:'top'}}><QaObjectsFindByTypeCell name={`children${SERVER}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_SERVER] } multiple={false}/></td>
+                        <td style={{verticalAlign:'top'}}><QaObjectsFindByTypeCell name={`children${COLLECTION}`} parentId={props.qaObject?.id} typeId={ childrenTypeIdArray[ARRAY_ID_COLLECTION] } multiple={false}/></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  )
                 case CASE:
                   const ARRAY_ID_BODY:number = 0;
                   const ARRAY_ID_TEST:number = 1;

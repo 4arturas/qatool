@@ -4,18 +4,20 @@ import React from "react";
 import jsonata from "jsonata";
 
 export const HAS_NO_PARENT = 0;
-export const COLLECTION = 1;
-export const SERVER = 2;
-export const SUITE = 3;
-export const CASE = 4;
-export const BODY = 5;
-export const TEST = 6;
-export const REPLACE = 7;
-export const REMOVE = 8;
-export const RESULT = 9;
-export const RESPONSE = 10;
+export const EXPERIMENT = 1;
+export const COLLECTION = 2;
+export const SERVER = 3;
+export const SUITE = 4;
+export const CASE = 5;
+export const BODY = 6;
+export const TEST = 7;
+export const REPLACE = 8;
+export const REMOVE = 9;
+export const RESULT = 10;
+export const RESPONSE = 11;
 
 export const TYPES = [
+  EXPERIMENT,
   COLLECTION,
   SERVER,
   SUITE,
@@ -32,6 +34,8 @@ export const typeIdToName = (typeId: number) =>
 {
   switch ( typeId )
   {
+    case EXPERIMENT:
+      return 'Experiment';
     case COLLECTION:
       return 'Collection';
     case SERVER:
@@ -61,6 +65,8 @@ export const typeIdToColor = (typeId: number) =>
 {
   switch ( typeId )
   {
+    case EXPERIMENT:
+      return 'gray';
     case COLLECTION:
       return '#BEEBE9';
     case SERVER:
@@ -91,26 +97,28 @@ export const typeIdMargin = (typeId: number) : number =>
   const step: number = 10;
   switch ( typeId )
   {
+    case EXPERIMENT:
+      return 0 * step;
     case COLLECTION:
-      return 0 * step;
-    case SERVER:
-      return 0 * step;
-    case SUITE:
       return 1 * step;
-    case CASE:
+    case SERVER:
+      return 1 * step;
+    case SUITE:
       return 2 * step;
+    case CASE:
+      return 3 * step;
     case BODY:
-      return 3 * step;
+      return 4 * step;
     case TEST:
-      return 3 * step;
+      return 4 * step;
     case REPLACE:
-      return 4 * step;
+      return 5 * step;
     case REMOVE:
-      return 4 * step;
+      return 5 * step;
     case RESULT:
-      return 4 * step;
+      return 5 * step;
     case RESPONSE:
-      return 4 * step;
+      return 5 * step;
     default:
       return 400 * step;
   }
@@ -120,6 +128,8 @@ export const getChildrenTypeIdByParentTypeId = (parentTypeId: number) : Array<nu
 {
   switch ( parentTypeId )
   {
+    case EXPERIMENT:
+      return [SERVER,COLLECTION];
     case COLLECTION:
       return [SUITE];
     case SUITE:
@@ -144,7 +154,7 @@ export const getChildrenFromInput = (input) : Array<number> => {
     delete input[childrenFragment];
   }
 
-  const childrenIDArr: Array<string> = [`${childrenFragment}${BODY}`, `${childrenFragment}${TEST}`, `${childrenFragment}${REPLACE}`, `${childrenFragment}${REMOVE}`, `${childrenFragment}${RESULT}`, `${childrenFragment}${RESPONSE}`];
+  const childrenIDArr: Array<string> = [`${childrenFragment}${SERVER}`, `${childrenFragment}${COLLECTION}`, `${childrenFragment}${BODY}`, `${childrenFragment}${TEST}`, `${childrenFragment}${REPLACE}`, `${childrenFragment}${REMOVE}`, `${childrenFragment}${RESULT}`, `${childrenFragment}${RESPONSE}`];
   childrenIDArr.map( (c) => {
     if ( input[c] )
     {
