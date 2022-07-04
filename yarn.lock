@@ -2327,6 +2327,43 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/fontawesome-common-types@npm:6.1.1":
+  version: 6.1.1
+  resolution: "@fortawesome/fontawesome-common-types@npm:6.1.1"
+  checksum: 50b5e9eb619a1ca0f8c2f9d15a34cdccdb14621ce6fef26583eaf2364d225233d539022403e487236cb65e8f09dd07f042e8e3af70c645cca096f7ce1f66912b
+  languageName: node
+  linkType: hard
+
+"@fortawesome/fontawesome-svg-core@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "@fortawesome/fontawesome-svg-core@npm:6.1.1"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.1.1
+  checksum: 15a21d81e0c45838b2333edd111f1659f84807cd90b4db611c4f966addfe2a4fd1fab8338328494aa5b0600346af9d4ff6511cf6a8a6156af507d17f1740d0a6
+  languageName: node
+  linkType: hard
+
+"@fortawesome/free-solid-svg-icons@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "@fortawesome/free-solid-svg-icons@npm:6.1.1"
+  dependencies:
+    "@fortawesome/fontawesome-common-types": 6.1.1
+  checksum: 249b20b635e767ca1445f708f801d3c9d47da0033f90ade4f4039e4bf5c0a99bf40f998cdbb4eab3c20aa0928293a8bcddfe542d1b0d641353c9f51097801eb0
+  languageName: node
+  linkType: hard
+
+"@fortawesome/react-fontawesome@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@fortawesome/react-fontawesome@npm:0.2.0"
+  dependencies:
+    prop-types: ^15.8.1
+  peerDependencies:
+    "@fortawesome/fontawesome-svg-core": ~1 || ~6
+    react: ">=16.3"
+  checksum: cf1bd3840dfe1b39d2d5ee92ac49ba3aabad95d05dd6374368a5a1e5f140c8e497d11599290cb70afc6c856bb3228628269199e9659ce8f3132692a2d1e464a5
+  languageName: node
+  linkType: hard
+
 "@gar/promisify@npm:^1.0.1, @gar/promisify@npm:^1.1.3":
   version: 1.1.3
   resolution: "@gar/promisify@npm:1.1.3"
@@ -24763,6 +24800,9 @@ __metadata:
   resolution: "web@workspace:web"
   dependencies:
     "@ant-design/icons": ^4.7.0
+    "@fortawesome/fontawesome-svg-core": ^6.1.1
+    "@fortawesome/free-solid-svg-icons": ^6.1.1
+    "@fortawesome/react-fontawesome": ^0.2.0
     "@redwoodjs/forms": 1.5.2
     "@redwoodjs/router": 1.5.2
     "@redwoodjs/web": 1.5.2
