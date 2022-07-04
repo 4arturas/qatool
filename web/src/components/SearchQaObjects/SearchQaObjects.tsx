@@ -71,14 +71,21 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
           <Link to={routes.qaObjectRelationship({id:record.id})}>
             {record.name}
           </Link>
-          {
-            record.typeId === CASE &&
+
+            <>
+              {  record.typeId === CASE &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
               <Link to={routes.qaObjectMerge( {parentId: record.id})} style={{float:'right', color: 'black'}}>
                 <ExperimentOutlined style={{fontSize:'20px'}}/>
               </Link>
-            </Tooltip>
-          }
+            </Tooltip> }
+            {record.typeId === EXPERIMENT &&
+            <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
+              <Link to={routes.experiment( {id: record.id})} style={{float:'right', color: 'black'}}>
+                <ExperimentOutlined style={{fontSize:'20px'}}/>
+              </Link>
+            </Tooltip>          }
+            </>
         </div>
     },
     {
