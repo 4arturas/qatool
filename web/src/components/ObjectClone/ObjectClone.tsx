@@ -8,7 +8,7 @@ import {
 } from "src/global";
 import {toast} from "@redwoodjs/web/toast";
 import {CopyOutlined} from "@ant-design/icons";
-import {Modal} from "antd";
+import {Modal, Tooltip} from "antd";
 import QaObjectForm from "src/components/QaObjectForm";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
@@ -83,8 +83,9 @@ const ObjectClone = ({parentId, qaObject, beforeSave, afterSave}) => {
 
   return (
     <>
-      <CopyOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
-
+      <Tooltip title="Clone Object">
+        <CopyOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
+      </Tooltip>
       <Modal
         title={ 'New Object' }
         visible={isModalVisible}

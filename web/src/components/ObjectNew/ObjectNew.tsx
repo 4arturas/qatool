@@ -1,5 +1,5 @@
 import {PlusCircleOutlined} from "@ant-design/icons";
-import {Modal} from "antd";
+import {Modal, Tooltip} from "antd";
 import QaObjectForm from "src/components/QaObjectForm";
 import React, {useState} from "react";
 import {toast} from "@redwoodjs/web/toast";
@@ -56,7 +56,9 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
 
     return (
       <>
-        <PlusCircleOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} /><span style={{marginLeft:'3px'}}>{typeIdToTag(typeId)}</span>
+        <Tooltip title="Crete New Object">
+          <PlusCircleOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} /><span style={{marginLeft:'3px'}}>{typeIdToTag(typeId)}</span>
+        </Tooltip>
 
         <Modal
           title={ 'New Object' }

@@ -6,7 +6,7 @@ import {
   getChildrenFromInput,
 } from "src/global";
 import { EditOutlined} from "@ant-design/icons";
-import {Modal} from "antd";
+import {Modal, Tooltip} from "antd";
 import QaObjectForm from "src/components/QaObjectForm";
 import {useLazyQuery} from "@apollo/client";
 
@@ -103,7 +103,9 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
 
   return (
     <>
-      <EditOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
+      <Tooltip title="Edit Object">
+        <EditOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
+      </Tooltip>
 
       <Modal
         title={ 'Edit Object' }

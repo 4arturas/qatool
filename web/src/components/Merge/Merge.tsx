@@ -1,4 +1,4 @@
-import {Modal} from "antd";
+import {Modal, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import {faCodeFork} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -191,8 +191,9 @@ const Merge = ( {qaObjectParent} ) => {
   return (
 
     <>
-
-      <FontAwesomeIcon icon={faCodeFork} style={{fontSize:'20px', cursor: 'pointer'}} onClick={()=>setIsModalVisible(true)}/>
+      <Tooltip title="Show Merge">
+        <FontAwesomeIcon icon={faCodeFork} style={{fontSize:'20px', cursor: 'pointer'}} onClick={()=>setIsModalVisible(true)}/>
+      </Tooltip>
 
       <Modal
         title={ 'Merge' }
