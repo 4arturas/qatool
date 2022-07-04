@@ -17,6 +17,8 @@ import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import {Tag} from "antd";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCodeFork } from '@fortawesome/free-solid-svg-icons'
 
 const QaObjectRelationship = ({qaObject, uniqueId}) => {
 
@@ -100,7 +102,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
         {qaObject.typeId===CASE &&
           <span key={`${qaObject.id}${uniqueId++}`} style={{marginLeft:'10px'}}>
             <Link key={`${qaObject.id}${uniqueId++}`} to={routes.qaObjectMerge( {parentId: qaObject.id})} style={{textDecoration:'none', color:'black'}}>
-              Merge
+                <FontAwesomeIcon icon={faCodeFork} style={{fontSize:'20px'}}/>
             </Link>
           </span>
         }
