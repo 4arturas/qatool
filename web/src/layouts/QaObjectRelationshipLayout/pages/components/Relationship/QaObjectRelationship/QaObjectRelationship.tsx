@@ -1,24 +1,19 @@
 import {
   CASE,
-  COLLECTION,
+  COLLECTION, EXPERIMENT,
   getChildrenTypeIdByParentTypeId,
-  getRandomIntInclusive,
   SERVER,
   TEST,
   typeIdToColor,
-  typeIdToName
 } from "src/global";
-import {Link, navigate, routes} from "@redwoodjs/router";
 import React, {useState} from "react";
-import ReactDOM from "react-dom";
 import {toast, Toaster} from "@redwoodjs/web/toast";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import {Tag} from "antd";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCodeFork } from '@fortawesome/free-solid-svg-icons'
+import Merge from "src/components/Merge/Merge";
 
 const QaObjectRelationship = ({qaObject, uniqueId}) => {
 
@@ -52,7 +47,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
   }
 
   const childrenIdArr: Array<number> = getChildrenTypeIdByParentTypeId(qaObject.typeId);
-  let ctx = 0;
+
   return (
     <>
       <Tag key={`${qaObject.id}${uniqueId++}`}
@@ -70,7 +65,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
 
         <strong key={`${qaObject.id}${uniqueId++}`} style={{marginRight: '10px'}}>{qaObject.name}</strong>
 
-        <Tag key={`edibBlock${qaObject.id}${qaObject.typeId}`} style={{padding: '1px', paddingBottom: '3px', marginBottom: '5px', borderRadius: '15px'}}>
+        <Tag key={`edibBlock${qaObject.id}${qaObject.typeId}`} style={{padding: '1px', paddingBottom: '3px', paddingRight: '10px', marginBottom: '5px', borderRadius: '15px'}}>
           <ObjectEdit qaObject={qaObject} beforeSave={()=>{}} afterSave={()=>{}}/>&nbsp;&nbsp;&nbsp;
           <ObjectClone parentId={(qaObject.typeId===COLLECTION || qaObject.typeId===SERVER) ? null : qaObject.id} qaObject={qaObject} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
           <ObjectDelete key={`delete${qaObject.id}`}
@@ -83,7 +78,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
           {
             childrenIdArr.map((tId: number, idx: number) => {
 
-                if ( qaObject.typeId === CASE || qaObject.typeId === TEST )
+                if ( qaObject.typeId === EXPERIMENT ||  qaObject.typeId === CASE || qaObject.typeId === TEST )
                 {
                   const alreadyAddedThisTypeOfObject = qaObject.children.find((c) => c.typeId === tId);
                   if (alreadyAddedThisTypeOfObject)
@@ -95,18 +90,10 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
               </span>
               })
           }
+          <span key={`${qaObject.id}${uniqueId++}`} style={{}}><Merge qaObjectParent={qaObject} /></span>
         </Tag>
 
         { qaObject.parentId && <span key={`${qaObject.id}${uniqueId++}`} id={qaObject.relationshipId} onClick={detachComponent} style={{cursor:'pointer'}}>Detach</span> }
-
-        {qaObject.typeId===CASE &&
-          <span key={`${qaObject.id}${uniqueId++}`} style={{marginLeft:'10px'}}>
-            <Link key={`${qaObject.id}${uniqueId++}`} to={routes.qaObjectMerge( {parentId: qaObject.id})} style={{textDecoration:'none', color:'black'}}>
-                <FontAwesomeIcon icon={faCodeFork} style={{fontSize:'20px'}}/>
-            </Link>
-          </span>
-        }
-
 
         {qaObject.children.map( (c, idx) => <QaObjectRelationship key={uniqueId+idx} qaObject={c} uniqueId={(uniqueId++)*(idx++)}/> )}
       </Tag>
