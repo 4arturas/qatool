@@ -21,6 +21,7 @@ import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import {renderIntoDocument} from "react-dom/test-utils";
+import Merge from "src/components/Merge/Merge";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int) {
@@ -71,21 +72,17 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
           <Link to={routes.qaObjectRelationship({id:record.id})}>
             {record.name}
           </Link>
+          <>
+            <span style={{float:'right', color: 'black'}}><Merge qaObjectParent={record} /></span>
 
-            <>
-              {  record.typeId === CASE &&
-            <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
-              <Link to={routes.qaObjectMerge( {parentId: record.id})} style={{float:'right', color: 'black'}}>
-                <ExperimentOutlined style={{fontSize:'20px'}}/>
-              </Link>
-            </Tooltip> }
             {record.typeId === EXPERIMENT &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
               <Link to={routes.experiment( {id: record.id})} style={{float:'right', color: 'black'}}>
                 <ExperimentOutlined style={{fontSize:'20px'}}/>
               </Link>
-            </Tooltip>          }
-            </>
+            </Tooltip>
+            }
+          </>
         </div>
     },
     {
