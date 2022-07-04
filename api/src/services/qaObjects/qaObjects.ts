@@ -129,6 +129,61 @@ export const belongings = async ( { parentId} ) =>
 }
 
 
+const exp = async ( id ) =>
+{
+  try {
+
+    const parent = await db.qaObject.findUnique({where: {id: id}});
+    const suites = await QaObjectRelationship.where({parentId: id});
+    const children = [];
+    for (let i = 0; i < suites.length; i++) {
+      const suite = suites[i];
+      const child = await exp(suite.childrenId);
+      children.push(child);
+    }
+
+    return {
+      parent: parent,
+      children: children
+    };
+  }
+  catch ( e )
+  {
+    console.log( e );
+    return null;
+  }
+}
+
+const getRelations = async ( id, arr ) =>
+{
+  const suites = await QaObjectRelationship.where({parentId: id});
+  for (let i = 0; i < suites.length; i++) {
+    const suite = suites[i];
+    arr.push( {parentId: suite.parentId, childrenId: suite.childrenId } );
+    await getRelations(suite.childrenId, arr );
+  }
+}
+
+export const findExperiment = async ( { id: id } ) =>
+{
+  // let data: { parent: any; children: any[] };
+  let rel = [];
+  await getRelations( id, rel );
+
+  const arrParentId = rel.flatMap( i => i.parentId );
+  const arrChildrenId = rel.flatMap( i => i.childrenId );
+  arrParentId.push(...arrChildrenId);
+  const idArray = Array.from(new Set(arrParentId));
+
+  const objects = db.qaObject.findMany( { where: { id: { in: idArray } } } );
+  return {
+    experimentId: id,
+    relations: rel,
+    objects: objects
+  };
+}
+
+
 export const QaObject: QaObjectResolvers = {
   type: (_obj, { root }) =>
     db.qaObject.findUnique({ where: { id: root.id } }).type(),
