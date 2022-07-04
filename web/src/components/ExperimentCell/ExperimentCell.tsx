@@ -115,12 +115,12 @@ const Test = ( { experimentId, relations, objects } ) => {
 
                   <table style={{border:'1px solid red', marginTop: '10px', width: '100%'}} border={1} cellPadding={10}>
                     <tbody>
-                    {[...Array(cAse.threads*10)].map((y, thread) =>
+                    {[...Array(cAse.threads)].map((y, thread) =>
                       <tr>
                         <td style={{width:'70px', whiteSpace: 'nowrap'}}><b>User {thread+1}</b></td>
                         <td>
                           <div style={{display:'flex', width: '100%'}}>
-                          {[...Array(cAse.loops*10)].map((x, loop) =>
+                          {[...Array(cAse.loops)].map((x, loop) =>
                             <div style={{border: '1px solid green', width: '10%'}}>
                               Request {loop+1} - paymentId-{collection.batchId}-{suite.batchId}-{cAse.batchId}-{thread}-{loop}
                             </div>
