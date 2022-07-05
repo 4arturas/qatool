@@ -40,6 +40,14 @@ export const schema = gql`
     objects: [QaObject]
   }
 
+  type ExperimentResult {
+    experimentId: Int!
+    error: String
+  }
+  type ExperimentCaseResult {
+    results: [ExperimentResult]
+  }
+
   type Query {
     qaObjects: [QaObject!]! @requireAuth
     qaObject(id: Int!): QaObject @requireAuth
@@ -49,6 +57,7 @@ export const schema = gql`
     searchQaObjects(searchCriteria: QaObjectSearchCriteria, page: Int, pageSize: Int): QaObjectPage @requireAuth
     belongings(parentId: Int): [QaObject] @requireAuth
     findExperiment(id: Int): Experiment @requireAuth
+    runExperiment(experimentId: Int): ExperimentResult @requireAuth
   }
 
 
