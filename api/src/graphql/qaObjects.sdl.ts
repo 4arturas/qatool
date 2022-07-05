@@ -15,6 +15,7 @@ export const schema = gql`
     header:      String
     createdAt: DateTime!
     updatedAt: DateTime!
+    executed: Boolean
   }
 
   type QaObjectPage {
@@ -88,6 +89,7 @@ export const schema = gql`
     address:     String
     method:      String
     header:      String
+    executed: Boolean
   }
 
   type Mutation {

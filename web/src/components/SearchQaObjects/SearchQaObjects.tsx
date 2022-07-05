@@ -13,7 +13,7 @@ import {useLazyQuery} from "@apollo/client";
 import EditObject, { EDIT_OBJECT_NEW } from "src/components/EditObject/EditObject";
 import {Link, navigate, routes} from "@redwoodjs/router";
 import QaTrees from "src/layouts/QaTreeLayout/components/Tree/QaTrees/QaTrees";
-import {ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
+import {BarChartOutlined, ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
 import BelongingsCell from 'src/components/BelongingsCell'
 import ObjectClone from "src/components/ObjectClone/ObjectClone";
@@ -41,6 +41,7 @@ export const QUERY = gql`
         header
         createdAt
         updatedAt
+        executed
       }
       count
       page
@@ -78,7 +79,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
             {record.typeId === EXPERIMENT &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
               <Link to={routes.experiment( {id: record.id})} style={{float:'right', color: 'black'}}>
-                <ExperimentOutlined style={{fontSize:'20px'}}/>
+                { record.executed ? <BarChartOutlined  style={{fontSize:'20px'}}/> : <ExperimentOutlined style={{fontSize:'20px'}}/> }
               </Link>
             </Tooltip>
             }
