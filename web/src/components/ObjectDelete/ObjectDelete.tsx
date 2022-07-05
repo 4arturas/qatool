@@ -39,9 +39,8 @@ const ObjectDelete = ( { id, beforeSave, afterSave } ) => {
         okText="Yes"
         cancelText="No"
       >
-        <Tooltip title="Delete Object">
-          <DeleteOutlined style={{fontSize:'20px'}}/>
-        </Tooltip>
+       <DeleteOutlined style={{fontSize:'20px'}}/>
+
       </Popconfirm>
 
     )

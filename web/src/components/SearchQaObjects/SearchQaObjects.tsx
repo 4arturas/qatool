@@ -244,6 +244,9 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
                 tagRender={tagRender}
                 style={{minWidth: '200px'}}
                 allowClear
+                filterOption={(input, option) =>
+                  option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
                 options={ TYPES.map((t,i) => { return { value: t, label: typeIdToName(t) } }) }
               />
             </Form.Item>

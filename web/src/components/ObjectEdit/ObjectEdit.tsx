@@ -103,9 +103,7 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
 
   return (
     <>
-      <Tooltip title="Edit Object">
-        <EditOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
-      </Tooltip>
+      <EditOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
 
       <Modal
         title={ 'Edit Object' }

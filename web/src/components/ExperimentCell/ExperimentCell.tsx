@@ -6,7 +6,7 @@ import {BODY, CASE, COLLECTION, SERVER, SUITE, TEST, typeIdToColor, typeIdToName
 import Merge from "src/components/Merge/Merge";
 import {ExperimentOutlined} from "@ant-design/icons";
 import {useLazyQuery} from "@apollo/client";
-import {toast} from "@redwoodjs/web/toast";
+import {toast, Toaster} from "@redwoodjs/web/toast";
 import ExperimentResults from "src/components/ExperimentResults/ExperimentResults";
 
 export const QUERY = gql`
@@ -108,10 +108,18 @@ const Test = ( { experimentId, relations, objects } ) => {
 
   }, [] );
 
-  const [runExperiment, { called, loading, data }] = useLazyQuery(RUN_EXPERIMENT, {
+  const [runExperiment, { called, loading, data, error }] = useLazyQuery(RUN_EXPERIMENT, {
     onCompleted: () => {
       const { experimentId, error } = data.runExperiment;
-      fetchExperiments( { variables: { experimentId } } );
+      if ( error )
+      {
+        toast.error( error, { duration: 6000 } );
+      }
+      else
+      {
+        fetchExperiments( { variables: { experimentId } } );
+        toast.success( 'Experiment was executed successfully' );
+      }
     },
     onError: (error) => {
       toast.error(error.message)
@@ -140,7 +148,7 @@ const Test = ( { experimentId, relations, objects } ) => {
     <>
 
     <div key={`mainBlock${uniqueId++}`} style={{marginLeft: '20px'}}>
-
+      <Toaster toastOptions={{ className: 'rw-toast', duration: 3000 }} />
       { (experiment) &&
         <div key={`experiment${experimentId}${uniqueId++}`}>
           {typeIdToTag(experiment.typeId)}- {experiment.name}&nbsp;&nbsp;&nbsp;
@@ -186,7 +194,6 @@ const Test = ( { experimentId, relations, objects } ) => {
 
                   {relations.filter( f => f.parentId === cAse.id ).map( r => {
                   const obj = objects.find( bt => bt.id === r.childrenId );
-
                   switch ( obj.typeId )
                   {
                     case BODY: return (
@@ -196,7 +203,9 @@ const Test = ( { experimentId, relations, objects } ) => {
                     )
                     case TEST: return (
                       <div key={`testBlock${collection.id}${suite.id}${cAse.id}${obj.id}${uniqueId++}`} style={{marginLeft: '20px'}}>
-                        {typeIdToTag(obj.typeId)}- {obj.name}
+                        <div key={`testHeader${collection.id}${suite.id}${cAse.id}${obj.id}${uniqueId++}`}>
+                          {typeIdToTag(obj.typeId)}- {obj.name}
+                        </div>
                       </div>
                     )
                     default: return <div key={`unknown${collection.id}${suite.id}${cAse.id}${obj.id}${uniqueId++}`}>UNKNOWN ERROR</div>
