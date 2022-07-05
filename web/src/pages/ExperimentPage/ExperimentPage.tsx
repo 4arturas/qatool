@@ -1,12 +1,12 @@
-import { Link, routes } from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
+import ExperimentCell from 'src/components/ExperimentCell'
 
 const ExperimentPage = ({id}) => {
   return (
     <>
       <MetaTags title="Experiment" description="Experiment page" />
 
-      {id}
+     <ExperimentCell id={id}/>
 
     </>
   )

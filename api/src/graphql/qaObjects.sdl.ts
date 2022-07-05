@@ -29,6 +29,25 @@ export const schema = gql`
     name: String
   }
 
+  type Relations {
+    parentId: Int
+    childrenId: Int
+  }
+
+  type Experiment {
+    experimentId: Int!
+    relations: [Relations]
+    objects: [QaObject]
+  }
+
+  type ExperimentResult {
+    experimentId: Int!
+    error: String
+  }
+  type ExperimentCaseResult {
+    results: [ExperimentResult]
+  }
+
   type Query {
     qaObjects: [QaObject!]! @requireAuth
     qaObject(id: Int!): QaObject @requireAuth
@@ -37,6 +56,8 @@ export const schema = gql`
     qaObjectsPage(page: Int, pageSize: Int): QaObjectPage @requireAuth
     searchQaObjects(searchCriteria: QaObjectSearchCriteria, page: Int, pageSize: Int): QaObjectPage @requireAuth
     belongings(parentId: Int): [QaObject] @requireAuth
+    findExperiment(id: Int): Experiment @requireAuth
+    runExperiment(experimentId: Int): ExperimentResult @requireAuth
   }
 
 

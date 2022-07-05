@@ -1,3 +1,29 @@
+export const EXPERIMENT = 1;
+export const COLLECTION = 2;
+export const SERVER = 3;
+export const SUITE = 4;
+export const CASE = 5;
+export const BODY = 6;
+export const TEST = 7;
+export const REPLACE = 8;
+export const REMOVE = 9;
+export const RESULT = 10;
+export const RESPONSE = 11;
+
+export const TYPES = [
+  EXPERIMENT,
+  COLLECTION,
+  SERVER,
+  SUITE,
+  CASE,
+  BODY,
+  TEST,
+  REPLACE,
+  REMOVE,
+  RESULT,
+  RESPONSE
+];
+
 export const MSG_OUTGOING:number = 1;
 export const MSG_INCOMING:number = 2;
 
