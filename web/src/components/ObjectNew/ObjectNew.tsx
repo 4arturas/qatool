@@ -56,9 +56,8 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
 
     return (
       <>
-        <Tooltip title="Crete New Object">
-          <PlusCircleOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} /><span style={{marginLeft:'3px'}}>{typeIdToTag(typeId)}</span>
-        </Tooltip>
+        <PlusCircleOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} /><span style={{marginLeft:'3px'}}>{typeIdToTag(typeId)}</span>
+
 
         <Modal
           title={ 'New Object' }
