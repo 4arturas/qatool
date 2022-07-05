@@ -38,8 +38,17 @@ const buildTree = async ( tree:QaObj ): Promise<QaObj> => {
     /*tmpQaObjects.push( exists );
   }*/
 
-  tree.name = exists.name;
   tree.typeId = exists.typeId;
+  tree.name = exists.name;
+  tree.description = exists.description;
+  tree.batchId = exists.batchId;
+  tree.threads = exists.threads;
+  tree.loops = exists.loops;
+  tree.json = exists.json;
+  tree.jsonata = exists.jsonata;
+  tree.address = exists.address;
+  tree.method = exists.method;
+  tree.header = exists.header;
 
   const resultset = await db.qaObjectRelationship.findMany( { where: { parentId:tree.id } } );
 
