@@ -29,6 +29,7 @@ model QaObject {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  executed    Boolean @default(false) // This one is only neede for experiment, if it is true, that means that experiment was executed
 }
 
 model QaObjectType {
