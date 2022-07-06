@@ -10,6 +10,7 @@ import {
 } from "src/global";
 import Timeline from "src/components/Timeline/Timeline";
 import jsonata from "jsonata";
+import {FieldTimeOutlined} from "@ant-design/icons";
 
 const columns = [
   {
@@ -92,7 +93,7 @@ const ShowTimeline = ({rec}) => {
 
   return <>
     <Button type="primary" onClick={()=>setIsModalVisible(true)}>
-      Timeline
+      <FieldTimeOutlined style={{fontSize: '20px'}}/>
     </Button>
     <Modal
       visible={isModalVisible}
