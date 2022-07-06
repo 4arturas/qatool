@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qatoolapi
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      platform: qatoolapi
+  template:
+    metadata:
+      labels:
+        platform: qatoolapi
+    spec:
+      containers:
+        - env:
+            - name: NODE_ENV
+              value: development
+            - name: RUNTIME_ENV
+              value: dev
+            - name: DATABASE_URL
+              value: postgres://postgres:password@dbserver:5432/postgres
+          image: arturix/qatoolapi:latest
+          name: qatoolapi
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8911
+      imagePullSecrets:
+        - name: my-container-registry-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    platform: qatoolapi
+  name: qatoolapi
+spec:
+  ports:
+    - port: 8911
+      name: qatoolapi
+  selector:
+    platform: qatoolapi
+  type: NodePort
+
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qatoolweb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      platform: qatoolweb
+  template:
+    metadata:
+      labels:
+        platform: qatoolweb
+    spec:
+      containers:
+        - env:
+            - name: NODE_ENV
+              value: production
+            - name: RUNTIME_ENV
+              value: production
+          image: arturix/qatoolweb:latest
+          name: qatoolweb
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8910
+      imagePullSecrets:
+        - name: my-container-registry-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    platform: qatoolweb
+  name: qatoolweb
+spec:
+  ports:
+    - port: 8910
+      name: qatoolweb
+  selector:
+    platform: qatoolweb
+  type: NodePort
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qatool
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: redk8s.sys
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: qatoolweb
+                port:
+                  name: qatoolweb
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: qatoolapi
+                port:
+                  name: qatoolapi
+
+
