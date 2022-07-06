@@ -9,6 +9,8 @@ import {useLazyQuery} from "@apollo/client";
 import {toast, Toaster} from "@redwoodjs/web/toast";
 import ExperimentResults from "src/components/ExperimentResults/ExperimentResults";
 import ExperimentThreadsLoops from "src/components/ExperimentThreadsLoops/ExperimentThreadsLoops";
+import ExperimentRequestLengthBoxPlot
+  from "src/components/ExperimentRequestLengthBoxPlot/ExperimentRequestLengthBoxPlot";
 
 export const QUERY = gql`
   query FindExperimentQuery($id: Int!) {
@@ -158,6 +160,7 @@ const Test = ( { experimentId, relations, objects } ) => {
               Run Experiment
             </Button>
             :
+            <span>
             <ExperimentThreadsLoops
               experiments={executedExperiments}
               generateChartElement={
@@ -168,6 +171,9 @@ const Test = ( { experimentId, relations, objects } ) => {
                 }
               }
             />
+            &nbsp;
+            <ExperimentRequestLengthBoxPlot experiments={executedExperiments}/>
+            </span>
           }
         </div>   }
 
@@ -242,6 +248,13 @@ const Test = ( { experimentId, relations, objects } ) => {
                           }
                         }
                     />
+                      &nbsp;
+                      <ExperimentRequestLengthBoxPlot
+                        experiments={executedExperiments.filter( e =>
+                          e.experimentId === experimentId &&
+                          e.collectionId === collection.id &&
+                          e.suiteId === suite.id &&
+                          e.caseId === cAse.id )}/>
                     </div>
                     <ExperimentResults
                       experiments={executedExperiments.filter( e =>
@@ -249,6 +262,7 @@ const Test = ( { experimentId, relations, objects } ) => {
                         e.collectionId === collection.id &&
                         e.suiteId === suite.id &&
                         e.caseId === cAse.id )}/>
+
                   </div>
                 }
 
