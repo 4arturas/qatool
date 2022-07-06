@@ -127,7 +127,7 @@ const ExperimentResults = ( experiments ) => {
 
   return (
     <div>
-      <Table dataSource={experiments.experiments} columns={columns} pagination={false} rowKey={'id'}/>
+      <Table dataSource={experiments.experiments} columns={columns} pagination={{ pageSize: 5 }} rowKey={'id'}/>
     </div>
   )
 }
