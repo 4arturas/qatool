@@ -24,9 +24,10 @@ const VTE = ( {title, color, date, json, position, JSONata, icon} ) =>
     { JSONata && <><b>JSONata:</b> <span>{JSONata}</span></> }
 
     <div style={{maxHeight: '150px', overflow: "auto", border:'1px solid lightgrey'}}>
-            <textarea cols={100} rows={100} style={{border:0, backgroundColor: `${textAreaBackground}`}}>
-              {JSON.stringify(JSON.parse(json), null, 2)}
-            </textarea>
+      <textarea
+        cols={100} rows={100}
+        style={{border:0, backgroundColor: `${textAreaBackground}`}}
+        defaultValue={JSON.stringify(JSON.parse(json), null, 2)}/>
     </div>
 
   </VerticalTimelineElement>
