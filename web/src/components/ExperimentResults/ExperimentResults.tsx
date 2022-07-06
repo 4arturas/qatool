@@ -92,9 +92,7 @@ const ShowTimeline = ({rec}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return <>
-    <Button type="primary" onClick={()=>setIsModalVisible(true)}>
-      <FieldTimeOutlined style={{fontSize: '20px'}}/>
-    </Button>
+    <Button type="primary" onClick={()=>setIsModalVisible(true)} icon={<FieldTimeOutlined style={{fontSize: '20px'}}/>}/>
     <Modal
       visible={isModalVisible}
       onOk={()=>setIsModalVisible(false)}
