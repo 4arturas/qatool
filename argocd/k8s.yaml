@@ -97,7 +97,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   rules:
-    - host: redk8s.sys
+    - host: qatool.sys
       http:
         paths:
           - path: /
