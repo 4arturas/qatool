@@ -41,13 +41,18 @@ const Timeline = ( {incoming, outgoing, JSONata} ) => {
     { type: "date", id: "End" },
   ];
 
-  const rows = [
-    outgoing && ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
-    incoming && ["Incoming", outgoing ? new Date(outgoing.requestDate) : new Date(incoming.responseDate), new Date(incoming.responseDate)],
-  ];
+  const rows =
+    (outgoing&&incoming) ?
+      [
+        ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
+        ["Incoming", new Date(outgoing.requestDate), new Date(incoming.responseDate)]
+      ] :
+      [
+        ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)]
+      ];
 
   const data = [columns, ...rows];
-console.log(data);
+
   return (
     <div style={{backgroundColor: 'whitesmoke'}}>
 
