@@ -8,6 +8,7 @@ import {ExperimentOutlined} from "@ant-design/icons";
 import {useLazyQuery} from "@apollo/client";
 import {toast, Toaster} from "@redwoodjs/web/toast";
 import ExperimentResults from "src/components/ExperimentResults/ExperimentResults";
+import ExperimentThreadsLoops from "src/components/ExperimentThreadsLoops/ExperimentThreadsLoops";
 
 export const QUERY = gql`
   query FindExperimentQuery($id: Int!) {
@@ -152,10 +153,21 @@ const Test = ( { experimentId, relations, objects } ) => {
       { (experiment) &&
         <div key={`experiment${experimentId}${uniqueId++}`}>
           {typeIdToTag(experiment.typeId)}- {experiment.name}&nbsp;&nbsp;&nbsp;
-          { !experimentExecuted &&
+          { !experimentExecuted ?
             <Button type="primary" icon={<ExperimentOutlined/>} disabled={loading} onClick={ExperimentRun}>
               Run Experiment
             </Button>
+            :
+            <ExperimentThreadsLoops
+              experiments={executedExperiments}
+              generateChartElement={
+                (experiment) =>
+                {
+                  const {thread, loop, requestDate, responseDate, collectionId, suiteId, caseId } = experiment;
+                  return [`User(${collectionId}${suiteId}${caseId}): ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
+                }
+              }
+            />
           }
         </div>   }
 
@@ -215,6 +227,22 @@ const Test = ( { experimentId, relations, objects } ) => {
                 {
                   executedExperiments.length > 0 &&
                   <div style={{paddingTop: '5px', paddingBottom: '5px'}}>
+                    <div style={{float:'left', paddingRight: '60px'}}>
+                    <ExperimentThreadsLoops
+                      experiments={executedExperiments.filter( e =>
+                        e.experimentId === experimentId &&
+                        e.collectionId === collection.id &&
+                        e.suiteId === suite.id &&
+                        e.caseId === cAse.id )}
+                        generateChartElement={
+                          (experiment) =>
+                          {
+                            const {thread, loop, requestDate, responseDate} = experiment;
+                            return [`User: ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
+                          }
+                        }
+                    />
+                    </div>
                     <ExperimentResults
                       experiments={executedExperiments.filter( e =>
                         e.experimentId === experimentId &&
