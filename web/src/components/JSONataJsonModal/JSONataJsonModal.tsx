@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCodeCompare, faNotEqual, faEquals} from "@fortawesome/free-solid-svg-icons";
-import {Modal, Tooltip} from "antd";
+import {Alert, Modal, Tooltip} from "antd";
 import ReactJson from "react-json-view";
 import {validateJSONata} from "src/global";
 
@@ -11,7 +11,7 @@ const JsoNataJsonModal = ({ title, JSONata, json }) => {
   const [valid] = useState( validateJSONata( JSONata, json ) );
 
   return <>
-    <Tooltip title={'Check Response with JSONata'}>
+    <Tooltip title={'Check Response against JSONata'}>
       <FontAwesomeIcon
         icon={faCodeCompare}
         style={{fontSize:'15px', cursor: 'pointer', color: `${valid?'black':'red'}`}}
@@ -30,8 +30,7 @@ const JsoNataJsonModal = ({ title, JSONata, json }) => {
       onOk={()=>setIsModalVisible(false)}
       onCancel={()=>setIsModalVisible(false)}
     >
-
-      <div style={{fontWeight: 'bold'}}>{JSONata}</div>
+      <Alert type={valid?'success':'error'} showIcon message={'JSONata'} description={JSONata}/>
       <div style={{textAlign:'center', padding: '10px'}}>
         <FontAwesomeIcon
           icon={valid?faEquals:faNotEqual}
