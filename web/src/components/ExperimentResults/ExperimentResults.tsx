@@ -11,6 +11,7 @@ import {
 import Timeline from "src/components/Timeline/Timeline";
 import jsonata from "jsonata";
 import {FieldTimeOutlined} from "@ant-design/icons";
+import JSONModal from "src/components/JSONModal/JSONModal";
 
 const columns = [
   {
@@ -28,14 +29,20 @@ const columns = [
     dataIndex: 'request',
     key: 'request',
     render: (_, record: { key: React.Key }) =>
-      <ViewJSon JSon={record.request} />
+      <>
+        <ViewJSon JSon={record.request}/>&nbsp;&nbsp;&nbsp;
+        <JSONModal title='Request JSON' json={record.request} />
+      </>
   },
   {
     title: 'Response',
     dataIndex: 'response',
     key: 'response',
     render: (_, record: { key: React.Key }) =>
-      <ViewJSon JSon={record.response} />
+      <>
+        <ViewJSon JSon={record.response}/>&nbsp;&nbsp;&nbsp;
+        <JSONModal title='Response JSON' json={record.response} />
+      </>
   },
   {
     title: 'Request Date',
