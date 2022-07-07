@@ -26,7 +26,7 @@ const JsonModal = ({ title, json }) => {
       onOk={()=>setIsModalVisible(false)}
       onCancel={()=>setIsModalVisible(false)}
     >
-      <ReactJson src={jsonPretty} />
+      <ReactJson src={jsonPretty} style={{maxHeight:'800px', overflow: 'auto'}}/>
     </Modal>
   </>
 }
