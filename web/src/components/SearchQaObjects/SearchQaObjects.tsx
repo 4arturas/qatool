@@ -1,7 +1,6 @@
 import {Badge, Button, Form, Input, Pagination, Select, Table, Tag, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import {
-  CASE,
   COLLECTION, EXPERIMENT,
   getChildrenTypeIdByParentTypeId,
   mySubstr, SERVER,
@@ -10,7 +9,6 @@ import {
   TYPES, validateJSONata
 } from "src/global";
 import {useLazyQuery} from "@apollo/client";
-import EditObject, { EDIT_OBJECT_NEW } from "src/components/EditObject/EditObject";
 import {Link, navigate, routes} from "@redwoodjs/router";
 import QaTrees from "src/layouts/QaTreeLayout/components/Tree/QaTrees/QaTrees";
 import {BarChartOutlined, ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
@@ -20,7 +18,6 @@ import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
-import {renderIntoDocument} from "react-dom/test-utils";
 import Merge from "src/components/Merge/Merge";
 
 export const QUERY = gql`
@@ -266,13 +263,9 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
             </Form.Item>
           </Form>
         </td>
-        <td style={{textAlign: "right", paddingRight: '50px'}}>
-          <EditObject object={null} type={EDIT_OBJECT_NEW}/>
-        </td>
       </tr>
       </tbody>
     </table>
-
     { qaObjectPage &&
 
       <>
