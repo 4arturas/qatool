@@ -4,7 +4,6 @@ import React, {useEffect, useState} from "react";
 import {
   BODY,
   CASE,
-  merge,
   typeIdToName,
   REMOVE,
   REPLACE,
@@ -15,7 +14,6 @@ import {
   mergeObjectsFromTestObject
 } from "src/global";
 import ReactDiffViewer from 'react-diff-viewer'
-import {Button, Select} from "antd";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 const { Option } = Select;
 
