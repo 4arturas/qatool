@@ -19,6 +19,7 @@ import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import Merge from "src/components/Merge/Merge";
+import JSONModal from "src/components/JSONModal/JSONModal";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int) {
@@ -115,15 +116,15 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       key: 'json',
       width: 200,
       render: (_, record) =>
-        mySubstr(record.json, 10)
+        <>{ record.json && <span style={{whiteSpace:'nowrap'}}>{mySubstr(record.json, 5)}&nbsp;<span style={{float:'right'}}><JSONModal title='JSON' json={record.json} /></span></span> }</>
     },
     {
       title: 'JSONata',
       dataIndex: 'jsonata',
       key: 'jsonata',
-      width: 200,
+      width: 100,
       render: (_, record) =>
-        <>{(record.json && record.jsonata) && (validateJSONata(record.jsonata, record.json) ? <Badge status="success" />:<Badge status="error" />)}{mySubstr(record.jsonata, 10)}</>
+        <>{(record.json && record.jsonata) && (validateJSONata(record.jsonata, record.json) ? <Badge status="success" />:<Badge status="error" />)}{mySubstr(record.jsonata, 5)}</>
     },
     {
       title: 'Address',
