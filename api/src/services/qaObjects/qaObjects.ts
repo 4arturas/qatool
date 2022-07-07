@@ -297,9 +297,11 @@ export const runExperiment = async ({experimentId}) =>
 
       } // end for case
     } // end for suite
+
     const experiment = await qaObject( { id: experimentId } );
     experiment.executed = true;
-    updateQaObject( { id: experimentId, input: experiment })
+    await updateQaObject( { id: experimentId, input: experiment })
+
     return generateResponse(null);
   }
   catch ( e )
