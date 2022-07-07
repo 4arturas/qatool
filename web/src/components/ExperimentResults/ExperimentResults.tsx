@@ -86,8 +86,8 @@ const columns = [
         <JSONataJsonModal title='Check Response with JSONata' JSONata={record.jsonata} json={record.response} />
   },
   {
-    title: 'Action',
-    key: 'action',
+    title: 'Timeline',
+    key: 'timeline',
     render: (_, record) => (
       <Space size="middle">
         <ShowTimeline rec={record} />
@@ -100,7 +100,7 @@ const ShowTimeline = ({rec}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   return <>
-    <Button type="primary" onClick={()=>setIsModalVisible(true)} icon={<FieldTimeOutlined style={{fontSize: '20px'}}/>}/>
+    <Button onClick={()=>setIsModalVisible(true)} icon={<FieldTimeOutlined style={{fontSize: '20px'}}/>}/>
     <Modal
       visible={isModalVisible}
       onOk={()=>setIsModalVisible(false)}
