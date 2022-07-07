@@ -1,8 +1,10 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Button, Modal} from "antd";
+import {Button, Modal, Tooltip} from "antd";
 import { Chart } from "react-google-charts";
 import * as ReactDOM from 'react-dom';
 import {Spin} from "antd/es";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faChartBar} from "@fortawesome/free-solid-svg-icons";
 
 /*const options = {
   timeline: { showRowLabels: false },
@@ -36,36 +38,41 @@ const ExperimentThreadsLoops = ({experiments, generateChartElement }) => {
   }, [] );
 const chartRef = useRef();
   return <>
-    <Button
-      type="primary"
-      onClick={ ()=> {
-        setIsModalVisible(true);
+    <Tooltip title={'Threads/Loops'}>
+      <Button>
+        <FontAwesomeIcon
+          icon={faChartBar}
+          style={{fontSize: '20px', cursor: "pointer"}}
+          onClick={ ()=> {
+            setIsModalVisible(true);
 
 
-        // This trick with the timer is needed because, on second modal open user will see shrinked chart, can't understand why is that
-        let rowsLocal: any;
-        if ( !rows ) {
-          rowsLocal = experiments.map( (experiment) => generateChartElement(experiment) );
-          setRows(rowsLocal);
-        }
-        else
-          rowsLocal = rows;
+            // This trick with the timer is needed because, on second modal open user will see shrinked chart, can't understand why is that
+            let rowsLocal: any;
+            if ( !rows ) {
+              rowsLocal = experiments.map( (experiment) => generateChartElement(experiment) );
+              setRows(rowsLocal);
+            }
+            else
+              rowsLocal = rows;
 
 
-        setTimeout( () => {
-          ReactDOM.render(
-            <Chart
-              chartType="Timeline"
-              data={[columns, ...rowsLocal]}
-              style={{width: '100%', height: '800px'}}
-              options={options}
-            />,
-            chartRef.current);
-        }, 100 );
+            setTimeout( () => {
+              ReactDOM.render(
+                <Chart
+                  chartType="Timeline"
+                  data={[columns, ...rowsLocal]}
+                  style={{width: '100%', height: '800px'}}
+                  options={options}
+                />,
+                chartRef.current);
+            }, 100 );
 
-      }}>
-      Threads/Loops
-    </Button>
+          }}
+        />
+      </Button>
+    </Tooltip>
+
     <Modal
       title={'Threads/Loops'}
       visible={isModalVisible}
