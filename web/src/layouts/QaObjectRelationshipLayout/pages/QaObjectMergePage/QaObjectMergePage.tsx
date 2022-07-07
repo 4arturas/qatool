@@ -14,6 +14,7 @@ import {
   mergeObjectsFromTestObject
 } from "src/global";
 import ReactDiffViewer from 'react-diff-viewer'
+import {Select} from "antd";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 const { Option } = Select;
 
