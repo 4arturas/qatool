@@ -45,25 +45,6 @@ model QaObjectRelationship {
   @@unique([parentId, childrenId])
 }
 
-model Message {
-  id              Int           @id @default(autoincrement())
-  type            Int
-  experimentId    Int
-  collectionId    Int
-  suiteId         Int
-  caseId          Int
-  thread          Int
-  loop            Int
-  request         String?
-  response        String?
-  requestDate     DateTime?
-  responseDate    DateTime?
-  status          Int?
-  statusText      String?
-  txnId           String?
-  jsonata         String?
-}
-
 model ExperimentResult {
   id              Int           @id @default(autoincrement())
   type            Int

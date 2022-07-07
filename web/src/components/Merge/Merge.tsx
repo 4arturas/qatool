@@ -16,7 +16,6 @@ import {
   typeIdToName
 } from "src/global";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
-import TestRun from "src/components/TestRun/TestRun";
 import ReactDiffViewer from "react-diff-viewer";
 
 const Merge = ( {qaObjectParent} ) => {
@@ -213,9 +212,6 @@ const Merge = ( {qaObjectParent} ) => {
             <tr>
               <td style={{padding: '5px'}}>
                 Data in {wrap2(body)} was removed using {wrap2(remove)} and replaced with data from {wrap2(replace)}, response will be checked width {wrap2(result)} on {wrap2(test)}.
-              {/*  <span style={{marginLeft:'20px'}}>*/}
-              {/*  <TestRun test={test} servers={servers} remove={remove} replace={replace} result={result} body={body}/>*/}
-              {/*</span>*/}
               </td>
             </tr>
 

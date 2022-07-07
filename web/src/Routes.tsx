@@ -39,7 +39,6 @@ const Routes = () => {
           <Route path="/qa-trees" page={QaTreesPage} name="qaTrees" />
           {/*<Route path="/qa-trees/{typeId:Int}/show" page={QaObjectsByTypeIdPage} name="qaObjectsByTypeId" />*/}
           {/*<Route path="/qa-trees/{typeId:Int}/new" page={QaTreesNewPage} name="qaTreeNew" />*/}
-          <Route path="/messages/{page:Int}/{pageSize:Int}" page={MessagesPage} name="messages" />
           <Route path="/experiment/{id:Int}" page={ExperimentPage} name="experiment" />
         </Set>
 

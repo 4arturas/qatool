@@ -1,7 +1,6 @@
 import type { APIGatewayEvent, Context } from 'aws-lambda'
 import { logger } from 'src/lib/logger'
 import {generatePaymentId, MSG_INCOMING} from "../global";
-import {createMessage} from "src/services/messages/messages";
 import {CreateMessageInput} from "web/types/graphql";
 
 /**
@@ -34,9 +33,9 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
     txnId:        bodyJSon.txnId
   }
 
-  const dbResult = await createMessage({
+/*  const dbResult = await createMessage({
     input: message
-  })
+  })*/
 
   return {
     statusCode: 200,

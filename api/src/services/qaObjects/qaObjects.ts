@@ -4,7 +4,7 @@ import type {
   MutationResolvers,
   QaObjectResolvers,
 } from 'types/graphql'
-import {Message, QaObjectRelationship} from "src/models";
+import {QaObjectRelationship} from "src/models";
 import {
   BODY,
   CASE, COLLECTION,
@@ -17,8 +17,6 @@ import {
   SUITE,
   TEST
 } from "src/functions/global";
-import {createMessage} from "src/services/messages/messages";
-import caseForm from "web/src/components/QaObjectForm/CaseForm";
 import {createExperimentResult} from "src/services/experimentResults/experimentResults";
 import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
 

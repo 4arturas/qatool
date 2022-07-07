@@ -36,14 +36,6 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                     QA Objects
                   </NavLink>
                 </li>
-                <li style={{display:'inline', marginRight: "20px"}}>
-                  <NavLink
-                    to={routes.messages({page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE})}
-                    className="rw-link"
-                    activeClassName="activeLink">
-                    Messages
-                  </NavLink>
-                </li>
               </ul>
             </td>
           </tr>

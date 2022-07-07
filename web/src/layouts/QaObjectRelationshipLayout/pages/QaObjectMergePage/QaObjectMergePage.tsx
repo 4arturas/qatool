@@ -15,10 +15,7 @@ import {
   mergeObjectsFromTestObject
 } from "src/global";
 import ReactDiffViewer from 'react-diff-viewer'
-import {Link, navigate, routes} from "@redwoodjs/router";
 import {Button, Select} from "antd";
-import jsonata from "jsonata";
-import TestRun from "src/components/TestRun/TestRun";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 const { Option } = Select;
 
@@ -203,9 +200,6 @@ const QaObjectMergePage = ({ parentId }: QaObjectMergePageProps) => {
           <tr>
             <td style={{padding: '5px'}}>
               Data in {wrap2(body)} was removed using {wrap2(remove)} and replaced with data from {wrap2(replace)}, response will be checked width {wrap2(result)} on {wrap2(test)}.
-              <span style={{marginLeft:'20px'}}>
-                <TestRun test={test} servers={servers} remove={remove} replace={replace} result={result} body={body}/>
-              </span>
             </td>
           </tr>
 
