@@ -60,7 +60,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       dataIndex: 'typeId',
       key: 'typeId',
       width: 100,
-      render: (_, record: { key: React.Key }) =>
+      render: (_, record) =>
         typeIdToTag(record.typeId)
     },
     {
@@ -68,7 +68,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       dataIndex: 'name',
       key: 'name',
       width:300,
-      render: (_, record: { key: React.Key }) =>
+      render: (_, record) =>
         <div>
           <Link to={routes.qaObjectRelationship({id:record.id})}>
             {record.name}
@@ -91,7 +91,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       dataIndex: 'description',
       key: 'description',
       width: 200,
-      render: (_, record: { key: React.Key }) =>
+      render: (_, record) =>
         mySubstr(record.description, 9)
     },
     {
@@ -117,7 +117,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       dataIndex: 'json',
       key: 'json',
       width: 200,
-      render: (_, record: { key: React.Key }) =>
+      render: (_, record) =>
         mySubstr(record.json, 10)
     },
     {
@@ -125,7 +125,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       dataIndex: 'jsonata',
       key: 'jsonata',
       width: 200,
-      render: (_, record: { key: React.Key }) =>
+      render: (_, record) =>
         <>{(record.json && record.jsonata) && (validateJSONata(record.jsonata, record.json) ? <Badge status="success" />:<Badge status="error" />)}{mySubstr(record.jsonata, 10)}</>
     },
     {
@@ -133,7 +133,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       dataIndex: 'address',
       key: 'address',
       width: 200,
-      render: (_, record: { key: React.Key }) =>
+      render: (_, record) =>
         mySubstr(record.address, 10)
     },
     {
@@ -147,7 +147,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       dataIndex: 'header',
       key: 'header',
       width: 200,
-      render: (_, record: { key: React.Key }) =>
+      render: (_, record) =>
         mySubstr(record.header, 10)
     },
     {
@@ -188,7 +188,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
     }
   });
 
-  const tagRender = (props: CustomTagProps) => {
+  const tagRender = (props) => {
     const { label, value, closable, onClose } = props;
     const onPreventMouseDown = (event: React.MouseEvent<HTMLSpanElement>) => {
       event.preventDefault();

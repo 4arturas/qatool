@@ -19,7 +19,7 @@ const columns = [
     title: 'Type',
     dataIndex: 'type',
     key: 'type',
-    render: (_, record: { key: React.Key }) =>
+    render: (_, record) =>
       <Tag color={messageTypeToColor(record.type)} style={{color:'black'}}>
         {messageTypeToNameShort(record.type)}
       </Tag>
@@ -29,7 +29,7 @@ const columns = [
     title: 'Request',
     dataIndex: 'request',
     key: 'request',
-    render: (_, record: { key: React.Key }) =>
+    render: (_, record) =>
       <>
         <ViewJSon JSon={record.request}/>&nbsp;&nbsp;&nbsp;
         <JSONModal title='Request JSON' json={record.request} />
@@ -39,7 +39,7 @@ const columns = [
     title: 'Response',
     dataIndex: 'response',
     key: 'response',
-    render: (_, record: { key: React.Key }) =>
+    render: (_, record) =>
       <>
         <ViewJSon JSon={record.response}/>&nbsp;&nbsp;&nbsp;
         <JSONModal title='Response JSON' json={record.response} />
@@ -49,21 +49,21 @@ const columns = [
     title: 'Request Date',
     dataIndex: 'requestDate',
     key: 'requestDate',
-    render: (_, record: { key: React.Key }) =>
+    render: (_, record) =>
       <ViewDate date={record.requestDate} />
   },
   {
     title: 'Response Date',
     dataIndex: 'responseDate',
     key: 'responseDate',
-    render: (_, record: { key: React.Key }) =>
+    render: (_, record) =>
       <ViewDate date={record.responseDate} />
   },
   {
     title: 'Status',
     dataIndex: 'status',
     key: 'status',
-    render: (_, record: { key: React.Key }) =>
+    render: (_, record) =>
       <ViewHttpCode httpCode={record.status} />
   },
   {
@@ -75,14 +75,14 @@ const columns = [
     title: 'txnId',
     dataIndex: 'txnId',
     key: 'txnId',
-    render: (_, record: { key: React.Key }) =>
+    render: (_, record) =>
       <>{record.txnId}</>
   },
   {
     title: 'JSONata',
     dataIndex: 'jsonata',
     key: 'jsonata',
-    render: (_, record: { key: React.Key }) =>
+    render: (_, record) =>
         <JSONataJsonModal title='Check Response with JSONata' JSONata={record.jsonata} json={record.response} />
   },
   {
