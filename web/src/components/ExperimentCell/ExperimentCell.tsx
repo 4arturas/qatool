@@ -156,7 +156,7 @@ const Test = ( { experimentId, relations, objects } ) => {
         <div key={`experiment${experimentId}${uniqueId++}`}>
           {typeIdToTag(experiment.typeId)}- {experiment.name}&nbsp;&nbsp;&nbsp;
           { !experimentExecuted ?
-            <Button type="primary" icon={<ExperimentOutlined/>} disabled={loading} onClick={ExperimentRun}>
+            <Button icon={<ExperimentOutlined/>} disabled={loading} onClick={ExperimentRun}>
               Run Experiment
             </Button>
             :

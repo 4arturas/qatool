@@ -12,6 +12,7 @@ import Timeline from "src/components/Timeline/Timeline";
 import jsonata from "jsonata";
 import {FieldTimeOutlined} from "@ant-design/icons";
 import JSONModal from "src/components/JSONModal/JSONModal";
+import JSONataJsonModal from "src/components/JSONataJsonModal/JSONataJsonModal";
 
 const columns = [
   {
@@ -82,7 +83,7 @@ const columns = [
     dataIndex: 'jsonata',
     key: 'jsonata',
     render: (_, record: { key: React.Key }) =>
-      <ShowJSONata rec={record}/>
+        <JSONataJsonModal title='Check Response with JSONata' JSONata={record.jsonata} json={record.response} />
   },
   {
     title: 'Action',
@@ -112,14 +113,6 @@ const ShowTimeline = ({rec}) => {
   </>
 
 }
-
-const ShowJSONata = (({rec}) => {
-  return (!rec.response||!rec.jsonata) ?
-    <></> :
-    jsonata(rec.jsonata).evaluate(JSON.parse(rec.response)) ?
-      <Alert showIcon={true} type={"success"} message={mySubstr(rec.jsonata,5)}/> :
-      <Alert showIcon={true} type={"error"} message={mySubstr(rec.jsonata,5)}/>
-})
 
 const ViewJSon = ({JSon}) => {
   return <>{JSon && mySubstr(JSon,10)}</>
