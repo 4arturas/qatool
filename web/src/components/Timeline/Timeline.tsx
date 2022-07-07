@@ -1,14 +1,18 @@
 import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
-import React from "react";
+import React, {useState} from "react";
 import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
 import jsonata from "jsonata";
 import {Chart} from "react-google-charts";
 import {colorIncoming, colorOutgoing, dateFormatYYYYMMDDHHmmss} from "src/global";
+import ReactJson from "react-json-view";
+import {Alert} from "antd";
 
 const VTE = ( {title, color, date, json, position, JSONata, icon} ) =>
 {
-  const textAreaBackground = !JSONata ? 'white' : ( jsonata(JSONata).evaluate(JSON.parse(json)) ? 'lightgreen':'#FFCCCB' );
+  const [valid] = useState(!JSONata?false:jsonata(JSONata).evaluate(JSON.parse(json)));
+
+  const textAreaBackground = !JSONata ? 'white' : ( valid ? 'lightgreen':'#FFCCCB' );
 
   return <VerticalTimelineElement
     className="vertical-timeline-element--work"
@@ -21,14 +25,9 @@ const VTE = ( {title, color, date, json, position, JSONata, icon} ) =>
   >
     <h3 className="vertical-timeline-element-title"><u>{title}</u></h3>
 
-    { JSONata && <><b>JSONata:</b> <span>{JSONata}</span></> }
+    { JSONata && <Alert style={{marginBottom:'5px'}} type={valid?'success':'error'} showIcon message={'JSONata'} description={JSONata}/> }
 
-    <div style={{maxHeight: '150px', overflow: "auto", border:'1px solid lightgrey'}}>
-      <textarea
-        cols={100} rows={100}
-        style={{border:0, backgroundColor: `${textAreaBackground}`}}
-        defaultValue={JSON.stringify(JSON.parse(json), null, 2)}/>
-    </div>
+    <ReactJson src={JSON.parse(json)} style={{maxHeight:'180px', overflow: 'auto', backgroundColor: `${textAreaBackground}`}}/>
 
   </VerticalTimelineElement>
 }
