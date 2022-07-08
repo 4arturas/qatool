@@ -1,7 +1,7 @@
 import type { FindExperimentQuery, FindExperimentQueryVariables } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import React, {useEffect, useState} from "react";
-import {Button, Tag} from "antd";
+import {Button, DatePicker, Tag} from "antd";
 import {BODY, CASE, COLLECTION, SERVER, SUITE, TEST, typeIdToColor, typeIdToName, typeIdToTag} from "src/global";
 import Merge from "src/components/Merge/Merge";
 import {ExperimentOutlined} from "@ant-design/icons";
@@ -11,6 +11,8 @@ import ExperimentResults from "src/components/ExperimentResults/ExperimentResult
 import ExperimentThreadsLoops from "src/components/ExperimentThreadsLoops/ExperimentThreadsLoops";
 import ExperimentRequestLengthBoxPlot
   from "src/components/ExperimentRequestLengthBoxPlot/ExperimentRequestLengthBoxPlot";
+import moment from "moment";
+import {RangePickerProps} from "antd/es/date-picker";
 
 export const QUERY = gql`
   query FindExperimentQuery($id: Int!) {
@@ -147,6 +149,31 @@ const Test = ( { experimentId, relations, objects } ) => {
     runExperiment();
   }
   let uniqueId = 0;
+
+  const range = (start: number, end: number) => {
+    const result = [];
+    for (let i = start; i < end; i++) {
+      result.push(i);
+    }
+    return result;
+  };
+  const disabledDate: RangePickerProps['disabledDate'] = current => {
+    // Can not select days before today and today
+    // return current && current < moment().endOf('day');
+    const d = new Date();
+    d.setDate(d.getDate()-1);
+    return current < moment( d );
+  };
+  const disabledDateTime = () => (
+    {
+
+    // disabledHours: () => range(0, 24).splice(4, 20),
+    disabledHours: () => range(0, new Date().getHours()),
+    disabledMinutes: () => range(0, new Date().getMinutes()),
+    // disabledSeconds: () => [55, 56],
+    disabledSeconds: () => range(1, 60),
+  });
+
   return (
     <>
 
@@ -175,6 +202,18 @@ const Test = ( { experimentId, relations, objects } ) => {
             <ExperimentRequestLengthBoxPlot experiments={executedExperiments}/>
             </span>
           }
+
+          &nbsp;&nbsp;&nbsp;
+          <DatePicker
+            format="YYYY-MM-DD HH:mm:ss"
+            disabledDate={disabledDate}
+            disabledTime={disabledDateTime}
+            showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
+            placeholder={'Set scheduler'}
+            onOk={()=>alert('Not implemented yet')}
+          />
+
+
         </div>   }
 
       { server &&
