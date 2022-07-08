@@ -14,7 +14,7 @@ const JsoNataJsonModal = ({ title, JSONata, json }) => {
     <Tooltip title={'Check Response against JSONata'}>
       <FontAwesomeIcon
         icon={faCodeCompare}
-        style={{fontSize:'15px', cursor: 'pointer', color: `${valid?'black':'red'}`}}
+        style={{fontSize:'15px', cursor: 'pointer', color: `${valid?'green':'red'}`}}
         onClick={ ()=> {
           setIsModalVisible(true)
           if ( jsonPretty )
