@@ -43,23 +43,11 @@ const Timeline = ( { experimentResults } ) => {
     { type: "date", id: "Start" },
     { type: "date", id: "End" },
   ];
-/*
-
-  const rows =
-    (outgoing&&incoming) ?
-      [
-        ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
-        ["Incoming", new Date(outgoing.requestDate), new Date(incoming.responseDate)]
-      ] :
-      [
-        ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)]
-      ];
-*/
 
   const rows = [
-    ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
-    incoming && ["Incoming", new Date(outgoing.requestDate), new Date(incoming.responseDate)],
-    settled && ["Settled", new Date(outgoing.requestDate), new Date(settled.responseDate)]
+    outgoing && ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
+    incoming && ["Incoming", outgoing ? new Date(outgoing.requestDate) : new Date(incoming.responseDate), new Date(incoming.responseDate)],
+    settled && ["Settled", outgoing ? new Date(outgoing.requestDate) : new Date(settled.responseDate), new Date(settled.responseDate)]
   ];
 
   const data = [columns, ...rows];
@@ -67,12 +55,14 @@ const Timeline = ( { experimentResults } ) => {
   return (
     <div style={{backgroundColor: 'whitesmoke'}}>
 
-      <Chart chartType="Timeline"
+      {
+        outgoing && <Chart chartType="Timeline"
              data={data}
              width="100%" height="175px"
              options={{
                colors: [ outgoing && `${colorOutgoing}`, incoming && `${colorIncoming}`, incoming && `${colorIncoming}`],
              }}/>
+      }
 
       <VerticalTimeline>
 
