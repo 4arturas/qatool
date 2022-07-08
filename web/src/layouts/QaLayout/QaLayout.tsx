@@ -36,6 +36,15 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                     QA Objects
                   </NavLink>
                 </li>
+                <li style={{display:'inline', marginRight: "20px"}}>
+                  <NavLink
+                    to={routes.experimentResults( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0} )}
+                    className="rw-link"
+                    // activeMatchParams
+                    activeClassName="activeLink">
+                    Experiment Results
+                  </NavLink>
+                </li>
               </ul>
             </td>
           </tr>

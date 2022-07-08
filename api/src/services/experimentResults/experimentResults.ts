@@ -66,3 +66,19 @@ export const timeline: QueryResolvers['timeline'] = async ({ id }) => {
   } // outgoing
   return resultArr;
 }
+
+export const experimentResultsPage = ({ page, pageSize, count }) => {
+
+  const offset = (page - 1) * pageSize
+console.log( offset );
+  return {
+    experimentResults: db.experimentResult.findMany({
+      take: pageSize,
+      skip: offset,
+      // orderBy: { id: 'desc' },
+    }),
+    count: count && count > 0 ? count: db.experimentResult.count(),
+    page: page,
+    pageSize: pageSize
+  };
+}
