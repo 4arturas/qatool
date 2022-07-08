@@ -201,6 +201,7 @@ export const findExperiment = async ( { id: id } ) =>
 
 export const runExperiment = async ({experimentId}) =>
 {
+  const promises = [];
   const generateResponse = ( error ): any => {
     return { experimentId: experimentId, error: error };
   }
@@ -252,51 +253,69 @@ export const runExperiment = async ({experimentId}) =>
         const response = replaceRemoveResultResponse.find(r => r.typeId === RESPONSE);
 
         for (let thread = 0; thread < cAse.threads; thread++) {
-          for (let loop = 0; loop < cAse.loops; loop++) {
-            const paymentId = generatePaymentId(collection, suite, cAse);
-            const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
+          const promise = new Promise(async (resolve, reject) => {
+            const loopArray = [];
+            for (let loop = 0; loop < cAse.loops; loop++) {
+
+                const paymentId = generatePaymentId(collection, suite, cAse);
+                const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
 
 
-            const requestDate: Date = new Date();
-            // const response = await postData(server.address, JSON.parse(server.header), changedBody);
-            const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
-            const responseDate: Date = new Date();
+                const requestDate: Date = new Date();
+                // const response = await postData(server.address, JSON.parse(server.header), changedBody);
+                const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
+                const responseDate: Date = new Date();
 
-            let responseJSon: any;
-            try {
-              responseJSon = await res.json();
-            } catch (e) {
-              responseJSon = null;
-            }
+                let responseJSon: any;
+                try {
+                  responseJSon = await res.json();
+                } catch (e) {
+                  responseJSon = null;
+                }
 
-            const messageOutgoing = {
-              type: MSG_OUTGOING,
-              experimentId: experimentId,
-              collectionId: collection.id,
-              suiteId: suite.id,
-              caseId: cAse.id,
-              thread: thread,
-              loop: loop,
-              request: JSON.stringify(changedBody),
-              response: JSON.stringify(responseJSon),
-              requestDate: requestDate.toISOString(),
-              responseDate: responseDate.toISOString(),
-              status: res.status,
-              statusText: res.statusText,
-              txnId: responseJSon?.txnId,
-              jsonata: result.jsonata
-            };
+                const messageOutgoing = {
+                  type: MSG_OUTGOING,
+                  experimentId: experimentId,
+                  collectionId: collection.id,
+                  suiteId: suite.id,
+                  caseId: cAse.id,
+                  thread: thread,
+                  loop: loop,
+                  request: JSON.stringify(changedBody),
+                  response: JSON.stringify(responseJSon),
+                  requestDate: requestDate.toISOString(),
+                  responseDate: responseDate.toISOString(),
+                  status: res.status,
+                  statusText: res.statusText,
+                  txnId: responseJSon?.txnId,
+                  jsonata: result.jsonata
+                };
+                loopArray.push( messageOutgoing );
 
-            const dbResult = await createExperimentResult({
-              input: messageOutgoing
-            });
+                // const messageIncoming = messageOutgoing.txnId && await Message.first({txnId: messageOutgoing.txnId});
 
-            const messageIncoming = messageOutgoing.txnId && await Message.first({txnId: messageOutgoing.txnId});
-          } // end for loop
+            } // end for loop
+            resolve( loopArray );
+          }); // end Promise
+          promises.push( promise );
         } // end for thread
 
       } // end for case
     } // end for suite
+
+    await Promise.all( promises ).then( async results => {
+      for ( let i = 0; i < results.length; i++ )
+      {
+        const loopArray = results[i];
+        for ( let j = 0; j < loopArray.length; j++ )
+        {
+          const messageOutgoing = loopArray[j];
+          const dbResult = await createExperimentResult({
+            input: messageOutgoing
+          });
+        }
+      }
+    });
 
     const experiment = await qaObject( { id: experimentId } );
     experiment.executed = true;
