@@ -8,6 +8,7 @@ export const schema = gql`
     caseId: Int!
     thread: Int!
     loop: Int!
+    paymentId: String
     request: String
     response: String
     requestDate: DateTime
@@ -32,6 +33,7 @@ export const schema = gql`
     caseId: Int!
     thread: Int!
     loop: Int!
+    paymentId: String
     request: String
     response: String
     requestDate: DateTime
@@ -50,6 +52,7 @@ export const schema = gql`
     caseId: Int
     thread: Int
     loop: Int
+    paymentId: String
     request: String
     response: String
     requestDate: DateTime

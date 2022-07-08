@@ -48,12 +48,13 @@ model QaObjectRelationship {
 model ExperimentResult {
   id              Int           @id @default(autoincrement())
   type            Int
-  experimentId    Int
-  collectionId    Int
-  suiteId         Int
-  caseId          Int
-  thread          Int
-  loop            Int
+  experimentId    Int?
+  collectionId    Int?
+  suiteId         Int?
+  caseId          Int?
+  thread          Int?
+  loop            Int?
+  paymentId       String?
   request         String?
   response        String?
   requestDate     DateTime?

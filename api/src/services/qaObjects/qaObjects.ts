@@ -258,7 +258,7 @@ export const runExperiment = async ({experimentId}) =>
             const loopArray = [];
             for (let loop = 0; loop < cAse.loops; loop++) {
 
-                const paymentId = generatePaymentId(collection, suite, cAse, counter++);
+                const paymentId:string = generatePaymentId(collection, suite, cAse, counter++);
                 const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
 
 
@@ -275,21 +275,22 @@ export const runExperiment = async ({experimentId}) =>
                 }
 
                 const messageOutgoing = {
-                  type: MSG_OUTGOING,
-                  experimentId: experimentId,
-                  collectionId: collection.id,
-                  suiteId: suite.id,
-                  caseId: cAse.id,
-                  thread: thread,
-                  loop: loop,
-                  request: JSON.stringify(changedBody),
-                  response: JSON.stringify(responseJSon),
-                  requestDate: requestDate.toISOString(),
-                  responseDate: responseDate.toISOString(),
-                  status: res.status,
-                  statusText: res.statusText,
-                  txnId: responseJSon?.txnId,
-                  jsonata: result.jsonata
+                  type:             MSG_OUTGOING,
+                  experimentId:     experimentId,
+                  collectionId:     collection.id,
+                  suiteId:          suite.id,
+                  caseId:           cAse.id,
+                  thread:           thread,
+                  loop:             loop,
+                  paymentId:        paymentId,
+                  request:          JSON.stringify(changedBody),
+                  response:         JSON.stringify(responseJSon),
+                  requestDate:      requestDate.toISOString(),
+                  responseDate:     responseDate.toISOString(),
+                  status:           res.status,
+                  statusText:       res.statusText,
+                  txnId:            responseJSon?.txnId,
+                  jsonata:          result.jsonata
                 };
                 loopArray.push( messageOutgoing );
 

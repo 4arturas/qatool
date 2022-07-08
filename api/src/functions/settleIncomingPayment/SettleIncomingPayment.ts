@@ -1,9 +1,8 @@
 import type { APIGatewayEvent, Context } from 'aws-lambda'
 import { logger } from 'src/lib/logger'
-import {generatePaymentId, MSG_INCOMING} from "../global";
-import {CreateMessageInput} from "web/types/graphql";
-import {createExperimentResult} from "src/services/experimentResults/experimentResults";
 import {CreateExperimentResultInput} from "types/graphql";
+import {MSG_INCOMING} from "src/functions/global";
+import {createExperimentResult} from "src/services/experimentResults/experimentResults";
 
 /**
  * The handler function is your code that processes http request events.
@@ -22,10 +21,12 @@ import {CreateExperimentResultInput} from "types/graphql";
  * function, and execution environment.
  */
 export const handler = async (event: APIGatewayEvent, context: Context) => {
-  logger.info('Invoked IncomingPayment function')
+  logger.info('Invoked SettleIncomingPayment function')
 
-  const bodyJSon = JSON.parse(event.body);
-  const paymentId:string = generatePaymentId('QA-INC');
+  const body = event.body;
+  const bodyJSON = JSON.parse(body);
+  const paymentId:string = bodyJSON.paymentId;
+
   const message:CreateExperimentResultInput = {
     type:         MSG_INCOMING,
     experimentId: null,
@@ -39,7 +40,7 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
     response:     event.body,
     requestDate:  null,
     responseDate: new Date().toISOString(),
-    txnId:        bodyJSon.txnId
+    txnId:        null
   }
 
   const dbResult = await createExperimentResult({
@@ -52,11 +53,7 @@ export const handler = async (event: APIGatewayEvent, context: Context) => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      "paymentId": paymentId,
-      "canAccept": true
-    }),/*
-    body: JSON.stringify({
-      data: 'IncomingPayment function',
-    }),*/
+      data: 'settleIncomingPayment function',
+    }),
   }
 }
