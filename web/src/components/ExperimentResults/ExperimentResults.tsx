@@ -13,6 +13,7 @@ import jsonata from "jsonata";
 import {FieldTimeOutlined} from "@ant-design/icons";
 import JSONModal from "src/components/JSONModal/JSONModal";
 import JSONataJsonModal from "src/components/JSONataJsonModal/JSONataJsonModal";
+import TimelineCell from "src/components/TimelineCell";
 
 const columns = [
   {
@@ -108,7 +109,7 @@ const ShowTimeline = ({rec}) => {
       width='50%'
       style={{ top: 5 }}
     >
-      <Timeline outgoing={rec.type === MSG_OUTGOING?rec:null} incoming={rec.type === MSG_INCOMING?rec:null} JSONata={rec.jsonata} />
+      <TimelineCell id={rec.id} />
     </Modal>
   </>
 

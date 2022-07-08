@@ -1,15 +1,17 @@
 import { db } from 'src/lib/db'
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
+import ExperimentResult from 'src/models/ExperimentResult'
 
 export const experimentResults: QueryResolvers['experimentResults'] = () => {
   return db.experimentResult.findMany()
 }
 
-export const experimentResultsByExperimentId: QueryResolvers['experimentResultsByExperimentId'] = ( {experimentId} ) => {
-  return db.experimentResult.findMany({
-    where: { experimentId: { equals: experimentId } }
-  })
-}
+export const experimentResultsByExperimentId: QueryResolvers['experimentResultsByExperimentId'] =
+  ({ experimentId }) => {
+    return db.experimentResult.findMany({
+      where: { experimentId: { equals: experimentId } },
+    })
+  }
 
 export const experimentResult: QueryResolvers['experimentResult'] = ({
   id,
@@ -40,3 +42,27 @@ export const deleteExperimentResult: MutationResolvers['deleteExperimentResult']
       where: { id },
     })
   }
+
+export const timeline: QueryResolvers['timeline'] = async ({ id }) => {
+  const resultArr = []
+  const outgoing = await experimentResult( { id } );
+  if ( outgoing ) {
+    resultArr.push(outgoing)
+
+    if ( outgoing.txnId )
+    {
+      const incoming = await ExperimentResult.findBy({ txnId: outgoing.txnId });
+      if ( incoming )
+      {
+        resultArr.push(incoming);
+        if ( incoming.paymentId )
+        {
+          const settled = await ExperimentResult.findBy({ paymentId: incoming.paymentId, txnId: null });
+          if ( settled )
+            resultArr.push( settled );
+        }
+      }
+    } // end incoming
+  } // outgoing
+  return resultArr;
+}

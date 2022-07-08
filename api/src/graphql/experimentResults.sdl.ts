@@ -23,6 +23,7 @@ export const schema = gql`
     experimentResults: [ExperimentResult!]! @requireAuth
     experimentResultsByExperimentId(experimentId: Int!): [ExperimentResult!]! @requireAuth
     experimentResult(id: Int!): ExperimentResult @requireAuth
+    timeline(id: Int!): [ExperimentResult] @requireAuth
   }
 
   input CreateExperimentResultInput {

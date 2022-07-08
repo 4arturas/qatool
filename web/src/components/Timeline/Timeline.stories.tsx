@@ -5,7 +5,7 @@ export const generated = () => {
   return <>
     <Timeline {...standard()} />
     <br/>
-    <Timeline incoming={null} outgoing={standard().outgoing} JSONata={standard().JSONata} />
+    <Timeline experimentResults={[]} incoming={null} outgoing={standard().outgoing} JSONata={standard().JSONata} />
   </>
 }
 

@@ -214,6 +214,20 @@ module.exports = {
           type: "DateTime",
           isGenerated: false,
           isUpdatedAt: true
+        },
+        {
+          name: "executed",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "Boolean",
+          default: false,
+          isGenerated: false,
+          isUpdatedAt: false
         }
       ],
       primaryKey: null,
@@ -344,7 +358,7 @@ module.exports = {
       isGenerated: false
     },
     {
-      name: "Message",
+      name: "ExperimentResult",
       dbName: null,
       fields: [
         {
@@ -374,6 +388,97 @@ module.exports = {
           isReadOnly: false,
           hasDefaultValue: false,
           type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "experimentId",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "collectionId",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "suiteId",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "caseId",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "thread",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "loop",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "paymentId",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
           isGenerated: false,
           isUpdatedAt: false
         },
@@ -430,7 +535,7 @@ module.exports = {
           isUpdatedAt: false
         },
         {
-          name: "httpCode",
+          name: "status",
           kind: "scalar",
           isList: false,
           isRequired: false,
@@ -439,6 +544,19 @@ module.exports = {
           isReadOnly: false,
           hasDefaultValue: false,
           type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "statusText",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
           isGenerated: false,
           isUpdatedAt: false
         },
@@ -460,46 +578,6 @@ module.exports = {
           kind: "scalar",
           isList: false,
           isRequired: false,
-          isUnique: false,
-          isId: false,
-          isReadOnly: false,
-          hasDefaultValue: false,
-          type: "String",
-          isGenerated: false,
-          isUpdatedAt: false
-        }
-      ],
-      primaryKey: null,
-      uniqueFields: [],
-      uniqueIndexes: [],
-      isGenerated: false
-    },
-    {
-      name: "Mytest",
-      dbName: null,
-      fields: [
-        {
-          name: "id",
-          kind: "scalar",
-          isList: false,
-          isRequired: true,
-          isUnique: false,
-          isId: true,
-          isReadOnly: false,
-          hasDefaultValue: true,
-          type: "Int",
-          default: {
-            name: "autoincrement",
-            args: []
-          },
-          isGenerated: false,
-          isUpdatedAt: false
-        },
-        {
-          name: "name",
-          kind: "scalar",
-          isList: false,
-          isRequired: true,
           isUnique: false,
           isId: false,
           isReadOnly: false,

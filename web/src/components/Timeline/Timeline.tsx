@@ -1,10 +1,10 @@
 import { VerticalTimeline, VerticalTimelineElement }  from 'react-vertical-timeline-component';
 import 'react-vertical-timeline-component/style.min.css';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
 import jsonata from "jsonata";
 import {Chart} from "react-google-charts";
-import {colorIncoming, colorOutgoing, dateFormatYYYYMMDDHHmmss} from "src/global";
+import {colorIncoming, colorOutgoing, dateFormatYYYYMMDDHHmmss, MSG_INCOMING, MSG_OUTGOING} from "src/global";
 import ReactJson from "react-json-view";
 import {Alert} from "antd";
 
@@ -32,13 +32,18 @@ const VTE = ( {title, color, date, json, position, JSONata, icon} ) =>
   </VerticalTimelineElement>
 }
 
-const Timeline = ( {incoming, outgoing, JSONata} ) => {
+const Timeline = ( { experimentResults } ) => {
+
+  const [outgoing] = useState( experimentResults.find( o => o.type === MSG_OUTGOING ) );
+  const [incoming] = useState( experimentResults.find( o => o.type === MSG_INCOMING && o.txnId !== null ) )
+  const [settled] = useState( experimentResults.find( o => o.type === MSG_INCOMING && o.txnId === null ) );
 
   const columns = [
     { type: "string", id: "RequestResponse" },
     { type: "date", id: "Start" },
     { type: "date", id: "End" },
   ];
+/*
 
   const rows =
     (outgoing&&incoming) ?
@@ -49,6 +54,13 @@ const Timeline = ( {incoming, outgoing, JSONata} ) => {
       [
         ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)]
       ];
+*/
+
+  const rows = [
+    ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
+    incoming && ["Incoming", new Date(outgoing.requestDate), new Date(incoming.responseDate)],
+    settled && ["Settled", new Date(outgoing.requestDate), new Date(settled.responseDate)]
+  ];
 
   const data = [columns, ...rows];
 
@@ -57,9 +69,9 @@ const Timeline = ( {incoming, outgoing, JSONata} ) => {
 
       <Chart chartType="Timeline"
              data={data}
-             width="100%" height="135px"
+             width="100%" height="175px"
              options={{
-               colors: [ outgoing && `${colorOutgoing}`, incoming && `${colorIncoming}`],
+               colors: [ outgoing && `${colorOutgoing}`, incoming && `${colorIncoming}`, incoming && `${colorIncoming}`],
              }}/>
 
       <VerticalTimeline>
@@ -69,9 +81,13 @@ const Timeline = ( {incoming, outgoing, JSONata} ) => {
 
         { incoming &&
           <VTE title={'Incoming response'} color={colorIncoming} date={incoming.responseDate} json={incoming.response} position={'right'} JSONata={null}
+               icon={<LogoutOutlined style={{marginLeft:'23px', marginTop: '30px'}}/>}/> }
+
+        { settled &&
+          <VTE title={'Settled response'} color={colorIncoming} date={settled.responseDate} json={settled.response} position={'right'} JSONata={null}
               icon={<LogoutOutlined style={{marginLeft:'23px', marginTop: '30px'}}/>}/> }
 
-        { outgoing && <VTE title={'Outgoing response'} color={colorOutgoing} date={outgoing.responseDate} json={outgoing.response} position={'right'} JSONata={JSONata}
+        { outgoing && <VTE title={'Outgoing response'} color={colorOutgoing} date={outgoing.responseDate} json={outgoing.response} position={'right'} JSONata={outgoing.jsonata}
               icon={<LogoutOutlined style={{marginLeft:'23px', marginTop: '30px'}}/>}/> }
 
       </VerticalTimeline>

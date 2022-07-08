@@ -7,8 +7,10 @@ import { RedwoodRecord } from '@redwoodjs/record'
 RedwoodRecord.db = db
 RedwoodRecord.schema = datamodel
 
+import ExperimentResult from 'src/models/ExperimentResult'
 import QaObjectRelationship from 'src/models/QaObjectRelationship'
 
+ExperimentResult.requiredModels = []
 QaObjectRelationship.requiredModels = []
 
-export { QaObjectRelationship }
+export { ExperimentResult, QaObjectRelationship }
