@@ -252,12 +252,13 @@ export const runExperiment = async ({experimentId}) =>
         const result = replaceRemoveResultResponse.find(r => r.typeId === RESULT);
         const response = replaceRemoveResultResponse.find(r => r.typeId === RESPONSE);
 
+        let counter = 0;
         for (let thread = 0; thread < cAse.threads; thread++) {
           const promise = new Promise(async (resolve, reject) => {
             const loopArray = [];
             for (let loop = 0; loop < cAse.loops; loop++) {
 
-                const paymentId = generatePaymentId(collection, suite, cAse);
+                const paymentId = generatePaymentId(collection, suite, cAse, counter++);
                 const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
 
 
@@ -346,11 +347,11 @@ async function makeCall(url, method, headers, data) {
   return response; // parses JSON response into native JavaScript objects
 }
 
-const generatePaymentId = ( collection, suite, cAse ):string =>
+const generatePaymentId = ( collection, suite, cAse, counter:number ):string =>
 {
   const prefix = 'QA-OUT';
   const random = getRandomIntInclusive(1000,9999);
-  return `${prefix}-${new Date().getTime()}-${random}-${collection.batchId}-${suite.batchId}-${cAse.batchId}`;
+  return `${prefix}-${new Date().getTime()}-${random}-${collection.batchId}-${suite.batchId}-${cAse.batchId}-${counter}`;
 }
 
 const merge = (paymentId:string, body, replace, remove) =>
