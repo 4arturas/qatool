@@ -85,7 +85,7 @@ const ObjectClone = ({parentId, qaObject, beforeSave, afterSave}) => {
     <>
       <CopyOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
       <Modal
-        title={ 'New Object' }
+        title={ 'Clone Object' }
         visible={isModalVisible}
         onOk={()=>setIsModalVisible(false)}
         onCancel={()=>setIsModalVisible(false)}
