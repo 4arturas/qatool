@@ -21,7 +21,6 @@ import QaObjectMergePage from './layouts/QaObjectRelationshipLayout/pages/QaObje
 const Routes = () => {
   return (
     <Router>
-
       <Set wrap={QaLayout}>
 
         {/*<Set wrap={QaObjectsLayout}>
@@ -43,6 +42,7 @@ const Routes = () => {
         </Set>
 
         <Set wrap={QaObjectRelationshipLayout}>
+          <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
           <Route path="/relationship/{id:Int}" page={QaObjectRelationshipPage} name="qaObjectRelationship" />
           <Route path="/relationship/{parentId:Int}/new/{typeId:Int}/type" page={QaObjectRelationshipNewPage} name="qaObjectRelationshipNew" />
           <Route path="/qa-object-merge/{parentId:Int}" page={QaObjectMergePage} name="qaObjectMerge" />

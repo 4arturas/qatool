@@ -71,6 +71,10 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
           <Link to={routes.qaObjectRelationship({id:record.id})}>
             {record.name}
           </Link>
+
+          <Link to={routes.tree({id:record.id})}>
+            [{record.name} new tree]
+          </Link>
           <>
             <span style={{float:'right', color: 'black'}}><Merge qaObjectParent={record} /></span>
 
