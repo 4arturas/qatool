@@ -6,7 +6,7 @@ import {
   TextField,
   Submit, SelectField, useForm,
 } from '@redwoodjs/forms'
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import CollectionForm from "./CollectionForm";
 import SuiteForm from "src/components/QaObjectForm/SuiteForm";
 import {
@@ -18,7 +18,7 @@ import {
   REPLACE, RESPONSE,
   RESULT, SERVER,
   SUITE,
-  TEST, EXPERIMENT
+  TEST, EXPERIMENT, typeIdToColor
 } from "src/global";
 import QaObjectsFindByTypeCell from "src/components/QaObjectsFindByTypeCell";
 import CaseForm from "src/components/QaObjectForm/CaseForm";
@@ -39,6 +39,7 @@ const QaObjectForm = (props) => {
   }
 
   const onSelect = (data) => {
+    console.log( data.target.value );
     setTypeId(parseInt(data.target.value));
   }
 
@@ -79,6 +80,7 @@ const QaObjectForm = (props) => {
           name="typeId"
           defaultValue={typeId}
           className="rw-input"
+          style={{backgroundColor:`${typeIdToColor(typeId)}`}}
           errorClassName="rw-input rw-input-error"
           onChange={onSelect}
           validation={{
