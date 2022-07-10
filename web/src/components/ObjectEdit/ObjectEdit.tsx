@@ -9,6 +9,8 @@ import { EditOutlined} from "@ant-design/icons";
 import {Modal, Tooltip} from "antd";
 import QaObjectForm from "src/components/QaObjectForm";
 import {useLazyQuery} from "@apollo/client";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 
 const UPDATE_QA_OBJECT_MUTATION = gql`
   mutation UpdateQaObjectMutation($id: Int!, $input: UpdateQaObjectInput!) {
@@ -103,7 +105,12 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
 
   return (
     <>
-      <EditOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
+      {/*<EditOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />*/}
+
+      <FontAwesomeIcon
+        icon={faPenToSquare}
+        style={{fontSize: '20px', cursor: "pointer"}}
+        onClick={ ()=>setIsModalVisible(true) }/>
 
       <Modal
         title={ 'Edit Object' }
