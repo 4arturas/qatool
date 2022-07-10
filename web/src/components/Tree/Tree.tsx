@@ -4,6 +4,7 @@ import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import Merge from "src/components/Merge/Merge";
+import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 
 const Tree = ( { tree } ) => {
 
@@ -30,6 +31,9 @@ const Tree = ( { tree } ) => {
     cloneQaObject: {
       marginLeft: '10px'
     },
+    deleteQaObject: {
+      marginLeft: '10px'
+    },
     addChildrenBlock: {
       border: `1px solid ${typeIdToColor(qaObject.typeId)}`, padding: '5px 0 5px 7px', borderRadius: '5px', marginLeft: '10px'
     },
@@ -41,7 +45,7 @@ const Tree = ( { tree } ) => {
     }
   }
 
-  return <div key={`tree${parentId}`} style={stylingObject.treeComponent}>
+  return <div id={`tree${parentId}`} style={stylingObject.treeComponent}>
 
     <Tag color={typeIdToColor(qaObject.typeId)} style={{color:'black'}}>
       {typeIdToName(qaObject.typeId)}
@@ -56,6 +60,18 @@ const Tree = ( { tree } ) => {
     <span key={`clone${parentId}`} style={stylingObject.cloneQaObject}>
       <Tooltip title={'Clone object'}>
         <ObjectClone parentId={parentId} qaObject={qaObject} beforeSave={()=>{}} afterSave={()=>{}}/>
+      </Tooltip>
+    </span>
+
+    <span key={`delete${parentId}`} style={stylingObject.deleteQaObject}>
+      <Tooltip title={'Delete object'}>
+        <ObjectDelete
+          id={parentId}
+          beforeSave={()=>{}}
+          afterSave={ () => {
+            document.getElementById(`tree${parentId}`).style.display = 'none';
+          }}
+        />
       </Tooltip>
     </span>
 
