@@ -4,7 +4,7 @@ import {
   BODY,
   CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, getChildrenFromInput, REMOVE,
   REPLACE, RESPONSE, RESULT,
-  TEST
+  TEST, typeIdToColor
 } from "src/global";
 import {toast} from "@redwoodjs/web/toast";
 import {CopyOutlined} from "@ant-design/icons";
@@ -83,13 +83,17 @@ const ObjectClone = ({parentId, qaObject, beforeSave, afterSave}) => {
     });
   }
 
+  const stylingObject = {
+    icon: { fontSize: '20px', cursor: "pointer", color: `${typeIdToColor(qaObject.typeId)}` }
+  }
+
   return (
     <>
       {/*<CopyOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />*/}
 
       <FontAwesomeIcon
         icon={faCopy}
-        style={{fontSize: '20px', cursor: "pointer"}}
+        style={stylingObject.icon}
         onClick={ ()=>setIsModalVisible(true) }/>
 
       <Modal
