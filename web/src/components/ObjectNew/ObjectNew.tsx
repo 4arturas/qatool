@@ -6,9 +6,11 @@ import {toast} from "@redwoodjs/web/toast";
 import {useMutation} from "@redwoodjs/web";
 import {
   CREATE_QA_OBJECT_RELATIONSHIP_MUTATION,
-  getChildrenFromInput,
+  getChildrenFromInput, typeIdToColor,
   typeIdToTag
 } from "src/global";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
   mutation CreateQaObjectMutationNewQaObject($input: CreateQaObjectInput!) {
@@ -54,10 +56,19 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
       },
     })
 
+  const stylingObject = {
+    icon: { fontSize: '20px', cursor: "pointer", color: `${typeIdToColor(typeId)}`, marginBottom: '-3px' }
+  }
+
     return (
       <>
-        <PlusCircleOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} /><span style={{marginLeft:'3px'}}>{typeIdToTag(typeId)}</span>
+        {/*<PlusCircleOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} /><span style={{marginLeft:'3px'}}>{typeIdToTag(typeId)}</span>*/}
 
+        <FontAwesomeIcon
+          icon={faCirclePlus}
+          style={stylingObject.icon}
+          onClick={ ()=>setIsModalVisible(true) }/>
+        <span style={{marginLeft:'3px'}}>{typeIdToTag(typeId)}</span>
 
         <Modal
           title={ 'New Object' }
