@@ -10,7 +10,7 @@ import {Modal, Tooltip} from "antd";
 import QaObjectForm from "src/components/QaObjectForm";
 import {useLazyQuery} from "@apollo/client";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
+import {faPen} from "@fortawesome/free-solid-svg-icons";
 
 const UPDATE_QA_OBJECT_MUTATION = gql`
   mutation UpdateQaObjectMutation($id: Int!, $input: UpdateQaObjectInput!) {
@@ -108,7 +108,7 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
       {/*<EditOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />*/}
 
       <FontAwesomeIcon
-        icon={faPenToSquare}
+        icon={faPen}
         style={{fontSize: '20px', cursor: "pointer"}}
         onClick={ ()=>setIsModalVisible(true) }/>
 
