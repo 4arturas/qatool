@@ -45,6 +45,11 @@ export const deleteQaObjectRelationship: MutationResolvers['deleteQaObjectRelati
     })
   }
 
+export const detachQaObjectRelationship: MutationResolvers['detachQaObjectRelationship'] = async ( { id } ) => {
+  const test = await db.qaObjectRelationship.delete({ where: { id } } );
+    return test;
+  }
+
 
 export const QaObjectRelationship: QaObjectRelationshipResolvers = {
   parent: (_obj, { root }) =>

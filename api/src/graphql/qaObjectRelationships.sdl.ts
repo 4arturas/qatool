@@ -30,5 +30,6 @@ export const schema = gql`
       input: UpdateQaObjectRelationshipInput!
     ): QaObjectRelationship! @requireAuth
     deleteQaObjectRelationship(id: Int!): QaObjectRelationship! @requireAuth
+    detachQaObjectRelationship(id: Int!): QaObjectRelationship! @requireAuth
   }
 `

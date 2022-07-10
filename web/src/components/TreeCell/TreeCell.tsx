@@ -43,7 +43,7 @@ export const Failure = ( { error }: CellFailureProps<FindTreeQueryVariables>) =>
 
 export const Success = ( { tree }: CellSuccessProps<FindTreeQuery, FindTreeQueryVariables> ) => {
   return <>
-    <Toaster toastOptions={{ className: 'rw-toast', duration: 3000 }} />
-    <Tree tree={tree} />
+    <Toaster toastOptions={{ className: 'rw-toast', duration: 30000 }} />
+    <Tree tree={tree} relationId={null} />
   </>
 }

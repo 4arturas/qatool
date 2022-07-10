@@ -5,19 +5,28 @@ import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import Merge from "src/components/Merge/Merge";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
+import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
 
-const Tree = ( { tree } ) => {
+const Tree = ( { tree, relationId } ) => {
+
+  let ctx = 0;
 
   const { parentId, hierarchy, objects }  = tree;
   const qaObject                          = objects.find( o => o.id === parentId );
-  const children:Array<number>            = hierarchy.filter( h => h.parentId === parentId ).map( m => m.childrenId );
-  const qaObjectChildren                  = objects.filter( o => children.includes( o.id ) );
 
-  const availableChildrenForObject: Array<number> = getChildrenTypeIdByParentTypeId( qaObject.typeId );
+  const childrenHierarchy:Array<{ id:number,parentId:number,childrenId:number}> =
+    hierarchy.filter( h => h.parentId === parentId );
+
+  const qaObjectChildrenNew = childrenHierarchy.map( ch => {
+    return { relationId: ch.id, object: objects.find( o => o.id === ch.childrenId ) }
+  });
+
+  const availableChildrenForObject: Array<number> =
+    getChildrenTypeIdByParentTypeId( qaObject.typeId );
 
   const possibleToAddChildren: Array<number> =
     ( qaObject.typeId === EXPERIMENT || qaObject.typeId === CASE || qaObject.typeId === TEST ) ?
-      qaObjectChildren.filter( f => !availableChildrenForObject.includes( f.typeId  ) ).map( m => m.typeId )
+      qaObjectChildrenNew.filter( f => !availableChildrenForObject.includes( f.object.typeId  ) ).map( m => m.object.typeId )
       :
       getChildrenTypeIdByParentTypeId( qaObject.typeId );
 
@@ -33,6 +42,9 @@ const Tree = ( { tree } ) => {
     },
     deleteQaObject: {
       marginLeft: '10px'
+    },
+    detachQaObject: {
+      marginLeft: '5px'
     },
     addChildrenBlock: {
       border: `1px solid ${typeIdToColor(qaObject.typeId)}`, padding: '5px 0 5px 7px', borderRadius: '5px', marginLeft: '10px'
@@ -76,6 +88,21 @@ const Tree = ( { tree } ) => {
       </Tooltip>
     </span>
 
+    {
+      qaObject.typeId !== EXPERIMENT &&
+      <span key={`detach${parentId}`} style={stylingObject.detachQaObject}>
+      <Tooltip title={'Delete object'}>
+        <ObjectDetach
+          relationId={relationId}
+          qaObject={qaObject}
+          beforeSave={()=>{}}
+          afterSave={ () => {
+            document.getElementById(`tree${parentId}`).style.display = 'none';
+          }}
+        />
+      </Tooltip>
+    </span>
+    }
 
     {
       possibleToAddChildren.length > 0 &&
@@ -99,8 +126,12 @@ const Tree = ( { tree } ) => {
     }
 
     <div key={`treeChildren${parentId}`} style={{marginLeft: '20px'}}>
-      {qaObjectChildren.map( q => {
-        return <Tree key={`treeChildrenInside${q.id}`} tree={{ parentId: q.id, hierarchy: hierarchy, objects: objects }}/>
+      {
+        qaObjectChildrenNew.map( q => {
+        { return !q.object ?
+          <span key={`dummyTreeChildrenInside${parentId}${ctx++}`}></span>/*TODO this needs to be solved, probably they are undefined because there are not deleted relationships*/ :
+          <Tree key={`treeChildrenInside${q.object.id}`} tree={{ parentId: q.object.id, hierarchy: hierarchy, objects: objects }} relationId={q.relationId}/>
+        }
       })}
     </div>
 
