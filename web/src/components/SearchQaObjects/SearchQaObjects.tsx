@@ -127,28 +127,6 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
         <>{(record.json && record.jsonata) && (validateJSONata(record.jsonata, record.json) ? <Badge status="success" />:<Badge status="error" />)}{mySubstr(record.jsonata, 5)}</>
     },
     {
-      title: 'Address',
-      dataIndex: 'address',
-      key: 'address',
-      width: 200,
-      render: (_, record) =>
-        mySubstr(record.address, 10)
-    },
-    {
-      title: 'Method',
-      dataIndex: 'method',
-      key: 'method',
-      width: 50
-    },
-    {
-      title: 'Header',
-      dataIndex: 'header',
-      key: 'header',
-      width: 200,
-      render: (_, record) =>
-        mySubstr(record.header, 10)
-    },
-    {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
