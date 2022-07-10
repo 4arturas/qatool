@@ -10,6 +10,8 @@ import {toast} from "@redwoodjs/web/toast";
 import {CopyOutlined} from "@ant-design/icons";
 import {Modal, Tooltip} from "antd";
 import QaObjectForm from "src/components/QaObjectForm";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faCopy} from "@fortawesome/free-solid-svg-icons";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
   mutation CreateQaObjectMutationCloneQaObject($input: CreateQaObjectInput!) {
@@ -83,7 +85,13 @@ const ObjectClone = ({parentId, qaObject, beforeSave, afterSave}) => {
 
   return (
     <>
-      <CopyOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />
+      {/*<CopyOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />*/}
+
+      <FontAwesomeIcon
+        icon={faCopy}
+        style={{fontSize: '20px', cursor: "pointer"}}
+        onClick={ ()=>setIsModalVisible(true) }/>
+
       <Modal
         title={ 'Clone Object' }
         visible={isModalVisible}
