@@ -3,7 +3,7 @@ import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
 import {
   CREATE_QA_OBJECT_RELATIONSHIP_MUTATION,
-  getChildrenFromInput,
+  getChildrenFromInput, typeIdToColor,
 } from "src/global";
 import { EditOutlined} from "@ant-design/icons";
 import {Modal, Tooltip} from "antd";
@@ -103,13 +103,17 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
     },
   })
 
+  const stylingObject = {
+    icon: { fontSize: '20px', cursor: "pointer", color: `${typeIdToColor(qaObject.typeId)}` }
+  }
+
   return (
     <>
       {/*<EditOutlined onClick={()=>setIsModalVisible(true)} style={{fontSize:'20px'}} />*/}
 
       <FontAwesomeIcon
         icon={faPen}
-        style={{fontSize: '20px', cursor: "pointer"}}
+        style={stylingObject.icon}
         onClick={ ()=>setIsModalVisible(true) }/>
 
       <Modal
