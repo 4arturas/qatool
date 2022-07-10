@@ -2,6 +2,7 @@ import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
 import {DeleteOutlined} from "@ant-design/icons";
 import {Popconfirm, Tooltip} from "antd";
+import {typeIdToColor} from "src/global";
 
 const DELETE_QA_OBJECT_WITH_CHILDREN = gql`
   mutation DeleteQaObjectWithChildrenMutation($id: Int!) {
@@ -11,7 +12,7 @@ const DELETE_QA_OBJECT_WITH_CHILDREN = gql`
   }
   `;
 
-const ObjectDelete = ( { id, beforeSave, afterSave } ) => {
+const ObjectDelete = ( { id, beforeSave, afterSave, typeId=null/*needed for the color*/ } ) => {
 
 
     const [deleteQaObjectWithChildren] = useMutation(DELETE_QA_OBJECT_WITH_CHILDREN, {
@@ -26,6 +27,10 @@ const ObjectDelete = ( { id, beforeSave, afterSave } ) => {
       },
     })
 
+  const stylingObject = {
+    icon: { fontSize: '20px', cursor: "pointer", color: `${typeId ? typeIdToColor(typeId): ''}` }
+  }
+
     return (
       <Popconfirm
         title="Are you sure to delete this item?"
@@ -39,7 +44,7 @@ const ObjectDelete = ( { id, beforeSave, afterSave } ) => {
         okText="Yes"
         cancelText="No"
       >
-       <DeleteOutlined style={{fontSize:'20px'}}/>
+       <DeleteOutlined style={stylingObject.icon}/>
 
       </Popconfirm>
 

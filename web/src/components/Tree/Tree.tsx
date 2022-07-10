@@ -67,6 +67,7 @@ const Tree = ( { tree } ) => {
       <Tooltip title={'Delete object'}>
         <ObjectDelete
           id={parentId}
+          typeId={qaObject.typeId}
           beforeSave={()=>{}}
           afterSave={ () => {
             document.getElementById(`tree${parentId}`).style.display = 'none';

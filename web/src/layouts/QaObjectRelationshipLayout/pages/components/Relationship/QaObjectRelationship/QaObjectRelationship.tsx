@@ -70,6 +70,7 @@ const QaObjectRelationship = ({qaObject, uniqueId}) => {
           <ObjectClone parentId={(qaObject.typeId===COLLECTION || qaObject.typeId===SERVER) ? null : qaObject.id} qaObject={qaObject} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
           <ObjectDelete key={`delete${qaObject.id}`}
                         id={qaObject.id}
+                        typeId={qaObject.typeId}
                         beforeSave={()=>{}}
                         afterSave={(id)=> {
                           document.getElementById(`edibBlock${qaObject.id}${qaObject.typeId}`).style.display = 'none';

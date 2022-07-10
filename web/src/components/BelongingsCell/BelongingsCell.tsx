@@ -59,6 +59,7 @@ export const Success = ({ belongings }: CellSuccessProps<BelongingsQuery>) => {
           <ObjectClone parentId={(record.typeId===COLLECTION || record.typeId===SERVER) ? null : record.id} qaObject={record} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
           <ObjectDelete key={`delete${record.id}`}
                         id={record.id}
+                        typeId={record.typeId}
                         beforeSave={()=>{}}
                         afterSave={(id)=> {
                           document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
