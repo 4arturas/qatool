@@ -91,7 +91,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
         qaObject={qaObject}
         beforeSave={()=>{}}
         afterSave={ () => {
-          window.location.href = window.location.href;
+          window.location.reload();
         }}/>
     </span>
 
@@ -102,7 +102,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
           qaObject={qaObject}
           beforeSave={()=>{}}
           afterSave={ ( clonedObject, relationship ) => {
-            window.location.href = window.location.href;
+            window.location.reload();
           } }
         />
       </Tooltip>
