@@ -95,18 +95,21 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
         }}/>
     </span>
 
+
     <span key={`clone${parentId}`} style={stylingObject.cloneQaObject}>
       <Tooltip title={'Clone object'}>
         <ObjectClone
           parentId={qaObject.typeId === EXPERIMENT ? null : treeParentId}
           qaObject={qaObject}
-          beforeSave={()=>{}}
-          afterSave={ ( clonedObject, relationship ) => {
+          beforeSave={() => {
+          }}
+          afterSave={(clonedObject, relationship) => {
             window.location.reload();
-          } }
+          }}
         />
       </Tooltip>
     </span>
+
 
     <span key={`delete${parentId}`} style={stylingObject.deleteQaObject}>
       <Tooltip title={'Delete object'}>
@@ -122,7 +125,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
     </span>
 
     {
-      qaObject.typeId !== EXPERIMENT &&
+      treeParentId !== parentId/*if here is equality that means that we are on the top of the hierarchy*/ &&
       <span key={`detach${parentId}`} style={stylingObject.detachQaObject}>
       <Tooltip title={'Delete object'}>
         <ObjectDetach
