@@ -89,7 +89,7 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
       toast.success('QaObject updated')
 
       setIsModalVisible(false);
-
+      afterSave( /*qaObject*/ );
     },
     onError: (error) => {
       toast.error(error.message)
@@ -136,7 +136,6 @@ const ObjectEdit = ({qaObject, beforeSave, afterSave}) => {
               const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
               const data = await updateQaObject({ variables: { id, input: castInput } })
               const qaObject = data.data.updateQaObject;
-              afterSave( qaObject );
             }
           }
           error={errorUpdateQaObject}
