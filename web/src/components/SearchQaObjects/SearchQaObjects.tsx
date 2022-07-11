@@ -9,8 +9,8 @@ import {
   TYPES, validateJSONata
 } from "src/global";
 import {useLazyQuery} from "@apollo/client";
-import {Link, navigate, routes} from "@redwoodjs/router";
-import QaTrees from "src/layouts/QaTreeLayout/components/Tree/QaTrees/QaTrees";
+import {Link, navigate, routes, useParams} from "@redwoodjs/router";
+import QaTrees from "src/components/QaTrees/QaTrees";
 import {BarChartOutlined, ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
 import BelongingsCell from 'src/components/BelongingsCell'
@@ -22,8 +22,8 @@ import Merge from "src/components/Merge/Merge";
 import JSONModal from "src/components/JSONModal/JSONModal";
 
 export const QUERY = gql`
-  query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int) {
-    searchQaObjects(searchCriteria: $searchCriteria, page: $page, pageSize: $pageSize) {
+  query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int, $count: Int) {
+    searchQaObjects(searchCriteria: $searchCriteria, page: $page, pageSize: $pageSize, count: $count) {
       qaObjects {
         id
         typeId
@@ -48,7 +48,7 @@ export const QUERY = gql`
   }
 `
 
-const SearchQaObjects = ({currentPage, pageSize}) => {
+const SearchQaObjects = ({currentPage, pageSize, count}) => {
 
   const [page, setPage] = useState(currentPage);
   const [form] = Form.useForm();
@@ -68,12 +68,8 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       width:300,
       render: (_, record) =>
         <div>
-          <Link to={routes.qaObjectRelationship({id:record.id})}>
-            {record.name}
-          </Link>
-
           <Link to={routes.tree({id:record.id})}>
-            [{record.name} new tree]
+            {record.name}
           </Link>
           <>
             <span style={{float:'right', color: 'black'}}><Merge qaObjectParent={record} /></span>
@@ -157,7 +153,6 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
     },
   ];
 
-  const [searchCriteria, setSearchCriteria] = useState({ });
   const [qaObjectPage, setQaObjectPage] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
 
@@ -189,8 +184,14 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
     );
   };
 
+  const { name, typeId } = useParams();
+
+  let tmpSearchCriteria = {};
+  if ( typeId ) tmpSearchCriteria['typeId'] = typeId.split(',').map( t => parseInt(t) );
+  if ( name ) tmpSearchCriteria['name'] = name;
+
   useEffect(() => {
-    searchQaObjects({variables: { searchCriteria: {}, page: page, pageSize: pageSize }});
+    searchQaObjects({variables: { searchCriteria: tmpSearchCriteria, page: page, pageSize: pageSize, count: count }});
   }, [] );
 
   return <>
@@ -203,13 +204,13 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
             form={form}
             name="basic"
             layout='inline'
-            initialValues={{remember: false}}
+            initialValues={tmpSearchCriteria}
             onFinish={ (values: any) => {
-              setSearchCriteria( values );
+              tmpSearchCriteria = values;
               setLoadingData( true );
-              navigate(routes.qaObjects({page:1, pageSize:pageSize}));
+              navigate(routes.qaObjects({page:1, pageSize:pageSize, count: 0, ...values}));
               setPage(1);
-              searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize }});
+              searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize, count: 0 }});
             }}
             onFinishFailed={(errorInfo: any) => {
               console.log('Failed:', errorInfo);
@@ -288,14 +289,14 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
                   onChange={ ( p) => {
                     setPage(p);
                     setLoadingData(true);
-                    searchQaObjects({variables: { searchCriteria: searchCriteria, page: p, pageSize: pageSize }});
-                    navigate(routes.qaObjects({page: p, pageSize: pageSize}))
+                    searchQaObjects({variables: { searchCriteria: tmpSearchCriteria, page: p, pageSize: pageSize, count: qaObjectPage.count }});
+                    navigate(routes.qaObjects({ page: p, pageSize: pageSize, count: qaObjectPage.count } ) )
                     setLoadingData(false);
                   }
                   }
                   showSizeChanger
                   onShowSizeChange={ ( current, ps) =>
-                    window.location.replace(routes.qaObjects({page: 1, pageSize: ps}))
+                    window.location.replace(routes.qaObjects({page: 1, pageSize: ps, count: qaObjectPage.count}))
                   }
                   pageSizeOptions={[5, 10, 20, 50, 100]}
                   total={qaObjectPage.count}

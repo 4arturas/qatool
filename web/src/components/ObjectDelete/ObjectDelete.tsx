@@ -6,9 +6,7 @@ import {typeIdToColor} from "src/global";
 
 const DELETE_QA_OBJECT_WITH_CHILDREN = gql`
   mutation DeleteQaObjectWithChildrenMutation($id: Int!) {
-    deleteQaObjectWithChildren(id: $id) {
-      id
-    }
+    deleteQaObjectWithChildren(id: $id)
   }
   `;
 

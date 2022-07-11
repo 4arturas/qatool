@@ -126,20 +126,21 @@ const ObjectClone = ({parentId, qaObject, beforeSave, afterSave}) => {
             }
             const data = createQaObject({ variables: { input: input } });
 
-            data.then( (ret) => {
+            data.then( async (ret) => {
               const newCreateQaObject = ret.data.createQaObject;
               const childrenId: number = newCreateQaObject.id;
+              let createQaObjectRelationshipRet: any = null;
               if ( parentId )
               {
                 const castInput = { parentId: parentId, childrenId: childrenId };
-                const ret = /*await*/ createQaObjectRelationship({ variables: { input: castInput } });
-                // const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
+                const ret = await createQaObjectRelationship({ variables: { input: castInput } });
+                createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
               }
 
               toast.success('Object cloned')
               setIsModalVisible(false);
 
-              afterSave(newCreateQaObject)
+              afterSave(newCreateQaObject, createQaObjectRelationshipRet);
             });
           }}
           error={errorSavingNew}

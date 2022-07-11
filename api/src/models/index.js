@@ -8,9 +8,11 @@ RedwoodRecord.db = db
 RedwoodRecord.schema = datamodel
 
 import ExperimentResult from 'src/models/ExperimentResult'
+import QaObject from 'src/models/QaObject'
 import QaObjectRelationship from 'src/models/QaObjectRelationship'
 
 ExperimentResult.requiredModels = []
+QaObject.requiredModels = []
 QaObjectRelationship.requiredModels = []
 
-export { ExperimentResult, QaObjectRelationship }
+export { ExperimentResult, QaObject, QaObjectRelationship }

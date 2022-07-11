@@ -1,14 +1,14 @@
 import {getChildrenTypeIdByParentTypeId} from "src/global";
-import QaTree from "src/layouts/QaTreeLayout/components/Tree/QaTree/QaTree";
+import ObjectNew from "src/components/ObjectNew/ObjectNew";
 
 const QaTrees = ({typeId}) => {
   const childTypeId: Array<number> = getChildrenTypeIdByParentTypeId(typeId);
   return (
     <>
-      <QaTree typeId={typeId}/>
+      <ObjectNew parentId={null} typeId={typeId} beforeSave={()=>{}} afterSave={()=>{}}/>
       {
         childTypeId.map( (childTypeId) =>
-          <div key={`${childTypeId}div`} style={{marginLeft:'10px', whiteSpace:'nowrap'}}>
+          <div key={`${childTypeId}div`} style={{marginLeft:'10px', marginBottom: '10px', marginTop: '10px', whiteSpace:'nowrap'}}>
             <QaTrees typeId={childTypeId}/>
           </div>
         )

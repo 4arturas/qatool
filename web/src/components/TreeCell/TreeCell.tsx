@@ -42,8 +42,8 @@ export const Failure = ( { error }: CellFailureProps<FindTreeQueryVariables>) =>
 )
 
 export const Success = ( { tree }: CellSuccessProps<FindTreeQuery, FindTreeQueryVariables> ) => {
-  return <>
+  return <div key={'divTreeContainer'} style={{marginLeft: '50px'}}>
     <Toaster toastOptions={{ className: 'rw-toast', duration: 30000 }} />
-    <Tree tree={tree} relationId={null} />
-  </>
+    <Tree tree={tree} relationId={null} treeParentId={tree.parentId}/>
+  </div>
 }

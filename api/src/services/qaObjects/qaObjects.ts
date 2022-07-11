@@ -19,6 +19,7 @@ import {
 } from "src/functions/global";
 import {createExperimentResult} from "src/services/experimentResults/experimentResults";
 import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
+import QaObjectModel  from 'src/models/QaObject'
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
   return db.qaObject.findMany()
@@ -84,13 +85,18 @@ export const qaObjectsPage = ({ page, pageSize }) => {
 
 export const deleteQaObjectWithChildren = async ({ id }) => {
 
-  const children = await QaObjectRelationship.where({ parentId: id});
+  const parent = await QaObjectRelationship.where({ parentId: id});
+  parent.map( c => c.destroy({ throw: true }) );
+  const children = await QaObjectRelationship.where({ childrenId: id});
   children.map( c => c.destroy({ throw: true }) );
 
-  return deleteQaObject( { id: id } );
+  const qaObjectModel = await QaObjectModel.where( {id:id} );
+  qaObjectModel.map( q => q.destroy( { throw: true } ) );
+
+  return id;
 }
 
-export const searchQaObjects = async ( { searchCriteria, page, pageSize } ) =>
+export const searchQaObjects = async ( { searchCriteria, page, pageSize, count } ) =>
 {
   const offset = (page - 1) * pageSize
 
@@ -124,13 +130,12 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize } ) =>
   }
 
   const qaObjects = await db.qaObject.findMany(findClause);
-  //TODO: Two queries, not good, rethink!
-  const count = (await db.qaObject.findMany(findClauseForCount)).length;
 
+  const recordsCount = count === 0 ? (await db.qaObject.findMany(findClauseForCount)).length : count;
 
   return {
     qaObjects: qaObjects,
-    count: count,
+    count: recordsCount,
     page: page,
     pageSize: pageSize
   };

@@ -1,4 +1,12 @@
-import {CASE, EXPERIMENT, getChildrenTypeIdByParentTypeId, TEST, typeIdToColor, typeIdToName} from "src/global";
+import {
+  CASE,
+  DEFAULT_TABLE_PAGE_SIZE,
+  EXPERIMENT,
+  getChildrenTypeIdByParentTypeId,
+  TEST,
+  typeIdToColor,
+  typeIdToName, typeIdToTag
+} from "src/global";
 import {Tag, Tooltip} from "antd";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import ObjectClone from "src/components/ObjectClone/ObjectClone";
@@ -6,8 +14,10 @@ import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import Merge from "src/components/Merge/Merge";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
+import {routes} from "@redwoodjs/router";
+import React from "react";
 
-const Tree = ( { tree, relationId } ) => {
+const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   let ctx = 0;
 
@@ -24,9 +34,28 @@ const Tree = ( { tree, relationId } ) => {
   const availableChildrenForObject: Array<number> =
     getChildrenTypeIdByParentTypeId( qaObject.typeId );
 
+  const returnNonExisting = ( arrChildren:Array<number>, arrObjects ): Array<number> => {
+    const arrRet: Array<number> = [];
+    for ( let i = 0; i < arrChildren.length; i++ ) {
+      const typeId = arrChildren[i];
+      let exists: boolean = false;
+      for (let j = 0; j < arrObjects.length; j++) {
+        const object = arrObjects[j];
+        if ( object.object.typeId === typeId )
+        {
+          exists = true;
+          break;
+        } // end if
+      } // end for j
+      if ( !exists )
+        arrRet.push( typeId );
+    } // end for i
+    return arrRet;
+  }
+
   const possibleToAddChildren: Array<number> =
-    ( qaObject.typeId === EXPERIMENT || qaObject.typeId === CASE || qaObject.typeId === TEST ) ?
-      qaObjectChildrenNew.filter( f => !availableChildrenForObject.includes( f.object.typeId  ) ).map( m => m.object.typeId )
+    ( (qaObject.typeId === EXPERIMENT || qaObject.typeId === CASE || qaObject.typeId === TEST) ) ?
+      returnNonExisting( availableChildrenForObject, qaObjectChildrenNew )
       :
       getChildrenTypeIdByParentTypeId( qaObject.typeId );
 
@@ -57,28 +86,45 @@ const Tree = ( { tree, relationId } ) => {
     }
   }
 
-  return <div id={`tree${parentId}`} style={stylingObject.treeComponent}>
+  const divTreeFragment = 'tree'
 
-    <Tag color={typeIdToColor(qaObject.typeId)} style={{color:'black'}}>
-      {typeIdToName(qaObject.typeId)}
-    </Tag>
+  return <div id={`${divTreeFragment}${parentId}`} style={stylingObject.treeComponent}>
+
+    <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${qaObject.typeId}`} )}>
+      {typeIdToTag(qaObject.typeId)}
+    </a>
 
     - {qaObject.name}
 
     <span key={`edit${parentId}`} style={stylingObject.editQaObject}>
-      <ObjectEdit qaObject={qaObject} beforeSave={()=>{}} afterSave={()=>{}}/>
+      <ObjectEdit
+        qaObject={qaObject}
+        beforeSave={()=>{}}
+        afterSave={ () => {
+          window.location.reload();
+        }}/>
     </span>
+
 
     <span key={`clone${parentId}`} style={stylingObject.cloneQaObject}>
       <Tooltip title={'Clone object'}>
-        <ObjectClone parentId={parentId} qaObject={qaObject} beforeSave={()=>{}} afterSave={()=>{}}/>
+        <ObjectClone
+          parentId={qaObject.typeId === EXPERIMENT ? null : treeParentId}
+          qaObject={qaObject}
+          beforeSave={() => {
+          }}
+          afterSave={(clonedObject, relationship) => {
+            window.location.reload();
+          }}
+        />
       </Tooltip>
     </span>
+
 
     <span key={`delete${parentId}`} style={stylingObject.deleteQaObject}>
       <Tooltip title={'Delete object'}>
         <ObjectDelete
-          id={parentId}
+          id={qaObject.id}
           typeId={qaObject.typeId}
           beforeSave={()=>{}}
           afterSave={ () => {
@@ -89,7 +135,7 @@ const Tree = ( { tree, relationId } ) => {
     </span>
 
     {
-      qaObject.typeId !== EXPERIMENT &&
+      treeParentId !== parentId/*if here is equality that means that we are on the top of the hierarchy*/ &&
       <span key={`detach${parentId}`} style={stylingObject.detachQaObject}>
       <Tooltip title={'Delete object'}>
         <ObjectDetach
@@ -110,9 +156,15 @@ const Tree = ( { tree, relationId } ) => {
         <span key={`addChildrenTitle${parentId}`} style={stylingObject.addChildrenTitle}>Add children</span>
         {
           possibleToAddChildren.map((typeId:number) => {
-            return <span key={`tree${parentId}${typeId}`}><ObjectNew parentId={parentId} typeId={typeId} beforeSave={() => {
-            }} afterSave={() => {
-            }}/></span>
+            return <span key={`tree${parentId}${typeId}`}>
+              <ObjectNew
+                parentId={parentId}
+                typeId={typeId}
+                beforeSave={() => {}}
+                afterSave={() => {
+                  window.location.reload();
+                }}/>
+            </span>
           })
         }
       </span>
@@ -130,7 +182,12 @@ const Tree = ( { tree, relationId } ) => {
         qaObjectChildrenNew.map( q => {
         { return !q.object ?
           <span key={`dummyTreeChildrenInside${parentId}${ctx++}`}></span>/*TODO this needs to be solved, probably they are undefined because there are not deleted relationships*/ :
-          <Tree key={`treeChildrenInside${q.object.id}`} tree={{ parentId: q.object.id, hierarchy: hierarchy, objects: objects }} relationId={q.relationId}/>
+          <Tree
+            key={`treeChildrenInside${q.object.id}`}
+            tree={{ parentId: q.object.id, hierarchy: hierarchy, objects: objects }}
+            relationId={q.relationId}
+            treeParentId={parentId}
+          />
         }
       })}
     </div>

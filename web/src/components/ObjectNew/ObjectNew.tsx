@@ -5,12 +5,13 @@ import React, {useState} from "react";
 import {toast} from "@redwoodjs/web/toast";
 import {useMutation} from "@redwoodjs/web";
 import {
-  CREATE_QA_OBJECT_RELATIONSHIP_MUTATION,
+  CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, DEFAULT_TABLE_PAGE_SIZE,
   getChildrenFromInput, typeIdToColor,
   typeIdToTag
 } from "src/global";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
+import {Link, NavLink, routes} from "@redwoodjs/router";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
   mutation CreateQaObjectMutationNewQaObject($input: CreateQaObjectInput!) {
@@ -68,7 +69,11 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
           icon={faCirclePlus}
           style={stylingObject.icon}
           onClick={ ()=>setIsModalVisible(true) }/>
-        <span style={{marginLeft:'3px'}}>{typeIdToTag(typeId)}</span>
+        <span style={{marginLeft:'3px'}}>
+          <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${typeId}`} )}>
+            {typeIdToTag(typeId)}
+          </a>
+        </span>
 
         <Modal
           title={ 'New Object' }

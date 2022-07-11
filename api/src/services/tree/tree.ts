@@ -26,6 +26,7 @@ export const fetchHierarchy = async ( { id } ) => {
   const parentArray:Array<number> = tree.map( t => t.parentId );
   const childrenArray:Array<number> = tree.map( t => t.childrenId );
   const concatArray:Array<number> = parentArray.concat(childrenArray);
+  concatArray.push(id);
   const idUniqueArray = Array.from(new Set(concatArray));
 
 
