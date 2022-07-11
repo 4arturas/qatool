@@ -10,7 +10,7 @@ import {
 } from "src/global";
 import {useLazyQuery} from "@apollo/client";
 import {Link, navigate, routes} from "@redwoodjs/router";
-import QaTrees from "src/layouts/QaTreeLayout/components/Tree/QaTrees/QaTrees";
+import QaTrees from "src/components/QaTrees/QaTrees";
 import {BarChartOutlined, ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
 import BelongingsCell from 'src/components/BelongingsCell'
@@ -68,12 +68,8 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
       width:300,
       render: (_, record) =>
         <div>
-          <Link to={routes.qaObjectRelationship({id:record.id})}>
-            {record.name}
-          </Link>
-
           <Link to={routes.tree({id:record.id})}>
-            [{record.name} new tree]
+            {record.name}
           </Link>
           <>
             <span style={{float:'right', color: 'black'}}><Merge qaObjectParent={record} /></span>
