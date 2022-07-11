@@ -9,7 +9,7 @@ import {
   TYPES, validateJSONata
 } from "src/global";
 import {useLazyQuery} from "@apollo/client";
-import {Link, navigate, routes} from "@redwoodjs/router";
+import {Link, navigate, routes, useParams} from "@redwoodjs/router";
 import QaTrees from "src/components/QaTrees/QaTrees";
 import {BarChartOutlined, ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
@@ -153,7 +153,6 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
     },
   ];
 
-  const [searchCriteria, setSearchCriteria] = useState({ });
   const [qaObjectPage, setQaObjectPage] = useState(null);
   const [loadingData, setLoadingData] = useState(false);
 
@@ -185,8 +184,14 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
     );
   };
 
+  const { name, typeId } = useParams();
+
+  let tmpSearchCriteria = {};
+  if ( typeId ) tmpSearchCriteria['typeId'] = typeId.split(',').map( t => parseInt(t) );
+  if ( name ) tmpSearchCriteria['name'] = name;
+
   useEffect(() => {
-    searchQaObjects({variables: { searchCriteria: {}, page: page, pageSize: pageSize, count: count }});
+    searchQaObjects({variables: { searchCriteria: tmpSearchCriteria, page: page, pageSize: pageSize, count: count }});
   }, [] );
 
   return <>
@@ -199,11 +204,11 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             form={form}
             name="basic"
             layout='inline'
-            initialValues={{remember: false}}
+            initialValues={tmpSearchCriteria}
             onFinish={ (values: any) => {
-              setSearchCriteria( values );
+              tmpSearchCriteria = values;
               setLoadingData( true );
-              navigate(routes.qaObjects({page:1, pageSize:pageSize, count: 0}));
+              navigate(routes.qaObjects({page:1, pageSize:pageSize, count: 0, ...values}));
               setPage(1);
               searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize, count: 0 }});
             }}
@@ -284,7 +289,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
                   onChange={ ( p) => {
                     setPage(p);
                     setLoadingData(true);
-                    searchQaObjects({variables: { searchCriteria: searchCriteria, page: p, pageSize: pageSize, count: qaObjectPage.count }});
+                    searchQaObjects({variables: { searchCriteria: tmpSearchCriteria, page: p, pageSize: pageSize, count: qaObjectPage.count }});
                     navigate(routes.qaObjects({ page: p, pageSize: pageSize, count: qaObjectPage.count } ) )
                     setLoadingData(false);
                   }
