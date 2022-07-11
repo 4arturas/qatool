@@ -1,4 +1,12 @@
-import {CASE, EXPERIMENT, getChildrenTypeIdByParentTypeId, TEST, typeIdToColor, typeIdToName} from "src/global";
+import {
+  CASE,
+  DEFAULT_TABLE_PAGE_SIZE,
+  EXPERIMENT,
+  getChildrenTypeIdByParentTypeId,
+  TEST,
+  typeIdToColor,
+  typeIdToName, typeIdToTag
+} from "src/global";
 import {Tag, Tooltip} from "antd";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import ObjectClone from "src/components/ObjectClone/ObjectClone";
@@ -6,6 +14,8 @@ import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import Merge from "src/components/Merge/Merge";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
+import {routes} from "@redwoodjs/router";
+import React from "react";
 
 const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
@@ -80,9 +90,9 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   return <div id={`${divTreeFragment}${parentId}`} style={stylingObject.treeComponent}>
 
-    <Tag color={typeIdToColor(qaObject.typeId)} style={{color:'black'}}>
-      {typeIdToName(qaObject.typeId)}
-    </Tag>
+    <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${qaObject.typeId}`} )}>
+      {typeIdToTag(qaObject.typeId)}
+    </a>
 
     - {qaObject.name}
 
