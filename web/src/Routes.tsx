@@ -20,17 +20,17 @@ const Routes = () => {
 
         <Route path="/" page={HomePage} name="home" />
 
-        <Route path="/qa-objects/{page:Int}/{pageSize:Int}" page={QaObjectsPage} name="qaObjects" />
+        <Route path="/qa-objects/{page:Int}/{pageSize:Int}/{count:Int}" page={QaObjectsPage} name="qaObjects" />
 
         <Route path="/experiment/{id:Int}" page={ExperimentPage} name="experiment" />
         <Route path="/experiments/{page:Int}/{pageSize:Int}/{count:Int}" page={ExperimentResultsPage} name="experimentResults" />
 
         <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
-        
+
       </Set>
-      
+
       <Route notfound page={NotFoundPage} />
-      
+
     </Router>
   )
 }

@@ -96,7 +96,7 @@ export const deleteQaObjectWithChildren = async ({ id }) => {
   return id;
 }
 
-export const searchQaObjects = async ( { searchCriteria, page, pageSize } ) =>
+export const searchQaObjects = async ( { searchCriteria, page, pageSize, count } ) =>
 {
   const offset = (page - 1) * pageSize
 
@@ -130,13 +130,12 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize } ) =>
   }
 
   const qaObjects = await db.qaObject.findMany(findClause);
-  //TODO: Two queries, not good, rethink!
-  const count = (await db.qaObject.findMany(findClauseForCount)).length;
 
+  const recordsCount = count === 0 ? (await db.qaObject.findMany(findClauseForCount)).length : count;
 
   return {
     qaObjects: qaObjects,
-    count: count,
+    count: recordsCount,
     page: page,
     pageSize: pageSize
   };

@@ -55,7 +55,7 @@ export const schema = gql`
     getQaObjectsByType(typeId: Int!): [QaObject] @requireAuth
     qaObjectsByTypeId(typeId: Int!): [QaObject] @requireAuth
     qaObjectsPage(page: Int, pageSize: Int): QaObjectPage @requireAuth
-    searchQaObjects(searchCriteria: QaObjectSearchCriteria, page: Int, pageSize: Int): QaObjectPage @requireAuth
+    searchQaObjects(searchCriteria: QaObjectSearchCriteria, page: Int, pageSize: Int, count: Int): QaObjectPage @requireAuth
     belongings(parentId: Int): [QaObject] @requireAuth
     findExperiment(id: Int): Experiment @requireAuth
     runExperiment(experimentId: Int): ExperimentResult @requireAuth

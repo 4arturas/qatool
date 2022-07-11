@@ -22,8 +22,8 @@ import Merge from "src/components/Merge/Merge";
 import JSONModal from "src/components/JSONModal/JSONModal";
 
 export const QUERY = gql`
-  query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int) {
-    searchQaObjects(searchCriteria: $searchCriteria, page: $page, pageSize: $pageSize) {
+  query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int, $count: Int) {
+    searchQaObjects(searchCriteria: $searchCriteria, page: $page, pageSize: $pageSize, count: $count) {
       qaObjects {
         id
         typeId
@@ -48,7 +48,7 @@ export const QUERY = gql`
   }
 `
 
-const SearchQaObjects = ({currentPage, pageSize}) => {
+const SearchQaObjects = ({currentPage, pageSize, count}) => {
 
   const [page, setPage] = useState(currentPage);
   const [form] = Form.useForm();
@@ -186,7 +186,7 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
   };
 
   useEffect(() => {
-    searchQaObjects({variables: { searchCriteria: {}, page: page, pageSize: pageSize }});
+    searchQaObjects({variables: { searchCriteria: {}, page: page, pageSize: pageSize, count: count }});
   }, [] );
 
   return <>
@@ -203,9 +203,9 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
             onFinish={ (values: any) => {
               setSearchCriteria( values );
               setLoadingData( true );
-              navigate(routes.qaObjects({page:1, pageSize:pageSize}));
+              navigate(routes.qaObjects({page:1, pageSize:pageSize, count: 0}));
               setPage(1);
-              searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize }});
+              searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize, count: 0 }});
             }}
             onFinishFailed={(errorInfo: any) => {
               console.log('Failed:', errorInfo);
@@ -284,14 +284,14 @@ const SearchQaObjects = ({currentPage, pageSize}) => {
                   onChange={ ( p) => {
                     setPage(p);
                     setLoadingData(true);
-                    searchQaObjects({variables: { searchCriteria: searchCriteria, page: p, pageSize: pageSize }});
-                    navigate(routes.qaObjects({page: p, pageSize: pageSize}))
+                    searchQaObjects({variables: { searchCriteria: searchCriteria, page: p, pageSize: pageSize, count: qaObjectPage.count }});
+                    navigate(routes.qaObjects({ page: p, pageSize: pageSize, count: qaObjectPage.count } ) )
                     setLoadingData(false);
                   }
                   }
                   showSizeChanger
                   onShowSizeChange={ ( current, ps) =>
-                    window.location.replace(routes.qaObjects({page: 1, pageSize: ps}))
+                    window.location.replace(routes.qaObjects({page: 1, pageSize: ps, count: qaObjectPage.count}))
                   }
                   pageSizeOptions={[5, 10, 20, 50, 100]}
                   total={qaObjectPage.count}
