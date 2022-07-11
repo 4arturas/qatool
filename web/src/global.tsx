@@ -234,6 +234,8 @@ export const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
   mutation CreateQaObjectRelationshipMutation($input: CreateQaObjectRelationshipInput!) {
     createQaObjectRelationship(input: $input) {
       id
+      parentId
+      childrenId
     }
   }`;
 

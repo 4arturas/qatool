@@ -19,6 +19,7 @@ import {
 } from "src/functions/global";
 import {createExperimentResult} from "src/services/experimentResults/experimentResults";
 import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
+import QaObjectModel  from 'src/models/QaObject'
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
   return db.qaObject.findMany()
@@ -84,10 +85,15 @@ export const qaObjectsPage = ({ page, pageSize }) => {
 
 export const deleteQaObjectWithChildren = async ({ id }) => {
 
-  const children = await QaObjectRelationship.where({ parentId: id});
+  const parent = await QaObjectRelationship.where({ parentId: id});
+  parent.map( c => c.destroy({ throw: true }) );
+  const children = await QaObjectRelationship.where({ childrenId: id});
   children.map( c => c.destroy({ throw: true }) );
 
-  return deleteQaObject( { id: id } );
+  const qaObjectModel = await QaObjectModel.where( {id:id} );
+  qaObjectModel.map( q => q.destroy( { throw: true } ) );
+
+  return id;
 }
 
 export const searchQaObjects = async ( { searchCriteria, page, pageSize } ) =>

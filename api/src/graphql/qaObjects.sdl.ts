@@ -97,6 +97,6 @@ export const schema = gql`
     updateQaObject(id: Int!, input: UpdateQaObjectInput!): QaObject!
       @requireAuth
     deleteQaObject(id: Int!): QaObject! @requireAuth
-    deleteQaObjectWithChildren(id: Int!): QaObject! @requireAuth
+    deleteQaObjectWithChildren(id: Int!): Int! @requireAuth
   }
 `
