@@ -29,11 +29,13 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   let ctx = 0;
 
-  const { parentId, hierarchy, objects }  = tree;
+  let { parentId, hierarchy, objects }  = tree;
   const qaObject                          = objects.find( o => o.id === parentId );
 
-  const childrenHierarchy:Array<{ id:number,parentId:number,childrenId:number}> =
-    hierarchy.filter( h => h.parentId === parentId );
+  let childrenHierarchy:Array<{ id:number,parentId:number,childrenId:number}> =
+    Array.from( new Set ( /*Unique*/
+      hierarchy.filter( h => h.parentId === parentId )
+    ) );
 
   const qaObjectChildrenNew = childrenHierarchy.map( ch => {
     return { relationId: ch.id, object: objects.find( o => o.id === ch.childrenId ) }
