@@ -1,14 +1,10 @@
 import type { BelongingsQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import React, {useState} from "react";
-import {COLLECTION, getChildrenTypeIdByParentTypeId, SERVER, typeIdToColor, typeIdToTag} from "src/global";
+import {getChildrenTypeIdByParentTypeId, typeIdToColor, typeIdToTag} from "src/global";
 import {Link, routes} from "@redwoodjs/router";
 import {Table} from "antd";
 import BelongingsCell from "./BelongingsCell";
-import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
-import ObjectClone from "src/components/ObjectClone/ObjectClone";
-import ObjectNew from "src/components/ObjectNew/ObjectNew";
-import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 
 
 export const QUERY = gql`
