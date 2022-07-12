@@ -44,11 +44,13 @@ const Timeline = ( { experimentResults } ) => {
     { type: "date", id: "End" },
   ];
 
-  const rows = [
-    outgoing && ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)],
-    incoming && ["Incoming", outgoing ? new Date(outgoing.requestDate) : new Date(incoming.responseDate), new Date(incoming.responseDate)],
-    settled && ["Settled", outgoing ? new Date(outgoing.requestDate) : new Date(settled.responseDate), new Date(settled.responseDate)]
-  ];
+  const rows = [];
+  if ( outgoing )
+    rows.push( ["Outgoing", new Date(outgoing.requestDate), new Date(outgoing.responseDate)] );
+  if ( incoming )
+    rows.push( ["Incoming", outgoing ? new Date(outgoing.requestDate) : new Date(incoming.responseDate), new Date(incoming.responseDate)] );
+  if ( settled )
+    rows.push( ["Settled", outgoing ? new Date(outgoing.requestDate) : new Date(settled.responseDate), new Date(settled.responseDate)] );
 
   const data = [columns, ...rows];
 

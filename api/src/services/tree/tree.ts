@@ -1,4 +1,3 @@
-import {QueryResolvers} from "types/graphql";
 import {db} from "src/lib/db";
 import {QaObjectRelationship} from "src/models";
 

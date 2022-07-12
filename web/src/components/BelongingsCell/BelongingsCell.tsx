@@ -1,14 +1,10 @@
 import type { BelongingsQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import React, {useState} from "react";
-import {COLLECTION, getChildrenTypeIdByParentTypeId, SERVER, typeIdToColor, typeIdToTag} from "src/global";
+import {getChildrenTypeIdByParentTypeId, typeIdToColor, typeIdToTag} from "src/global";
 import {Link, routes} from "@redwoodjs/router";
 import {Table} from "antd";
 import BelongingsCell from "./BelongingsCell";
-import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
-import ObjectClone from "src/components/ObjectClone/ObjectClone";
-import ObjectNew from "src/components/ObjectNew/ObjectNew";
-import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 
 
 export const QUERY = gql`
@@ -36,7 +32,7 @@ export const Success = ({ belongings }: CellSuccessProps<BelongingsQuery>) => {
       title: 'Type',
       dataIndex: 'typeId',
       key: 'typeId',
-      width: 100,
+      width: 10,
       render: (_, record: { key: React.Key }) =>
         typeIdToTag(record.typeId)
     },
@@ -44,36 +40,10 @@ export const Success = ({ belongings }: CellSuccessProps<BelongingsQuery>) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      width:200,
       render: (_, record: { key: React.Key }) =>
-        <Link to={routes.qaObjectRelationship({id:record.id})}>
+        <Link to={routes.tree({id:record.id})}>
           {record.name}
         </Link>
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <span id={`edibBlock${record.id}${record.typeId}`}>
-          <ObjectEdit qaObject={record} beforeSave={()=>{}} afterSave={()=>{}}/>&nbsp;&nbsp;&nbsp;
-          <ObjectClone parentId={(record.typeId===COLLECTION || record.typeId===SERVER) ? null : record.id} qaObject={record} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
-          <ObjectDelete key={`delete${record.id}`}
-                        id={record.id}
-                        typeId={record.typeId}
-                        beforeSave={()=>{}}
-                        afterSave={(id)=> {
-                          document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
-                        }
-                        }/>&nbsp;&nbsp;&nbsp;
-          {
-            getChildrenTypeIdByParentTypeId(record.typeId).map( (typeId, i) =>
-              <span key={`new${i}${record.id}${typeId}`}>
-                <ObjectNew typeId={typeId} parentId={record.id} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>
-              </span>
-            )
-          }
-        </span>
-      ),
     },
   ];
 
