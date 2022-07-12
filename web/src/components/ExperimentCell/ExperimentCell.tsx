@@ -172,6 +172,13 @@ const Experiment = ( { experiment } ) =>
   const groupedExperiment = funGroupExperiment( experiment );
 
   const CompMinMaxAvg = ( { arr } ) => {
+    function calculateMedian( array:Array<number> ):number {
+      array.sort(function(a, b) {
+        return a - b;
+      });
+      const mid = array.length / 2;
+      return mid % 1 ? array[mid - 0.5] : (array[mid - 1] + array[mid]) / 2;
+    }
     const minMaxAvg = ( arr:Array<number> ): { min:number, max:number, avg:number } =>
     {
       let min = arr[0], max = arr[0], avg: number;
@@ -184,8 +191,9 @@ const Experiment = ( { experiment } ) =>
       avg = sum/arr.length;
       return { min, max, avg };
     }
+    const median: number = calculateMedian( arr );
     const { min, max, avg } = minMaxAvg( arr );
-    return <><b>Min:</b> {min} <b>Max:</b> {max} <b>Avg:</b> {avg}</>
+    return <><b>Min:</b> {min} <b>Max:</b> {max} <b>Avg:</b> {avg} <b>Median:</b> {median}</>
   }
 
 
