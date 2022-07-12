@@ -36,7 +36,7 @@ export const Success = ({ belongings }: CellSuccessProps<BelongingsQuery>) => {
       title: 'Type',
       dataIndex: 'typeId',
       key: 'typeId',
-      width: 100,
+      width: 10,
       render: (_, record: { key: React.Key }) =>
         typeIdToTag(record.typeId)
     },
@@ -44,36 +44,10 @@ export const Success = ({ belongings }: CellSuccessProps<BelongingsQuery>) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      width:200,
       render: (_, record: { key: React.Key }) =>
-        <Link to={routes.qaObjectRelationship({id:record.id})}>
+        <Link to={routes.tree({id:record.id})}>
           {record.name}
         </Link>
-    },
-    {
-      title: 'Action',
-      key: 'action',
-      render: (_, record) => (
-        <span id={`edibBlock${record.id}${record.typeId}`}>
-          <ObjectEdit qaObject={record} beforeSave={()=>{}} afterSave={()=>{}}/>&nbsp;&nbsp;&nbsp;
-          <ObjectClone parentId={(record.typeId===COLLECTION || record.typeId===SERVER) ? null : record.id} qaObject={record} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
-          <ObjectDelete key={`delete${record.id}`}
-                        id={record.id}
-                        typeId={record.typeId}
-                        beforeSave={()=>{}}
-                        afterSave={(id)=> {
-                          document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
-                        }
-                        }/>&nbsp;&nbsp;&nbsp;
-          {
-            getChildrenTypeIdByParentTypeId(record.typeId).map( (typeId, i) =>
-              <span key={`new${i}${record.id}${typeId}`}>
-                <ObjectNew typeId={typeId} parentId={record.id} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>
-              </span>
-            )
-          }
-        </span>
-      ),
     },
   ];
 
