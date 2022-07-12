@@ -184,7 +184,6 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
     {
       qaObject.typeId === EXPERIMENT &&
       <span key={`runExperiment${parentId}`} style={stylingObject.runExperiment}>
-
           {
             qaObject.executed ?
               <Tooltip title={'View Experiment Results'}>
