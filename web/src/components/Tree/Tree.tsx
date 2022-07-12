@@ -5,9 +5,9 @@ import {
   getChildrenTypeIdByParentTypeId,
   TEST,
   typeIdToColor,
-  typeIdToName, typeIdToTag
+  typeIdToTag
 } from "src/global";
-import {Tag, Tooltip} from "antd";
+import {Popconfirm, Tooltip} from "antd";
 import ObjectNew from "src/components/ObjectNew/ObjectNew";
 import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
@@ -15,10 +15,17 @@ import Merge from "src/components/Merge/Merge";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
 import {routes} from "@redwoodjs/router";
-import React from "react";
+import React, {useState} from "react";
 import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
+import {useApolloClient} from "@apollo/client";
+import {toast} from "@redwoodjs/web/toast";
 
 const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
+
+  const client = useApolloClient();
+
+  const [experimentIsRunning, setExperimentIsRunning] = useState( false );
+  const [experimentIsExecuted, setExperimentIsExecuted] = useState( false );
 
   let ctx = 0;
 
@@ -185,7 +192,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
       qaObject.typeId === EXPERIMENT &&
       <span key={`runExperiment${parentId}`} style={stylingObject.runExperiment}>
           {
-            qaObject.executed ?
+            (qaObject.executed||experimentIsExecuted) ?
               <Tooltip title={'View Experiment Results'}>
                 <BarChartOutlined
                   style={ { fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
@@ -196,12 +203,51 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
               </Tooltip>
               :
               <Tooltip title={'Run Experiment'}>
-                <ExperimentOutlined
-                  style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}`}}
-                  onClick={()=>{
-                    alert( 'not implemented yet');
+                <Popconfirm
+                  title="Are you sure you want to run this experiment?"
+                  onConfirm={ async () => {
+                    if ( experimentIsRunning ) return;
+                    setExperimentIsRunning( true );
+
+                    const runExperiment = async ( id:number ) =>
+                    {
+                      const RUN_EXPERIMENT = gql`
+                        query RunExperiment($experimentId: Int!) {
+                          runExperiment(experimentId: $experimentId) {
+                            experimentId
+                            error
+                          }
+                        }
+                      `
+                      const ret = await client.query({
+                        query: RUN_EXPERIMENT,
+                        variables: { experimentId: id }
+                      });
+
+                      const { experimentId, error } = ret.data.runExperiment;
+                      return { experimentId, error };
+                    };
+
+                    setExperimentIsRunning( false );
+
+                    const { experimentId, error } = await runExperiment( qaObject.id );
+                    if ( error )
+                    {
+                      toast.error( error, { duration: 5000 } );
+                      return;
+                    }
+                    toast.success( 'Experiment was executed successfully', { duration: 5000 } );
+                    setExperimentIsExecuted( true );
                   }}
-                />
+                  // onCancel={cancel}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <ExperimentOutlined className={experimentIsRunning?'loading-spinner':''}
+                    style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
+                  />
+                </Popconfirm>
+
               </Tooltip>
           }
       </span>
