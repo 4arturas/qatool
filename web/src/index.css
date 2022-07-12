@@ -9,3 +9,13 @@
 .activeLink {
   font-weight: bold;
 }
+
+.loading-spinner {
+  animation: rotate 1.5s linear infinite;
+}
+
+@keyframes rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
