@@ -14,7 +14,7 @@ import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import Merge from "src/components/Merge/Merge";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
-import {routes} from "@redwoodjs/router";
+import {navigate, routes} from "@redwoodjs/router";
 import React, {useState} from "react";
 import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 import {useApolloClient} from "@apollo/client";
@@ -199,7 +199,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
                 <BarChartOutlined
                   style={ { fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
                   onClick={()=>{
-                    alert( 'not implemented yet');
+                    navigate( routes.experiment({id:qaObject.id}))
                   }}
                 />
               </Tooltip>

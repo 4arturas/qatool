@@ -6,7 +6,7 @@ const ExperimentPage = ({id}) => {
     <>
       <MetaTags title="Experiment" description="Experiment page" />
 
-     <ExperimentCell id={id}/>
+     <ExperimentCell experimentId={id}/>
 
     </>
   )
