@@ -16,6 +16,7 @@ import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
 import {routes} from "@redwoodjs/router";
 import React from "react";
+import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 
 const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
@@ -83,6 +84,9 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
     },
     merge: {
       marginLeft: '10px'
+    },
+    runExperiment: {
+      marginLeft: '8px'
     }
   }
 
@@ -174,6 +178,33 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
       qaObject.typeId === CASE &&
       <span key={`merge${parentId}`} style={stylingObject.merge}>
         <Merge qaObjectParent={qaObject} />
+      </span>
+    }
+
+    {
+      qaObject.typeId === EXPERIMENT &&
+      <span key={`runExperiment${parentId}`} style={stylingObject.runExperiment}>
+
+          {
+            qaObject.executed ?
+              <Tooltip title={'View Experiment Results'}>
+                <BarChartOutlined
+                  style={ { fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
+                  onClick={()=>{
+                    alert( 'not implemented yet');
+                  }}
+                />
+              </Tooltip>
+              :
+              <Tooltip title={'Run Experiment'}>
+                <ExperimentOutlined
+                  style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}`}}
+                  onClick={()=>{
+                    alert( 'not implemented yet');
+                  }}
+                />
+              </Tooltip>
+          }
       </span>
     }
 
