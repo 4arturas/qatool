@@ -1,9 +1,19 @@
 --------------------------------
-
 INSERT INTO "User"
-(id, uuid, email, hashedPassword, salt, resetToken, resetTokenExpiresAt, active, createdAt, updatedAt)
-VALUES(1, 'cl5jhpoms0001jyia8xn2l8gp', 'a', '19d7f55d11286141519a12442c5ff51c6b1997a6fb65fe6766f0f54b6945044b', '0026cf3ae2907da543a795bfb37d3f44', NULL, NULL, 0, '1657709966836', '1657709966836');
+(id, uuid, email, hashedPassword, salt, resetToken, resetTokenExpiresAt, active)
+VALUES(1, 'cl5jhpoms0001jyia8xn2l8gp', 'a', '19d7f55d11286141519a12442c5ff51c6b1997a6fb65fe6766f0f54b6945044b', '0026cf3ae2907da543a795bfb37d3f44', NULL, NULL, 0);
+INSERT INTO "User"
+(id, uuid, email, hashedPassword, salt, resetToken, resetTokenExpiresAt, active)
+VALUES(2, 'cl5jj1x7v0002boiae0hclijt', 'c', '23a0708921eca9e0a3a9cb4d97307a24eb7ae082a7f86bf458fd34ed2a5ce3a8', 'b8f4487964ed5abf48dbcd0b2a4aae81', NULL, NULL, 0);
 
+--------------------------------
+INSERT INTO UserRole
+(id, name, userId, active)
+VALUES(1, 'Admin', 1, 1);
+
+INSERT INTO UserRole
+(id, name, userId, active)
+VALUES(2, 'Customer', 2, 1);
 --------------------------------
 
 INSERT INTO QaObjectType (name) VALUES('EXPERIMENT');
@@ -84,5 +94,7 @@ VALUES(10, 8);
 INSERT INTO QaObjectRelationship
 (parentId, childrenId)
 VALUES(10, 9);
+
+
 
 

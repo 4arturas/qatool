@@ -1,3 +1,35 @@
+-- "User" definition
+
+CREATE TABLE "User" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "uuid" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "hashedPassword" TEXT NOT NULL,
+    "salt" TEXT NOT NULL,
+    "resetToken" TEXT,
+    "resetTokenExpiresAt" DATETIME,
+    "active" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE UNIQUE INDEX "User_uuid_key" ON "User"("uuid");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- UserRole definition
+
+CREATE TABLE "UserRole" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "userId" INTEGER,
+    "active" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "UserRole_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE UNIQUE INDEX "UserRole_name_userId_key" ON "UserRole"("name", "userId");
+
 -- CreateTable
 CREATE TABLE "QaObject" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
