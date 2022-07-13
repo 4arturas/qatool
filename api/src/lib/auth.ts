@@ -19,10 +19,12 @@ import { db } from './db'
  * seen if someone were to open the Web Inspector in their browser.
  */
 export const getCurrentUser = async (session) => {
-  return await db.user.findUnique({
+  let user = await db.user.findUnique({
     where: { id: session.id },
     select: { id: true, email: true },
-  })
+  });
+  user['roles'] = ['admin', 'customer']; //TODO: fetch roles from the database
+  return user;
 }
 
 /**
