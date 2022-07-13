@@ -11,7 +11,7 @@ type QaLayoutProps = {
 
 const QaLayout = ({ children }: QaLayoutProps) => {
 
-  const { currentUser, logOut } = useAuth()
+  const { currentUser, logOut, hasRole } = useAuth()
 
   return <>
     <div className="rw-scaffold">
@@ -63,7 +63,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
           {
             currentUser ?
             <>
-              { currentUser.email }&nbsp;
+              { currentUser.email }&nbsp;{/*{ hasRole( ['admin', 'customer']) ? 'HAS ROLE':'NO ROLE' }*/}
               <Tooltip title={'Logout'}>
                 <LogoutOutlined style={{fontSize: '20px'}} onClick={()=>logOut()}/>
               </Tooltip>
