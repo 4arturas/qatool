@@ -1,3 +1,11 @@
+--------------------------------
+
+INSERT INTO "User"
+(id, uuid, email, hashedPassword, salt, resetToken, resetTokenExpiresAt, active, createdAt, updatedAt)
+VALUES(1, 'cl5jhpoms0001jyia8xn2l8gp', 'a', '19d7f55d11286141519a12442c5ff51c6b1997a6fb65fe6766f0f54b6945044b', '0026cf3ae2907da543a795bfb37d3f44', NULL, NULL, 0, '1657709966836', '1657709966836');
+
+--------------------------------
+
 INSERT INTO QaObjectType (name) VALUES('EXPERIMENT');
 INSERT INTO QaObjectType (name) VALUES('COLLECTION');
 INSERT INTO QaObjectType (name) VALUES('SERVER');
@@ -76,4 +84,5 @@ VALUES(10, 8);
 INSERT INTO QaObjectRelationship
 (parentId, childrenId)
 VALUES(10, 9);
+
 
