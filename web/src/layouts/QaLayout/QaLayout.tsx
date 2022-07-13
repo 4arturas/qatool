@@ -1,6 +1,8 @@
 import { NavLink, routes} from "@redwoodjs/router";
 import 'antd/dist/antd.css';
 import {DEFAULT_TABLE_PAGE_SIZE} from "src/global";
+import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
+import {Tooltip} from "antd";
 
 type QaLayoutProps = {
   children?: React.ReactNode
@@ -52,6 +54,15 @@ const QaLayout = ({ children }: QaLayoutProps) => {
           </tr>
           </tbody>
         </table>
+
+        <span>
+          <Tooltip title={'Login'}>
+            <LoginOutlined style={{fontSize: '20px'}}/>
+          </Tooltip>
+          <Tooltip title={'Logout'}>
+            <LogoutOutlined style={{fontSize: '20px'}}/>
+          </Tooltip>
+        </span>
 
     </header>
     <main>{children}</main>
