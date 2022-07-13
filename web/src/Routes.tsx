@@ -7,15 +7,18 @@
 // 'src/pages/HomePage/HomePage.js'         -> HomePage
 // 'src/pages/Admin/BooksPage/BooksPage.js' -> AdminBooksPage
 
-import { Router, Route, Set } from '@redwoodjs/router'
+import { Router, Route, Set, Private } from '@redwoodjs/router'
 import QaLayout from "src/layouts/QaLayout/QaLayout";
 
 
 import HomePage from "src/pages/HomePage/HomePage";
+import ForbiddenPage from './pages/ForbiddenPage/ForbiddenPage';
 
 const Routes = () => {
   return (
     <Router>
+
+      <Route path="/forbidden" page={ForbiddenPage} name="forbidden" />
 
       <Route path="/login" page={LoginPage} name="login" />
       <Route path="/signup" page={SignupPage} name="signup" />
@@ -26,13 +29,18 @@ const Routes = () => {
 
         <Route path="/" page={HomePage} name="home" />
 
-        <Route path="/qa-objects/{page:Int}/{pageSize:Int}/{count:Int}" page={QaObjectsPage} name="qaObjects" />
+        <Private unauthenticated="login">
 
-        <Route path="/experiment/{id:Int}" page={ExperimentPage} name="experiment" />
-        <Route path="/experiments/{page:Int}/{pageSize:Int}/{count:Int}" page={ExperimentResultsPage} name="experimentResults" />
+          <Route path="/qa-objects/{page:Int}/{pageSize:Int}/{count:Int}" page={QaObjectsPage} name="qaObjects" />
 
-        <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
+          <Route path="/experiment/{id:Int}" page={ExperimentPage} name="experiment" />
+          <Route path="/experiments/{page:Int}/{pageSize:Int}/{count:Int}" page={ExperimentResultsPage} name="experimentResults" />
 
+          <Private unauthenticated="forbidden" roles={['admin']}>
+            <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
+          </Private>
+
+        </Private>
       </Set>
 
       <Route notfound page={NotFoundPage} />
