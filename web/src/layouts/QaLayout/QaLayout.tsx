@@ -1,14 +1,18 @@
-import { NavLink, routes} from "@redwoodjs/router";
+import {navigate, NavLink, routes} from "@redwoodjs/router";
 import 'antd/dist/antd.css';
 import {DEFAULT_TABLE_PAGE_SIZE} from "src/global";
 import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
 import {Tooltip} from "antd";
+import {useAuth} from "@redwoodjs/auth";
 
 type QaLayoutProps = {
   children?: React.ReactNode
 }
 
 const QaLayout = ({ children }: QaLayoutProps) => {
+
+  const { currentUser, logOut } = useAuth()
+
   return <>
     <div className="rw-scaffold">
       <header className="rw-header">
@@ -56,12 +60,19 @@ const QaLayout = ({ children }: QaLayoutProps) => {
         </table>
 
         <span>
-          <Tooltip title={'Login'}>
-            <LoginOutlined style={{fontSize: '20px'}}/>
-          </Tooltip>
-          <Tooltip title={'Logout'}>
-            <LogoutOutlined style={{fontSize: '20px'}}/>
-          </Tooltip>
+          {
+            currentUser ?
+            <>
+              { currentUser.email }&nbsp;
+              <Tooltip title={'Logout'}>
+                <LogoutOutlined style={{fontSize: '20px'}} onClick={()=>logOut()}/>
+              </Tooltip>
+            </>
+            :
+              <Tooltip title={'Login'}>
+                <LoginOutlined style={{fontSize: '20px'}} onClick={()=>navigate(routes.login())}/>
+              </Tooltip>
+          }
         </span>
 
     </header>
