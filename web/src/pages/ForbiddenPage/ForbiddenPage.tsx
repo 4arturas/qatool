@@ -1,19 +1,19 @@
-import { Link, routes } from '@redwoodjs/router'
+import {navigate, routes} from '@redwoodjs/router'
 import { MetaTags } from '@redwoodjs/web'
+import {Button, Result} from "antd";
 
 const ForbiddenPage = () => {
   return (
     <>
       <MetaTags title="Forbidden" description="Forbidden page" />
 
-      <h1>ForbiddenPage</h1>
-      <p>
-        Find me in <code>./web/src/pages/ForbiddenPage/ForbiddenPage.tsx</code>
-      </p>
-      <p>
-        My default route is named <code>forbidden</code>, link to me with `
-        <Link to={routes.forbidden()}>Forbidden</Link>`
-      </p>
+      <Result
+        status="403"
+        title="403"
+        subTitle="Sorry, you are not authorized to access this page."
+        extra={<Button type="primary" onClick={()=>navigate(routes.home())}>Back Home</Button>}
+      />
+
     </>
   )
 }
