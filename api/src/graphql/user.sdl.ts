@@ -10,8 +10,8 @@ export const schema = gql`
   }
 
   type Query {
-    getUser(id: Int!): User @requireAuth
-    getUsers: [User] @requireAuth
+    getUser(id: Int!): User @requireAuth(roles: ["admin"])
+    getUsers: [User] @requireAuth(roles: ["admin"])
   }
 
   input UpdateUserInput {
@@ -21,7 +21,7 @@ export const schema = gql`
   }
 
   type Mutation {
-    deleteUser(id: Int!): Int! @requireAuth
-    updateUser(id: Int!, input: UpdateUserInput!): User! @requireAuth
+    deleteUser(id: Int!): Int! @requireAuth(roles: ["admin"])
+    updateUser(id: Int!, input: UpdateUserInput!): User! @requireAuth(roles: ["admin"])
   }
 `
