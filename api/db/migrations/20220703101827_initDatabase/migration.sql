@@ -9,11 +9,11 @@ VALUES(2, 'cl5jj1x7v0002boiae0hclijt', 'c', '23a0708921eca9e0a3a9cb4d97307a24eb7
 --------------------------------
 INSERT INTO UserRole
 (id, name, userId, active)
-VALUES(1, 'Admin', 1, 1);
+VALUES(1, 'admin', 1, 1);
 
 INSERT INTO UserRole
 (id, name, userId, active)
-VALUES(2, 'Customer', 2, 1);
+VALUES(2, 'customer', 2, 1);
 --------------------------------
 
 INSERT INTO QaObjectType (name) VALUES('EXPERIMENT');
