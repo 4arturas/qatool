@@ -1,5 +1,6 @@
 import { AuthenticationError, ForbiddenError } from '@redwoodjs/graphql-server'
 import { db } from './db'
+import {UserRole} from "src/models";
 
 /**
  * The session object sent in as the first argument to getCurrentUser() will
@@ -23,7 +24,11 @@ export const getCurrentUser = async (session) => {
     where: { id: session.id },
     select: { id: true, email: true },
   });
-  user['roles'] = ['admin', 'customer']; //TODO: fetch roles from the database
+
+  const userRoles = await UserRole.where( { userId: session.id } )
+  const userRolesArr = userRoles.map( ur => ur.name );
+
+  user['roles'] = userRolesArr;
   return user;
 }
 
