@@ -53,6 +53,17 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                     Experiment Results
                   </NavLink>
                 </li>
+                { hasRole( ['admin'] ) &&
+                  <li style={{display: 'inline', marginRight: "20px"}}>
+                    <NavLink
+                      to={routes.users()}
+                      className="rw-link"
+                      // activeMatchParams
+                      activeClassName="activeLink">
+                      Users
+                    </NavLink>
+                  </li>
+                }
               </ul>
             </td>
           </tr>
