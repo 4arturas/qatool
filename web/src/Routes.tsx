@@ -38,6 +38,7 @@ const Routes = () => {
 
           <Private unauthenticated="forbidden" roles={['admin']}>
             <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
+            <Route path="/users" page={UsersPage} name="users" />
           </Private>
 
         </Private>
