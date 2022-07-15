@@ -40,15 +40,17 @@ export const deleteUser = async ( { id: id } ) =>
   await db.user.update({
     data: { deleted: new Date().toISOString() },
     where: { id },
-  })
+  });
   return id;
 }
 
 export const updateUser = async ( { id, input } ) =>
 {
+  await db.user.update({
+    data: { email: input.email },
+    where: { id },
+  })
 
-  const user = await User.find( id );
-  await user.update({ email: input.email })
   const userRoles = await UserRole.where( { userId: id } );
   // Delete
   userRoles.map( async ur => {

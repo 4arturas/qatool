@@ -40,10 +40,9 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
       if (response.message)
       {
         // toast('New user was added' );
-        toast.success('New user was added' );
-        const userId = parseInt( response.message );
-
-        OnSubmitFormFunction({ id: userId, ...values })
+        const newValues = { id: null, ...values };
+        newValues.id = parseInt( response.message );
+        OnSubmitFormFunction( newValues );
         // toast(response.message)
       }
       else if (response.error)
