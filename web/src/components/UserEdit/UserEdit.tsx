@@ -1,39 +1,57 @@
 import React from "react";
 import {Button, Form, Input, Select} from "antd";
 import {useApolloClient} from "@apollo/client";
+import {toast} from "@redwoodjs/web/toast";
+import {useAuth} from "@redwoodjs/auth";
 
 const UserEdit = ( { user, OnSubmitFormFunction }) => {
 
   const [form] = Form.useForm();
   const client = useApolloClient();
+  const { signUp } = useAuth()
 
   const onFinish = async (values: any) => {
-
-    const variables = {
-      id: user.id,
-      input: { email: values.email, userRoles: values.userRoles }
-    };
-    const UPDATE_USER = gql`
+    if ( user )
+    {
+      const UPDATE_USER = gql`
                   mutation UpdateUser($id: Int!, $input: UpdateUserInput!) {
-                    updateUser (id: $id, input: $input) {
+                    updateUser(id: $id, input: $input) {
                       id
                       email
                       userRoles
                     }
                   }`;
 
-    const ret = await client.mutate({
-      mutation: UPDATE_USER,
-      variables: variables
-    });
+      const ret = await client.mutate({
+        mutation: UPDATE_USER,
+        variables: { id: user.id, input: {email: values.email, userRoles: values.userRoles} }
+      });
 
-    console.log ( ret.data.updateUser );
+      OnSubmitFormFunction(values)
+    }
+    else
+    {
+      const response = await signUp({ username: values.email, password: values.password, userRoles: values.userRoles } );
 
+      if (response.message)
+      {
+        // toast('New user was added' );
+        toast.success('New user was added' );
+        const userId = parseInt( response.message );
 
-    OnSubmitFormFunction(values)
+        OnSubmitFormFunction({ id: userId, ...values })
+        // toast(response.message)
+      }
+      else if (response.error)
+      {
+        toast.error(response.error)
+      }
+      else {
+        // user is signed in automatically
+        toast.success('Welcome!')
+      }
 
-
-    console.log('Success:', values);
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
@@ -66,6 +84,16 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
       <Input/>
     </Form.Item>
 
+    { !user &&
+      <Form.Item
+        label="Password"
+        name="password"
+        rules={[{required: true, message: 'Please input password!'}]}
+      >
+        <Input.Password/>
+      </Form.Item>
+    }
+
     <Form.Item
       label="Roles"
       name="userRoles"
@@ -84,7 +112,7 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
 
     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
       <Button type="primary" htmlType="submit">
-        Update
+        { user ? 'Update User' : 'Create New User' }
       </Button>
     </Form.Item>
   </Form>

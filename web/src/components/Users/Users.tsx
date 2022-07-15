@@ -1,10 +1,12 @@
-import {Modal, Popconfirm, Table, Tag} from "antd";
+import {Modal, Popconfirm, Table, Tag, Tooltip} from "antd";
 import React, {useState} from "react";
-import {faPen, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faPen, faTrash,faCirclePlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useApolloClient} from "@apollo/client";
 import UserEditCell from 'src/components/UserEditCell'
 import {dateFormatYYYYMMDDHHmmss} from "src/global";
+import UserEdit from "src/components/UserEdit/UserEdit";
+import {Toaster} from "@redwoodjs/web/toast";
 
 const stylingObject = {
   edit: {
@@ -15,21 +17,36 @@ const stylingObject = {
   },
 }
 
-const EditUserModal = ( { user, OnUserUpdate } ) =>
+const EditUserModal = ( { user, OnUserAction } ) =>
 {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const OnSubmitFormFunction = (formValues:any) => {
-    OnUserUpdate( formValues );
+    OnUserAction( formValues );
     setIsModalVisible(false);
   }
 
   return <>
-    <FontAwesomeIcon
-      icon={faPen}
-      style={stylingObject.edit}
-      onClick={()=>setIsModalVisible(true)}
-    />
+    {
+      user ?
+      <Tooltip title={'Update User'}>
+        <FontAwesomeIcon
+          icon={faPen}
+          style={stylingObject.edit}
+          onClick={() => setIsModalVisible(true)}
+        />
+      </Tooltip>
+        :
+      <span style={{marginRight:'20px', float: 'right'}}>
+        <Tooltip title={'Create New User'}>
+          <FontAwesomeIcon
+            icon={faCirclePlus}
+            style={stylingObject.edit}
+            onClick={() => setIsModalVisible(true)}
+          />
+        </Tooltip>
+      </span>
+    }
     <Modal
       title={'User'}
       visible={isModalVisible}
@@ -38,7 +55,12 @@ const EditUserModal = ( { user, OnUserUpdate } ) =>
       footer={null}
       destroyOnClose={true}
     >
-      <UserEditCell id={user.id} OnSubmitFormFunction={OnSubmitFormFunction}/>
+      {
+        user ?
+        <UserEditCell id={user.id} OnSubmitFormFunction={OnSubmitFormFunction}/>
+          :
+        <UserEdit user={null} OnSubmitFormFunction={OnSubmitFormFunction}/>
+      }
     </Modal>
   </>
 
@@ -60,6 +82,16 @@ const Users = ( {users} ) => {
       replaceData.userRoles = formValues.userRoles;
       return replaceData;
     } );
+    setData(newDataArray);
+  }
+
+  const OnUserInsert = ( formValues ) =>
+  {
+    const newDataArray = [...data];
+
+    const newUser = { id: formValues.id, email: formValues.email, userRoles: formValues.userRoles };
+    newDataArray.push( newUser );
+
     setData(newDataArray);
   }
 
@@ -93,7 +125,7 @@ const Users = ( {users} ) => {
         <>
           { !record.deleted &&
             <span>
-              <EditUserModal user={record} OnUserUpdate={OnUserUpdate}/>
+              <EditUserModal user={record} OnUserAction={OnUserUpdate}/>
               &nbsp;&nbsp;
 
               <Popconfirm
@@ -124,9 +156,9 @@ const Users = ( {users} ) => {
                 okText="Yes"
                 cancelText="No"
               >
-           <FontAwesomeIcon
-             icon={faTrash}
-             style={stylingObject.delete}/>
+                <Tooltip title={'Delete User'}>
+                  <FontAwesomeIcon icon={faTrash} style={stylingObject.delete}/>
+                </Tooltip>
           </Popconfirm>
           </span>
           }
@@ -135,6 +167,8 @@ const Users = ( {users} ) => {
     },
     ];
   return <>
+    <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
+    <EditUserModal user={null} OnUserAction={OnUserInsert}/>
     <Table dataSource={data} columns={columns} pagination={{ pageSize: 5 }} rowKey={'id'}/>
   </>
 }
