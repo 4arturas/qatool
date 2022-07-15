@@ -1,12 +1,12 @@
 export const schema = gql`
   type UserRole {
-    name: String!
+    name: String
   }
   type User {
     id: Int!
     email: String!
     deleted: Date
-    userRoles: [String]
+    userRoles: [UserRole]
   }
 
   type Query {

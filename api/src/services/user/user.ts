@@ -1,30 +1,38 @@
 import {User, UserRole} from "src/models";
+import {db} from "src/lib/db";
 
 export const getUser = async ( { id: id } )  =>
 {
-  const userDB = await User.find( id );
-
-  const userRolesDB = await UserRole.where( { userId: id } );
-  const userRoles:Array<string> = userRolesDB.map( ur => ur.name );
-
-  const userRet:{ id: number, email: string, deleted: Date, userRoles: Array<string> } = { id: userDB.id, email: userDB.email, deleted: userDB.deleted, userRoles: userRoles };
-  return userRet;
+  return await db.user.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true,
+      email: true,
+      deleted: true,
+      userRoles:  {
+        select: {
+          name: true
+        }
+      }
+    }
+  });
 }
 export const getUsers = async ()  =>
 {
-  const usersAll = await User.all();
-  const userRoleArray = await UserRole.all();
-
-  const users:Array<{id:number, email:string, deleted:Date, userRoles:Array<string>}> = [];
-
-  for ( let i = 0; i < usersAll.length; i++ )
-  {
-    const u = usersAll[i];
-    const userRoles = userRoleArray.filter( ur => ur.userId === u.id ).map( ur => ur.name);
-    users.push( { id: u.id, email: u.email, deleted: u.deleted, userRoles: userRoles } );
-  }
-
-  return users;
+  return await db.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      deleted: true,
+      userRoles:  {
+        select: {
+          name: true
+        }
+      }
+    }
+  });
 }
 
 export const deleteUser = async ( { id: id } ) =>
@@ -55,5 +63,5 @@ export const updateUser = async ( { id, input } ) =>
 
   input.id = id;
   // return user;
-  return input;
+  return { ...input, userRoles: input.userRoles.map( roleName => { return { name: roleName } } ) };
 }

@@ -18,13 +18,17 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
                     updateUser(id: $id, input: $input) {
                       id
                       email
-                      userRoles
+                      userRoles {
+                        name
+                      }
                     }
                   }`;
 
+      const userRoles = values.userRoles.map( roleName => roleName );
+
       const ret = await client.mutate({
         mutation: UPDATE_USER,
-        variables: { id: user.id, input: {email: values.email, userRoles: values.userRoles} }
+        variables: { id: user.id, input: {email: values.email, userRoles: userRoles } }
       });
 
       OnSubmitFormFunction(values)
@@ -65,7 +69,7 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
     onFinish={onFinish}
     onFinishFailed={onFinishFailed}
     autoComplete="off"
-    initialValues={user}
+    initialValues={user && {...user, userRoles: user.userRoles.map(ur=>ur.name)}}
   >
 
     <Form.Item

@@ -9,7 +9,9 @@ export const QUERY = gql`
       id
       email
       deleted
-      userRoles
+      userRoles {
+        name
+      }
     }
   }
 `

@@ -7,7 +7,9 @@ export const QUERY = gql`
     user: getUser(id: $id) {
       id
       email
-      userRoles
+      userRoles: userRoles {
+        name
+      }
     }
   }
 `

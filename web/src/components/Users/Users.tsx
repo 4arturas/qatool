@@ -67,11 +67,11 @@ const EditUserModal = ( { user, OnUserAction } ) =>
 }
 
 const Users = ( {users} ) => {
-
   const [data, setData] = useState( users );
 
   const client = useApolloClient();
 
+  const reformatUserRoles = ( formValues ) => formValues.map( roleName => { return { name: roleName } } );
   const OnUserUpdate = ( formValues ) =>
   {
     const newDataArray = data.map( u => {
@@ -79,7 +79,8 @@ const Users = ( {users} ) => {
         return u;
       const replaceData = { ...u }
       replaceData.email = formValues.email;
-      replaceData.userRoles = formValues.userRoles;
+      replaceData.userRoles = reformatUserRoles( formValues.userRoles );
+
       return replaceData;
     } );
     setData(newDataArray);
@@ -88,8 +89,7 @@ const Users = ( {users} ) => {
   const OnUserInsert = ( formValues ) =>
   {
     const newDataArray = [...data];
-
-    const newUser = { id: formValues.id, email: formValues.email, userRoles: formValues.userRoles };
+    const newUser = { id: formValues.id, email: formValues.email, userRoles: reformatUserRoles( formValues.userRoles) };
     newDataArray.push( newUser );
 
     setData(newDataArray);
@@ -108,7 +108,7 @@ const Users = ( {users} ) => {
       dataIndex: 'userRoles',
       key: 'userRoles',
       render: (_, record) =>
-        record.userRoles.map( roleName => <Tag key={`${roleName}${record.id}`}>{roleName}</Tag> )
+        record.userRoles.map( role => <Tag key={`${role.name}${record.id}`}>{role.name}</Tag> )
     },
     {
       title: 'Deleted',
