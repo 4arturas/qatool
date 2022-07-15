@@ -37,8 +37,10 @@ export const getUsers = async ()  =>
 
 export const deleteUser = async ( { id: id } ) =>
 {
-  const user = await User.find(id)
-  await user.update({ deleted: new Date().toISOString(), })
+  await db.user.update({
+    data: { deleted: new Date().toISOString() },
+    where: { id },
+  })
   return id;
 }
 
