@@ -106,7 +106,6 @@ export const handler = async (event, context) => {
     handler: async ({ username, hashedPassword, salt, userAttributes }) => {
       // This function was modified according to the documentation on https://redwoodjs.com/docs/auth/dbauth#signuphandler
       // The 2. case is used, because I am using this function for creating new user
-      console.log( 'userAttributes', userAttributes );
       const newUser = await db.user.create({
         data: {
           email: username,
