@@ -30,6 +30,9 @@ model QaObject {
   updatedAt   DateTime @updatedAt
 
   executed Boolean @default(false) // This one is only neede for experiment, if it is true, that means that experiment was executed
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 }
 
 model QaObjectType {
@@ -67,27 +70,29 @@ model ExperimentResult {
 }
 
 model User {
-  id                  Int       @id @default(autoincrement())
-  uuid                String    @unique @default(cuid())
-  email               String    @unique
+  id                  Int        @id @default(autoincrement())
+  uuid                String     @unique @default(cuid())
+  email               String     @unique
   hashedPassword      String // <─┐
   salt                String // <─┼─ add these lines
   resetToken          String? // <─┤
   resetTokenExpiresAt DateTime? // <─┘
-  active              Boolean @default(false)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @default(now())
+  active              Boolean    @default(false)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @default(now())
   deleted             DateTime?
   userRoles           UserRole[]
+  qaObject            QaObject[]
 }
 
 model UserRole {
-  id                  Int      @id @default(autoincrement())
-  name                String
-  user                User?    @relation(fields: [userId], references: [id])
-  userId              Int?
-  active              Boolean @default(true)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  name      String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
   @@unique([name, userId])
 }
