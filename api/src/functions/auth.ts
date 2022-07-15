@@ -1,5 +1,6 @@
 import { db } from 'src/lib/db'
 import { DbAuthHandler } from '@redwoodjs/api'
+import {UserRole} from "src/models";
 
 export const handler = async (event, context) => {
 
@@ -102,15 +103,25 @@ export const handler = async (event, context) => {
     //
     // If this returns anything else, it will be returned by the
     // `signUp()` function in the form of: `{ message: 'String here' }`.
-    handler: ({ username, hashedPassword, salt, userAttributes }) => {
-      return db.user.create({
+    handler: async ({ username, hashedPassword, salt, userAttributes }) => {
+      // This function was modified according to the documentation on https://redwoodjs.com/docs/auth/dbauth#signuphandler
+      // The 2. case is used, because I am using this function for creating new user
+      console.log( 'userAttributes', userAttributes );
+      const newUser = await db.user.create({
         data: {
           email: username,
           hashedPassword: hashedPassword,
           salt: salt,
           // name: userAttributes.name
         },
-      })
+      });
+
+      const userRoles = userAttributes.userRoles;
+      userRoles.map( async roleName => await UserRole.create( { userId: newUser.id, name: roleName } ) );
+
+      return newUser.id;
+      // If we use the return below, then user will be logged in after it will be registered
+      // return newUser;
     },
 
     errors: {
