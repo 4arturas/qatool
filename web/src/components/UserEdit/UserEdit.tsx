@@ -107,8 +107,8 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
         placeholder="Select role"
         mode='multiple'
         options={[
-          {value:'admin'},
-          {value:'customer'},
+          {value:'admin', label: 'Admin' },
+          {value:'customer', label: 'Customer' },
         ]
       }/>
     </Form.Item>
