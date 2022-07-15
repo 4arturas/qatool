@@ -1,5 +1,4 @@
-import {PlusCircleOutlined} from "@ant-design/icons";
-import {Modal, Tooltip} from "antd";
+import {Modal} from "antd";
 import QaObjectForm from "src/components/QaObjectForm";
 import React, {useState} from "react";
 import {toast} from "@redwoodjs/web/toast";
@@ -11,7 +10,7 @@ import {
 } from "src/global";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
-import {Link, NavLink, routes} from "@redwoodjs/router";
+import {routes} from "@redwoodjs/router";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
   mutation CreateQaObjectMutationNewQaObject($input: CreateQaObjectInput!) {
