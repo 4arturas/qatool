@@ -29,7 +29,13 @@ export const fetchHierarchy = async ( { id } ) => {
   const idUniqueArray = Array.from(new Set(concatArray));
 
 
-  const objects = await db.qaObject.findMany( { where: { id: { in: idUniqueArray } } } );
+  const objects = await db.qaObject.findMany( {
+    where: { id: { in: idUniqueArray } },
+    include: {
+      user:   { select: { email: true } },
+      parent: { select: { id: true, parentId: true, childrenId: true } },
+    },
+  } );
 
   return {
     parentId:   id,

@@ -28,6 +28,9 @@ export const QUERY = gql`
         createdAt
         updatedAt
         executed
+        userId
+        user { email }
+        parent { id parentId childrenId }
       }
     }
   }

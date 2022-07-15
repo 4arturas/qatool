@@ -80,8 +80,14 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
           onOk={()=>setIsModalVisible(false)}
           onCancel={()=>setIsModalVisible(false)}
           footer={null}
-          width={'50%'}
+          width={'100%'}
         >
+          <table>
+            <tbody>
+            <tr>
+              <td>new form</td>
+              <td>
+
           <QaObjectForm
             qaObject={{typeId: typeId}}
             onSave={(input) => {
@@ -117,6 +123,10 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
             error={errorSavingNew}
             loading={loadingSaveNew}
             submitName={ 'Create New Object' } />
+              </td>
+            </tr>
+            </tbody>
+          </table>
         </Modal>
       </>
     );

@@ -102,8 +102,21 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
     take: pageSize,
     skip: offset,
 
+    /*select: {
+      user: { select: { email: true } },
+      children: {
+        select: { childrenId: true }
+      }
+    },*/
+
     include: {
-      user: { select: { email: true } }
+      user:     { select: { email: true } },
+      // parent:   { select: { parentId: true } },
+      parent: {  },
+      children:  {  }
+/*      select: {
+        children:  { childrenId: true }
+      }*/
     },
 
       // views: { where: { createdAt: dateFilter } },

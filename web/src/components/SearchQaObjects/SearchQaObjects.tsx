@@ -44,6 +44,9 @@ export const QUERY = gql`
         user {
           email
         }
+        parent {
+          id parentId childrenId
+        }
       }
       count
       page
@@ -141,7 +144,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
-        <span id={`edibBlock${record.id}${record.typeId}`}>
+        <span id={`edibBlock${record.id}${record.typeId}`}>TODO Children: { record.parent.length }
           <ObjectEdit qaObject={record} beforeSave={()=>{}} afterSave={()=>{}}/>&nbsp;&nbsp;&nbsp;
           <ObjectClone parentId={(record.typeId===COLLECTION || record.typeId===SERVER) ? null : record.id} qaObject={record} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
           <ObjectDelete key={`delete${record.id}`}

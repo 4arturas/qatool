@@ -107,7 +107,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
       {typeIdToTag(qaObject.typeId)}
     </a>
 
-    - {qaObject.name}
+    - {qaObject.name} (OWNER of the object <b>{qaObject.user.email}</b>) (Has <b>{qaObject.parent.length}</b> children)
 
     <span key={`edit${parentId}`} style={stylingObject.editQaObject}>
       <ObjectEdit
