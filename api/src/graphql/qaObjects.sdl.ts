@@ -16,6 +16,8 @@ export const schema = gql`
     createdAt: DateTime!
     updatedAt: DateTime!
     executed: Boolean
+    userId: Int!
+    user: User
   }
 
   type QaObjectPage {

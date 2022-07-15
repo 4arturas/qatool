@@ -103,6 +103,11 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
   const findClause = {
     take: pageSize,
     skip: offset,
+
+    include: {
+      user: { select: { email: true } }
+    },
+
       // views: { where: { createdAt: dateFilter } },
 
     // where: whereClause

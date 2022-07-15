@@ -40,6 +40,10 @@ export const QUERY = gql`
         createdAt
         updatedAt
         executed
+        userId
+        user {
+          email
+        }
       }
       count
       page
@@ -125,6 +129,13 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       width: 100,
       render: (_, record) =>
         <>{(record.json && record.jsonata) && (validateJSONata(record.jsonata, record.json) ? <Badge status="success" />:<Badge status="error" />)}{mySubstr(record.jsonata, 5)}</>
+    },
+    {
+      title: 'Owner',
+      dataIndex: 'userId',
+      key: 'userId',
+      width: 100,
+      render: (_, record) => record.user.email
     },
     {
       title: 'Action',
