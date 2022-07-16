@@ -4,7 +4,7 @@ import {navigate, routes} from "@redwoodjs/router";
 import {
   BODY,
   CASE,
-  COLLECTION,
+  COLLECTION, CREATE_QA_OBJECT_RELATIONSHIP_MUTATION,
   DEFAULT_TABLE_PAGE_SIZE, EXPERIMENT,
   getChildrenTypeIdByParentTypeId, REMOVE, REPLACE, RESPONSE, RESULT, SERVER, SUITE, TEST,
   typeIdToColor,
@@ -13,10 +13,11 @@ import {
   TYPES
 } from "src/global";
 import React, {useEffect, useState} from "react";
-import {Button, Form, Input, Modal, Select} from "antd";
+import {Button, Form, Input, InputNumber, Modal, Select, Tag} from "antd";
 import {useApolloClient} from "@apollo/client";
 import {Spin} from "antd/es";
-import {SearchOutlined} from "@ant-design/icons";
+import {toast} from "@redwoodjs/web/toast";
+import {useMutation} from "@redwoodjs/web";
 const { TextArea } = Input;
 
 const FIND_QA_OBJECTS_BY_TYPE = gql`
@@ -34,7 +35,28 @@ const FIND_QA_OBJECTS_BY_TYPE = gql`
   }
 `;
 
-const ObjectNewTest = ({typeId, qaObject}) => {
+const CREATE_QA_OBJECT_MUTATION = gql`
+  mutation CreateQaObjectMutationNewQaObject($input: CreateQaObjectInput!) {
+    createQaObject(input: $input) {
+      id
+      typeId
+      name
+      description
+      batchId
+      threads
+      loops
+      json
+      jsonata
+      address
+      method
+      header
+      createdAt
+      updatedAt
+    }
+  }`;
+
+const SPLIT_SYMBOL = '-';
+const ObjectNewTest = ({typeId, qaObject, beforeSave, afterSave }) => {
   const client = useApolloClient();
 
   const [objectTypeId, setObjectTypeId] = useState( typeId );
@@ -51,6 +73,26 @@ const ObjectNewTest = ({typeId, qaObject}) => {
   const [remove, setRemove] = useState(null );
   const [result, setResult] = useState(null );
   const [response, setResponse] = useState(null );
+
+  const [createQaObject, {loading: loadingSaveNew, error: errorSavingNew, data: newObject}] = useMutation( CREATE_QA_OBJECT_MUTATION,
+    {
+      onCompleted: () => {
+        // console.log( newObject );
+        // afterSaved(newObject);
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      },
+    });
+
+  const [createQaObjectRelationship, { loading: loadingQaObjectRelationship, error: errorQaObjectRelationship }] = useMutation(CREATE_QA_OBJECT_RELATIONSHIP_MUTATION, {
+    onCompleted: () => {
+
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
 
   const getObjectByTypeId = async ( typeId:number, callback ) =>
   {
@@ -113,7 +155,7 @@ const ObjectNewTest = ({typeId, qaObject}) => {
 
 
   const SelectChildren = ( { typeId, options, multiple }) => {
-    const convertToOptions = ( qaObject ) => qaObject.map( qa => { return {value: qa.id, label: qa.name } } );
+    const convertToOptions = ( qaObject ) => qaObject.map( qa => { return {value: `${qa.id}${SPLIT_SYMBOL}${qa.typeId}`, label: qa.name } } );
 
     if ( !options ) return <></>
 
@@ -153,10 +195,11 @@ const ObjectNewTest = ({typeId, qaObject}) => {
       </span>
 
     <Modal
-      title={ 'New Object' }
+      title={ <Tag color={typeIdToColor(objectTypeId)} style={{color:'black'}}>New {typeIdToName(objectTypeId)}</Tag> }
       visible={isModalVisible}
       onOk={()=>setIsModalVisible(false)}
       onCancel={()=>setIsModalVisible(false)}
+      destroyOnClose={true}
       footer={null}
       width={'100%'}
     >
@@ -165,9 +208,52 @@ const ObjectNewTest = ({typeId, qaObject}) => {
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={{typeId:typeId, name: 'test'}}
+        initialValues={{typeId:objectTypeId}}
         onFinish={ (values: any) => {
-          console.log( values );
+          beforeSave();
+          const children = [];
+          Object.keys( values ).map( k => {
+            if ( k.indexOf('childrenId') !== -1 )
+            {
+              const childrenId = values[k];
+              const splitC = ( val ) => { const s = val.split(SPLIT_SYMBOL); return { childrenId: s[0], childrenObjectTypeId: s[1] } }
+              if ( Array.isArray(childrenId) )
+              {
+                childrenId.map( c => children.push( splitC( c ) ) );
+              }
+              else
+              {
+                children.push( splitC( childrenId ) );
+              }
+              delete values[k];
+            }
+          });
+          // values.children = children;
+
+          const data = createQaObject({ variables: { input: values } });
+
+          data.then( (ret) => {
+            const newCreateQaObject = ret.data.createQaObject;
+            const childParentId: number = newCreateQaObject.id;
+
+            children.map(async (c) => {
+              const castInput = {parentId: childParentId, childrenId: (c.childrenId * 1), childrenObjectTypeId: (c.childrenObjectTypeId*1) };
+              const ret = await createQaObjectRelationship({variables: {input: castInput}});
+            });
+
+            /*            if ( parentId )
+                        {
+                          const castInput = { parentId: parentId, childrenId: childParentId };
+                          const ret = /!*await*!/ createQaObjectRelationship({ variables: { input: castInput } });
+                          // const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
+                        }*/
+
+            toast.success('New Object created')
+            setIsModalVisible(false);
+
+            afterSave(newCreateQaObject);
+
+          })
         }}
         onFinishFailed={(errorInfo: any) => {
           console.log('Failed:', errorInfo);
@@ -210,6 +296,93 @@ const ObjectNewTest = ({typeId, qaObject}) => {
             >
               <TextArea rows={4}/>
             </Form.Item>
+
+            { ( objectTypeId===COLLECTION || objectTypeId===SUITE || objectTypeId===CASE ) &&
+
+              <Form.Item
+                label="Batch ID"
+                name="batchId"
+                style={stylingObject.formItem}
+              >
+                <InputNumber/>
+              </Form.Item>
+            }
+
+            { objectTypeId===CASE &&
+              <>
+                <Form.Item
+                  label="Number of Users"
+                  name="threads"
+                  rules={[{ required: true, message: 'Please input number of Users!' }]}
+                  style={stylingObject.formItem}
+                >
+                  <InputNumber/>
+                </Form.Item>
+                <Form.Item
+                  label="Number of Requests per User"
+                  name="loops"
+                  rules={[{ required: true, message: 'Please input number number of Requests per User!' }]}
+                  style={stylingObject.formItem}
+                >
+                  <InputNumber/>
+                </Form.Item>
+              </>
+            }
+
+            { objectTypeId===SERVER &&
+              <>
+                <Form.Item
+                  label="Address"
+                  name="address"
+                  rules={[{ required: true, message: 'Please input Address!' }]}
+                  style={stylingObject.formItem}
+                >
+                  <Input/>
+                </Form.Item>
+                <Form.Item
+                  label="Method"
+                  name="method"
+                  rules={[{ required: true, message: 'Please select Method!' }]}
+                  style={stylingObject.formItem}
+                >
+                  <Select
+                    placeholder={`Select Method`}
+                    options={[{value:'POST'}, {value:'GET'}]}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label="Headers"
+                  name="header"
+                  rules={[{ required: true, message: 'Please add Headers!' }]}
+                  style={stylingObject.formItem}
+                >
+                  <TextArea rows={4}/>
+                </Form.Item>
+              </>
+            }
+
+            { ( objectTypeId===REPLACE || objectTypeId===REMOVE || objectTypeId===RESULT || objectTypeId===RESPONSE ) &&
+
+              <Form.Item
+                label="JSON"
+                name="json"
+                style={stylingObject.formItem}
+              >
+                <TextArea
+                  rows={4}
+                  placeholder={`Add ${typeIdToName(objectTypeId)} example`}/>
+              </Form.Item>
+            }
+
+            { objectTypeId===RESULT &&
+              <Form.Item
+                label="JSONata"
+                name="jsonata"
+                style={stylingObject.formItem}
+              >
+                <TextArea rows={4} placeholder={'Add JSONata which will be used to check response from the server'}/>
+              </Form.Item>
+            }
 
             <SelectChildren typeId={SERVER} options={server} multiple={false}/>
             <SelectChildren typeId={COLLECTION} options={collection} multiple={true}/>

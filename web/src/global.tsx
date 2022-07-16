@@ -236,6 +236,7 @@ export const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
       id
       parentId
       childrenId
+      childrenObjectTypeId
     }
   }`;
 

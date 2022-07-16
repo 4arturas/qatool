@@ -15,6 +15,7 @@ export const schema = gql`
   input CreateQaObjectRelationshipInput {
     parentId: Int!
     childrenId: Int!
+    childrenObjectTypeId: Int!
   }
 
   input UpdateQaObjectRelationshipInput {
