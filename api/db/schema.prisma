@@ -39,19 +39,23 @@ model QaObject {
 }
 
 model QaObjectType {
-  id       Int        @id @default(autoincrement())
-  name     String
-  QaObject QaObject[]
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  QaObject             QaObject[]
+  qaObjectRelationship QaObjectRelationship[] @relation("ChildrenObjectType")
 }
 
 model QaObjectRelationship {
-  id          Int @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  parent      QaObject @relation("Parent", fields: [parentId], references: [id])
-  parentId    Int
+  parent   QaObject @relation("Parent", fields: [parentId], references: [id])
+  parentId Int
 
-  children    QaObject @relation("Children", fields: [childrenId], references: [id])
-  childrenId  Int
+  children   QaObject @relation("Children", fields: [childrenId], references: [id])
+  childrenId Int
+
+  childrenObjectType   QaObjectType @relation("ChildrenObjectType", fields: [childrenObjectTypeId], references: [id])
+  childrenObjectTypeId Int
 
   @@unique([parentId, childrenId])
 }

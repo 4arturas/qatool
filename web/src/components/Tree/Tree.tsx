@@ -4,7 +4,7 @@ import {
   EXPERIMENT,
   getChildrenTypeIdByParentTypeId,
   TEST,
-  typeIdToColor,
+  typeIdToColor, typeIdToName,
   typeIdToTag
 } from "src/global";
 import {Popconfirm, Tooltip} from "antd";
@@ -107,7 +107,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
       {typeIdToTag(qaObject.typeId)}
     </a>
 
-    - {qaObject.name} (OWNER of the object <b>{qaObject.user.email}</b>) (Has <b>{qaObject.parent.length}</b> children)
+    - {qaObject.name} (OWNER of the object <b>{qaObject.user.email}</b>) (Has <b>{qaObject.parent.length}</b> children) (Children type <b>{qaObject.parent.map( p => `${typeIdToName(p.childrenObjectTypeId)} - ` )}</b> children)
 
     <span key={`edit${parentId}`} style={stylingObject.editQaObject}>
       <ObjectEdit

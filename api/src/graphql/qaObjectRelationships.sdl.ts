@@ -3,6 +3,7 @@ export const schema = gql`
     id: Int!
     parentId: Int!
     childrenId: Int!
+    childrenObjectTypeId: Int!
   }
 
   type Query {

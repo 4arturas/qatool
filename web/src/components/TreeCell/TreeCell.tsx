@@ -30,7 +30,7 @@ export const QUERY = gql`
         executed
         userId
         user { email }
-        parent { id parentId childrenId }
+        parent { id parentId childrenId childrenObjectTypeId }
       }
     }
   }

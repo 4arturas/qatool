@@ -71,29 +71,29 @@ VALUES(7, 'Test Init', 'Test Init', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NU
 --------------------------------
 
 INSERT INTO QaObjectRelationship
-(parentId, childrenId)
-VALUES(2, 3);
+(parentId, childrenId, childrenObjectTypeId)
+VALUES(2, 3, 4);
 INSERT INTO QaObjectRelationship
-(parentId, childrenId)
-VALUES(3, 4);
+(parentId, childrenId, childrenObjectTypeId)
+VALUES(3, 4, 5);
 INSERT INTO QaObjectRelationship
-(parentId, childrenId)
-VALUES(4, 5);
+(parentId, childrenId, childrenObjectTypeId)
+VALUES(4, 5, 6);
 INSERT INTO QaObjectRelationship
-(parentId, childrenId)
-VALUES(4, 10);
+(parentId, childrenId, childrenObjectTypeId)
+VALUES(4, 10, 7);
 INSERT INTO QaObjectRelationship
-(parentId, childrenId)
-VALUES(10, 6);
+(parentId, childrenId, childrenObjectTypeId)
+VALUES(10, 6, 8);
 INSERT INTO QaObjectRelationship
-(parentId, childrenId)
-VALUES(10, 7);
+(parentId, childrenId, childrenObjectTypeId)
+VALUES(10, 7, 9);
 INSERT INTO QaObjectRelationship
-(parentId, childrenId)
-VALUES(10, 8);
+(parentId, childrenId, childrenObjectTypeId)
+VALUES(10, 8, 10);
 INSERT INTO QaObjectRelationship
-(parentId, childrenId)
-VALUES(10, 9);
+(parentId, childrenId, childrenObjectTypeId)
+VALUES(10, 9, 11);
 
 
 

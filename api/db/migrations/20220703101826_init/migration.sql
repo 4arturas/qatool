@@ -59,10 +59,15 @@ CREATE TABLE "QaObjectType" (
 );
 
 -- CreateTable
+-- QaObjectRelationship definition
 CREATE TABLE "QaObjectRelationship" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "parentId" INTEGER NOT NULL,
-    "childrenId" INTEGER NOT NULL
+                                      "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                                      "parentId" INTEGER NOT NULL,
+                                      "childrenId" INTEGER NOT NULL,
+                                      "childrenObjectTypeId" INTEGER NOT NULL,
+                                      CONSTRAINT "QaObjectRelationship_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "QaObject" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+                                      CONSTRAINT "QaObjectRelationship_childrenId_fkey" FOREIGN KEY ("childrenId") REFERENCES "QaObject" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+                                      CONSTRAINT "QaObjectRelationship_childrenObjectTypeId_fkey" FOREIGN KEY ("childrenObjectTypeId") REFERENCES "QaObjectType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
