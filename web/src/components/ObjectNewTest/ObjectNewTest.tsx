@@ -1,5 +1,5 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCirclePlus, faPen} from "@fortawesome/free-solid-svg-icons";
+import {faCirclePlus, faCopy, faPen} from "@fortawesome/free-solid-svg-icons";
 import {navigate, routes} from "@redwoodjs/router";
 import {
   BODY,
@@ -96,7 +96,7 @@ const DELETE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
 `
 
 const SPLIT_SYMBOL = '-';
-const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => {
+const ObjectNewTest = ({typeId, qaObject, children, cloneObject, beforeSave, afterSave }) => {
   const client = useApolloClient();
 
   const [componentQaObject, setComponentQaObject] = useState( qaObject );
@@ -261,7 +261,7 @@ const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => 
 
   return <>
     <FontAwesomeIcon
-      icon={componentQaObject ? faPen : faCirclePlus}
+      icon={ cloneObject ? faCopy : componentQaObject ? faPen : faCirclePlus}
       style={stylingObject.icon}
       onClick={ ()=>setIsModalVisible(true) }/>
 
@@ -308,7 +308,7 @@ const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => 
           });
 
           // TODO: implement child management on server side
-          if ( !componentQaObject ) // new object
+          if ( !componentQaObject || cloneObject ) // new object
           {
             const data = createQaObject({variables: {input: values}});
 
@@ -512,7 +512,7 @@ const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => 
 
             <Form.Item>
               <Button type="primary" htmlType="submit" style={{float:'right'}}>
-                { componentQaObject ? 'Update' : 'Create New' }
+                { cloneObject ? 'Clone' : componentQaObject ? 'Update' : 'Create New' }
               </Button>
             </Form.Item>
       </Form>
