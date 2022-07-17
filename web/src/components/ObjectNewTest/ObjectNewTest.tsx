@@ -1,11 +1,11 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCirclePlus, faCopy, faPen} from "@fortawesome/free-solid-svg-icons";
-import {navigate, routes} from "@redwoodjs/router";
+import {routes} from "@redwoodjs/router";
 import {
   BODY,
   CASE,
   COLLECTION, CREATE_QA_OBJECT_RELATIONSHIP_MUTATION,
-  DEFAULT_TABLE_PAGE_SIZE, EXPERIMENT,
+  DEFAULT_TABLE_PAGE_SIZE,
   getChildrenTypeIdByParentTypeId, REMOVE, REPLACE, RESPONSE, RESULT, SERVER, SUITE, TEST,
   typeIdToColor,
   typeIdToName,
@@ -14,7 +14,7 @@ import {
 } from "src/global";
 import React, {useEffect, useState} from "react";
 import {Button, Form, Input, InputNumber, Modal, Select, Tag} from "antd";
-import {useApolloClient, useLazyQuery} from "@apollo/client";
+import {useApolloClient} from "@apollo/client";
 import {Spin} from "antd/es";
 import {toast} from "@redwoodjs/web/toast";
 import {useMutation} from "@redwoodjs/web";
@@ -96,7 +96,7 @@ const DELETE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
 `
 
 const SPLIT_SYMBOL = '-';
-const ObjectNewTest = ({typeId, qaObject, children, cloneObject, beforeSave, afterSave }) => {
+const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, beforeSave, afterSave }) => {
   const client = useApolloClient();
 
   const [componentQaObject, setComponentQaObject] = useState( qaObject );
@@ -274,7 +274,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, beforeSave, aft
     }
 
     <Modal
-      title={ <Tag color={typeIdToColor(objectTypeId)} style={{color:'black'}}>New {typeIdToName(objectTypeId)}</Tag> }
+      title={ <Tag color={typeIdToColor(objectTypeId)} style={{color:'black'}}>{cloneObject ? 'Clone ' : componentQaObject ? 'Update ' : 'Create New '} {typeIdToName(objectTypeId)}</Tag> }
       visible={isModalVisible}
       onOk={()=>setIsModalVisible(false)}
       onCancel={()=>setIsModalVisible(false)}
@@ -287,7 +287,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, beforeSave, aft
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={componentQaObject}
+        initialValues={ componentQaObject ? componentQaObject : {typeId:typeId} }
         onFinish={ (values: any) => {
           beforeSave();
           const children = [];
@@ -312,7 +312,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, beforeSave, aft
           {
             const data = createQaObject({variables: {input: values}});
 
-            data.then((ret) => {
+            data.then( async (ret) => {
               const newCreateQaObject = ret.data.createQaObject;
               const childParentId: number = newCreateQaObject.id;
 
@@ -325,14 +325,14 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, beforeSave, aft
                 const ret = await createQaObjectRelationship({variables: {input: castInput}});
               });
 
-              /*            if ( parentId )
-                          {
-                            const castInput = { parentId: parentId, childrenId: childParentId };
-                            const ret = /!*await*!/ createQaObjectRelationship({ variables: { input: castInput } });
-                            // const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
-                          }*/
+              if ( parentId )
+              {
+                const castInput = { parentId: parentId, childrenId: childParentId, childrenObjectTypeId: typeId };
+                const ret = await createQaObjectRelationship({ variables: { input: castInput } });
+                // const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
+              }
 
-              toast.success('New Object created')
+              toast.success(cloneObject ? 'Object cloned' : 'New Object created')
               setIsModalVisible(false);
 
               afterSave(newCreateQaObject);
@@ -385,7 +385,11 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, beforeSave, aft
               <Select
                 style={{...stylingObject.selectObjectType, border: `1px solid ${objectColor}` } }
                 placeholder="Select Object Type"
-                options={TYPES.map( typeId => { return { value: typeId, label: typeIdToName(typeId) } } )}
+                options={
+                  qaObject ? [ { value: qaObject.typeId, label: typeIdToName( qaObject.typeId ) } ] :
+                    typeId ? [{ value: typeId, label: typeIdToName(typeId) }] :
+                    TYPES.map( typeId => { return { value: typeId, label: typeIdToName(typeId) } } )
+                }
                 onChange={ (typeId) =>
                 {
                   setObjectTypeId(typeId);
