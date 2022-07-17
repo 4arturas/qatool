@@ -77,7 +77,7 @@ const UPDATE_QA_OBJECT_MUTATION = gql`
 `
 
 const FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID = gql`
-  query FindRelationshipsWithTheSameParentId($parentId: Int!) {
+  query FindRelationships($parentId: Int!) {
     qaObjectRelationshipsWithTheSameParentId(parentId: $parentId) {
       id
       parentId
