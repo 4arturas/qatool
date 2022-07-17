@@ -19,6 +19,7 @@ import React, {useState} from "react";
 import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 import {useApolloClient} from "@apollo/client";
 import {toast} from "@redwoodjs/web/toast";
+import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 
 const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
@@ -110,29 +111,29 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
     - {qaObject.name} (OWNER of the object <b>{qaObject.user.email}</b>) (Has <b>{qaObject.parent.length}</b> children) (Children type <b>{qaObject.parent.map( p => `${typeIdToName(p.childrenObjectTypeId)} - ` )}</b> children)
 
     <span key={`edit${parentId}`} style={stylingObject.editQaObject}>
-      <ObjectEdit
+      <ObjectNewTest
+        typeId={qaObject.typeId}
         qaObject={qaObject}
+        children={childrenHierarchy.map( ch => objects.find( o => o.id == ch.childrenId ) )}
+        cloneObject={false}
+        parentId={null}
         beforeSave={()=>{}}
         afterSave={ () => {
           window.location.reload();
         }}/>
     </span>
-
-
-    <span key={`clone${parentId}`} style={stylingObject.cloneQaObject}>
-      <Tooltip title={'Clone object'}>
-        <ObjectClone
-          parentId={qaObject.typeId === EXPERIMENT ? null : treeParentId}
-          qaObject={qaObject}
-          beforeSave={() => {
-          }}
-          afterSave={(clonedObject, relationship) => {
-            window.location.reload();
-          }}
-        />
-      </Tooltip>
+    <span key={`clone${parentId}`} style={stylingObject.editQaObject}>
+      <ObjectNewTest
+        typeId={qaObject.typeId}
+        qaObject={qaObject}
+        children={childrenHierarchy.map( ch => objects.find( o => o.id == ch.childrenId ) )}
+        cloneObject={true}
+        parentId={null}
+        beforeSave={()=>{}}
+        afterSave={ () => {
+          window.location.reload();
+        }}/>
     </span>
-
 
     <span key={`delete${parentId}`} style={stylingObject.deleteQaObject}>
       <Tooltip title={'Delete object'}>
@@ -170,11 +171,14 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
         {
           possibleToAddChildren.map((typeId:number) => {
             return <span key={`tree${parentId}${typeId}`}>
-              <ObjectNew
-                parentId={parentId}
+              <ObjectNewTest
                 typeId={typeId}
-                beforeSave={() => {}}
-                afterSave={() => {
+                qaObject={null}
+                children={childrenHierarchy.map( ch => objects.find( o => o.id == ch.childrenId ) )}
+                cloneObject={false}
+                parentId={parentId}
+                beforeSave={()=>{}}
+                afterSave={ () => {
                   window.location.reload();
                 }}/>
             </span>
