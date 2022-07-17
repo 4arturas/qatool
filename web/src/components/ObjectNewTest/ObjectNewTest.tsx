@@ -14,7 +14,7 @@ import {
 } from "src/global";
 import React, {useEffect, useState} from "react";
 import {Button, Form, Input, InputNumber, Modal, Select, Tag} from "antd";
-import {useApolloClient} from "@apollo/client";
+import {useApolloClient, useLazyQuery} from "@apollo/client";
 import {Spin} from "antd/es";
 import {toast} from "@redwoodjs/web/toast";
 import {useMutation} from "@redwoodjs/web";
@@ -55,6 +55,46 @@ const CREATE_QA_OBJECT_MUTATION = gql`
     }
   }`;
 
+const UPDATE_QA_OBJECT_MUTATION = gql`
+  mutation UpdateQaObjectMutation($id: Int!, $input: UpdateQaObjectInput!) {
+    updateQaObject(id: $id, input: $input) {
+      id
+      typeId
+      name
+      description
+      batchId
+      threads
+      loops
+      json
+      jsonata
+      address
+      method
+      header
+      createdAt
+      updatedAt
+    }
+  }
+`
+
+const FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID = gql`
+  query FindRelationshipsWithTheSameParentId($parentId: Int!) {
+    qaObjectRelationshipsWithTheSameParentId(parentId: $parentId) {
+      id
+      parentId
+      childrenId
+      childrenObjectTypeId
+    }
+  }
+`
+
+const DELETE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
+  mutation DeleteQaObjectRelationshipMutation($id: Int!) {
+    deleteQaObjectRelationship(id: $id) {
+      id
+    }
+  }
+`
+
 const SPLIT_SYMBOL = '-';
 const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => {
   const client = useApolloClient();
@@ -92,6 +132,23 @@ const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => 
     },
     onError: (error) => {
       toast.error(error.message)
+    },
+  })
+
+  const [updateQaObject, { loading: loadingUpdateQaObject, error: errorUpdateQaObject, data }] = useMutation(UPDATE_QA_OBJECT_MUTATION, {
+
+    onCompleted: () => {
+
+    },
+    onError: (error) => {
+      toast.error(error.message)
+    },
+  })
+
+  const [deleteQaObjectRelationship] = useMutation(DELETE_QA_OBJECT_RELATIONSHIP_MUTATION, {
+    onCompleted: () => {
+    },
+    onError: (error) => {
     },
   })
 
@@ -152,7 +209,7 @@ const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => 
         const memberName = `childrenId${qaObjectChildren.typeId}`
         if ( !newQaObject[memberName] )
           newQaObject[memberName] = [];
-        newQaObject[memberName].push( convertQaObjectToOption(qaObjectChildren));
+        newQaObject[memberName].push( `${qaObjectChildren.id}${SPLIT_SYMBOL}${qaObjectChildren.typeId}`);
       });
       setComponentQaObject( newQaObject );
     }
@@ -234,48 +291,84 @@ const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => 
         onFinish={ (values: any) => {
           beforeSave();
           const children = [];
-          Object.keys( values ).map( k => {
-            if ( k.indexOf('childrenId') !== -1 )
-            {
+          Object.keys(values).map(k => {
+            if (k.indexOf('childrenId') !== -1) {
               const childrenId = values[k];
-              const splitC = ( val ) => { const s = val.split(SPLIT_SYMBOL); return { childrenId: s[0], childrenObjectTypeId: s[1] } }
-              if ( Array.isArray(childrenId) )
-              {
-                childrenId.map( c => children.push( splitC( c ) ) );
+              const splitC = (val) => {
+                const s = val.split(SPLIT_SYMBOL);
+                return {childrenId: s[0], childrenObjectTypeId: s[1]}
               }
-              else
-              {
-                children.push( splitC( childrenId ) );
+              if (Array.isArray(childrenId)) {
+                childrenId.map(c => children.push(splitC(c)));
+              } else {
+                children.push(splitC(childrenId));
               }
               delete values[k];
             }
           });
-          // values.children = children;
 
-          const data = createQaObject({ variables: { input: values } });
+          // TODO: implement child management on server side
+          if ( !componentQaObject ) // new object
+          {
+            const data = createQaObject({variables: {input: values}});
 
-          data.then( (ret) => {
-            const newCreateQaObject = ret.data.createQaObject;
-            const childParentId: number = newCreateQaObject.id;
+            data.then((ret) => {
+              const newCreateQaObject = ret.data.createQaObject;
+              const childParentId: number = newCreateQaObject.id;
 
-            children.map(async (c) => {
-              const castInput = {parentId: childParentId, childrenId: (c.childrenId * 1), childrenObjectTypeId: (c.childrenObjectTypeId*1) };
-              const ret = await createQaObjectRelationship({variables: {input: castInput}});
+              children.map(async (c) => {
+                const castInput = {
+                  parentId: childParentId,
+                  childrenId: (c.childrenId * 1),
+                  childrenObjectTypeId: (c.childrenObjectTypeId * 1)
+                };
+                const ret = await createQaObjectRelationship({variables: {input: castInput}});
+              });
+
+              /*            if ( parentId )
+                          {
+                            const castInput = { parentId: parentId, childrenId: childParentId };
+                            const ret = /!*await*!/ createQaObjectRelationship({ variables: { input: castInput } });
+                            // const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
+                          }*/
+
+              toast.success('New Object created')
+              setIsModalVisible(false);
+
+              afterSave(newCreateQaObject);
+
+            })
+
+          } // new object end
+          else // update object
+          {
+
+            // const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
+            const id = componentQaObject.id;
+            const data = updateQaObject({ variables: {  id, input: values } })
+            data.then( async ( ret ) => {
+              const queryResult = await client.query({
+                query: FIND_RELATIONSHIPS_WITH_THE_SAME_PARENT_ID,
+                variables: { parentId: id }
+              });
+              const data = queryResult.data.qaObjectRelationshipsWithTheSameParentId;
+              data.map((p)=> {
+                const id = p.id;
+                deleteQaObjectRelationship({ variables: { id } });
+              });
+
+              children.map( (childrenId) => {
+                console.log( childrenId );
+                const castInput = { parentId: id, childrenId: parseInt(childrenId.childrenId), childrenObjectTypeId: parseInt(childrenId.childrenObjectTypeId) };
+                createQaObjectRelationship({ variables: { input: castInput } });
+              });
+
+              toast.success('QaObject updated')
+
+              setIsModalVisible(false);
+              afterSave( /*qaObject*/ );
             });
-
-            /*            if ( parentId )
-                        {
-                          const castInput = { parentId: parentId, childrenId: childParentId };
-                          const ret = /!*await*!/ createQaObjectRelationship({ variables: { input: castInput } });
-                          // const createQaObjectRelationshipRet = ret.data.createQaObjectRelationship;
-                        }*/
-
-            toast.success('New Object created')
-            setIsModalVisible(false);
-
-            afterSave(newCreateQaObject);
-
-          })
+          }
         }}
         onFinishFailed={(errorInfo: any) => {
           console.log('Failed:', errorInfo);
