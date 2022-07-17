@@ -5,21 +5,6 @@ import type {
   QaObjectResolvers,
 } from 'types/graphql'
 import {QaObjectRelationship} from "src/models";
-import {
-  BODY,
-  CASE, COLLECTION,
-  getRandomIntInclusive, MSG_OUTGOING,
-  REMOVE,
-  REPLACE,
-  RESPONSE,
-  RESULT,
-  SERVER,
-  SUITE,
-  TEST
-} from "src/functions/global";
-import {createExperimentResult} from "src/services/experimentResults/experimentResults";
-import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
-import QaObjectModel  from 'src/models/QaObject'
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
   return db.qaObject.findMany()
