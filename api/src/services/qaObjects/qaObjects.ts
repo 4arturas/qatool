@@ -82,14 +82,26 @@ export const qaObjectsPage = ({ page, pageSize }) => {
 }
 
 export const deleteQaObjectWithChildren = async ({ id }) => {
+  await db.qaObjectRelationship.deleteMany({
+    where: {
+      OR: [
+        {
+          parentId: {
+            equals: id
+          }
+        },
+        {
+          childrenId: {
+            equals: id
+          }
+        }
+      ]
+    }
+  });
 
-  const parent = await QaObjectRelationship.where({ parentId: id});
-  parent.map( c => c.destroy({ throw: true }) );
-  const children = await QaObjectRelationship.where({ childrenId: id});
-  children.map( c => c.destroy({ throw: true }) );
-
-  const qaObjectModel = await QaObjectModel.where( {id:id} );
-  qaObjectModel.map( q => q.destroy( { throw: true } ) );
+  await db.qaObject.delete({
+    where: { id },
+  });
 
   return id;
 }
