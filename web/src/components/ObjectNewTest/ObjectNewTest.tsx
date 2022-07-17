@@ -1,5 +1,5 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
+import {faCirclePlus, faPen} from "@fortawesome/free-solid-svg-icons";
 import {navigate, routes} from "@redwoodjs/router";
 import {
   BODY,
@@ -56,9 +56,10 @@ const CREATE_QA_OBJECT_MUTATION = gql`
   }`;
 
 const SPLIT_SYMBOL = '-';
-const ObjectNewTest = ({typeId, qaObject, beforeSave, afterSave }) => {
+const ObjectNewTest = ({typeId, qaObject, children, beforeSave, afterSave }) => {
   const client = useApolloClient();
 
+  const [componentQaObject, setComponentQaObject] = useState( qaObject );
   const [objectTypeId, setObjectTypeId] = useState( typeId );
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [objectColor, setObjectColor] = useState( typeId ? typeIdToColor(typeId) : '' );
@@ -141,6 +142,21 @@ const ObjectNewTest = ({typeId, qaObject, beforeSave, afterSave }) => {
   }
   useEffect( () => {
     fetchChildren( typeId );
+
+    if ( componentQaObject )
+    {
+      const newQaObject = { ...qaObject };
+      // newQaObject['childrenId3'] = [{ value: "19-3", label: "S" }];
+      // newQaObject['childrenId2'] = [{ value: "20-2", label: "C" }];
+      children.map( (qaObjectChildren) => {
+        const memberName = `childrenId${qaObjectChildren.typeId}`
+        if ( !newQaObject[memberName] )
+          newQaObject[memberName] = [];
+        newQaObject[memberName].push( convertQaObjectToOption(qaObjectChildren));
+      });
+      setComponentQaObject( newQaObject );
+    }
+
   }, [] );
 
 
@@ -153,9 +169,11 @@ const ObjectNewTest = ({typeId, qaObject, beforeSave, afterSave }) => {
     selectObjectType: {}
   }
 
+  const convertQaObjectToOption = ( qaObject ) => ( { value: `${qaObject.id}${SPLIT_SYMBOL}${qaObject.typeId}`, label: qaObject.name } );
 
-  const SelectChildren = ( { typeId, options, multiple }) => {
-    const convertToOptions = ( qaObject ) => qaObject.map( qa => { return {value: `${qa.id}${SPLIT_SYMBOL}${qa.typeId}`, label: qa.name } } );
+  const SelectChildren = ( { typeId, options, multiple, children }) => {
+
+    const convertToOptions = ( qaObject ) => qaObject.map( qa => convertQaObjectToOption( qa ) );
 
     if ( !options ) return <></>
 
@@ -183,16 +201,20 @@ const ObjectNewTest = ({typeId, qaObject, beforeSave, afterSave }) => {
       }
     </Form.Item>
   }
+
   return <>
     <FontAwesomeIcon
-      icon={faCirclePlus}
+      icon={componentQaObject ? faPen : faCirclePlus}
       style={stylingObject.icon}
       onClick={ ()=>setIsModalVisible(true) }/>
+
+    { !componentQaObject &&
       <span style={{marginLeft:'3px'}}>
         <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${typeId}`} )}>
           {typeIdToTag(typeId)}
         </a>
       </span>
+    }
 
     <Modal
       title={ <Tag color={typeIdToColor(objectTypeId)} style={{color:'black'}}>New {typeIdToName(objectTypeId)}</Tag> }
@@ -208,7 +230,7 @@ const ObjectNewTest = ({typeId, qaObject, beforeSave, afterSave }) => {
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={{typeId:objectTypeId}}
+        initialValues={componentQaObject}
         onFinish={ (values: any) => {
           beforeSave();
           const children = [];
@@ -384,20 +406,20 @@ const ObjectNewTest = ({typeId, qaObject, beforeSave, afterSave }) => {
               </Form.Item>
             }
 
-            <SelectChildren typeId={SERVER} options={server} multiple={false}/>
-            <SelectChildren typeId={COLLECTION} options={collection} multiple={true}/>
-            <SelectChildren typeId={SUITE} options={suite} multiple={true}/>
-            <SelectChildren typeId={CASE} options={cAse} multiple={true}/>
-            <SelectChildren typeId={BODY} options={body} multiple={false}/>
-            <SelectChildren typeId={TEST} options={test} multiple={false}/>
-            <SelectChildren typeId={REPLACE} options={replace} multiple={false}/>
-            <SelectChildren typeId={REMOVE} options={remove} multiple={false}/>
-            <SelectChildren typeId={RESULT} options={result} multiple={false}/>
-            <SelectChildren typeId={RESPONSE} options={response} multiple={false}/>
+            <SelectChildren typeId={SERVER} options={server} multiple={false} children={children}/>
+            <SelectChildren typeId={COLLECTION} options={collection} multiple={true} children={children}/>
+            <SelectChildren typeId={SUITE} options={suite} multiple={true} children={children}/>
+            <SelectChildren typeId={CASE} options={cAse} multiple={true} children={children}/>
+            <SelectChildren typeId={BODY} options={body} multiple={false} children={children}/>
+            <SelectChildren typeId={TEST} options={test} multiple={false} children={children}/>
+            <SelectChildren typeId={REPLACE} options={replace} multiple={false} children={children}/>
+            <SelectChildren typeId={REMOVE} options={remove} multiple={false} children={children}/>
+            <SelectChildren typeId={RESULT} options={result} multiple={false} children={children}/>
+            <SelectChildren typeId={RESPONSE} options={response} multiple={false} children={children}/>
 
             <Form.Item>
               <Button type="primary" htmlType="submit" style={{float:'right'}}>
-                Submit
+                { componentQaObject ? 'Update' : 'Create New' }
               </Button>
             </Form.Item>
       </Form>
