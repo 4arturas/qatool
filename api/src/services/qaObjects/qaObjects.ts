@@ -13,6 +13,11 @@ export const qaObjects: QueryResolvers['qaObjects'] = () => {
 export const qaObject: QueryResolvers['qaObject'] = ({ id }) => {
   return db.qaObject.findUnique({
     where: { id },
+    include: {
+      user:     { select: { email: true } },
+      parent: {  },
+      children:  {  }
+    }
   })
 }
 
