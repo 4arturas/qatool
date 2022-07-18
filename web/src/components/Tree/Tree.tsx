@@ -8,9 +8,6 @@ import {
   typeIdToTag
 } from "src/global";
 import {Popconfirm, Tooltip} from "antd";
-import ObjectNew from "src/components/ObjectNew/ObjectNew";
-import ObjectClone from "src/components/ObjectClone/ObjectClone";
-import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import Merge from "src/components/Merge/Merge";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
@@ -21,6 +18,39 @@ import {useApolloClient} from "@apollo/client";
 import {toast} from "@redwoodjs/web/toast";
 import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 
+export const FETCH_TREE = gql`
+  query FetchTree($id: Int!) {
+    tree: fetchHierarchy(id: $id) {
+      parentId
+      hierarchy {
+        id
+        parentId
+        childrenId
+      }
+      objects {
+        id
+        typeId
+        name
+        description
+        batchId
+        threads
+        loops
+        json
+        jsonata
+        address
+        method
+        header
+        createdAt
+        updatedAt
+        executed
+        userId
+        user { email }
+        parent { id parentId childrenId childrenObjectTypeId }
+      }
+    }
+  }
+`
+
 const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   const client = useApolloClient();
@@ -30,8 +60,10 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   let ctx = 0;
 
-  let { parentId, hierarchy, objects }  = tree;
-  const qaObject                          = objects.find( o => o.id === parentId );
+  const [parentId, setParentId] = useState( tree.parentId );
+  const [hierarchy, setHierarchy] = useState( tree.hierarchy );
+  const [objects, setObjects] = useState( tree.objects );
+  const [qaObject, setQaObject] = useState( tree.objects.find( o => o.id === tree.parentId ) );
 
   let childrenHierarchy:Array<{ id:number,parentId:number,childrenId:number}> =
     Array.from( new Set ( /*Unique*/
@@ -100,6 +132,19 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
     }
   }
 
+  const refreshTree = ( id ) =>
+  {
+    client.query({
+      query: FETCH_TREE,
+      variables: { id: id }
+    }).then( ret => {
+      setParentId( ret.data.tree.parentId );
+      setHierarchy( ret.data.tree.hierarchy );
+      setObjects( ret.data.tree.objects );
+      setQaObject( ret.data.tree.objects.find( o => o.id === ret.data.tree.parentId ) );
+    });
+  }
+
   const divTreeFragment = 'tree'
 
   return <div id={`${divTreeFragment}${parentId}`} style={stylingObject.treeComponent}>
@@ -118,8 +163,9 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
         cloneObject={false}
         parentId={null}
         beforeSave={()=>{}}
-        afterSave={ () => {
-          window.location.reload();
+        afterSave={ ( id ) => {
+          refreshTree( id );
+          // window.location.reload();
         }}/>
     </span>
     <span key={`clone${parentId}`} style={stylingObject.editQaObject}>
@@ -130,8 +176,8 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
         cloneObject={true}
         parentId={null}
         beforeSave={()=>{}}
-        afterSave={ () => {
-          window.location.reload();
+        afterSave={ ( newQaObject ) => {
+          // refreshTree( parentId );
         }}/>
     </span>
 
@@ -142,7 +188,13 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
           typeId={qaObject.typeId}
           beforeSave={()=>{}}
           afterSave={ () => {
+            if ( treeParentId === parentId )
+            {
+              navigate(  routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0} ) );
+              return;
+            }
             document.getElementById(`tree${parentId}`).style.display = 'none';
+            // refreshTree( treeParentId );
           }}
         />
       </Tooltip>
@@ -178,8 +230,9 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
                 cloneObject={false}
                 parentId={parentId}
                 beforeSave={()=>{}}
-                afterSave={ () => {
-                  window.location.reload();
+                afterSave={ (newQaObject) => {
+                  refreshTree( parentId );
+                  // window.location.reload();
                 }}/>
             </span>
           })
