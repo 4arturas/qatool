@@ -514,7 +514,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
             <SelectChildren typeId={RESPONSE} options={response} multiple={false} children={children}/>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" style={{float:'right'}}>
+              <Button type="primary" htmlType="submit" style={{float:'right', backgroundColor: `${objectColor}`, color: 'black'}}>
                 { cloneObject ? 'Clone' : componentQaObject ? 'Update' : 'Create New' }
               </Button>
             </Form.Item>
