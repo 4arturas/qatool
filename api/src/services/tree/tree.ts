@@ -33,7 +33,7 @@ export const fetchHierarchy = async ( { id } ) => {
     where: { id: { in: idUniqueArray } },
     include: {
       user:   { select: { email: true } },
-      parent: { select: { id: true, parentId: true, childrenId: true } },
+      parent: { select: { id: true, parentId: true, childrenId: true, childrenObjectTypeId: true } },
     },
   } );
 
