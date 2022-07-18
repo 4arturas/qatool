@@ -13,7 +13,7 @@ import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
 import {routes} from "@redwoodjs/router";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
-  mutation CreateQaObjectMutationNewQaObject($input: CreateQaObjectInput!) {
+  mutation CreateQaObjectMutationNewQaObject2($input: CreateQaObjectInput!) {
     createQaObject(input: $input) {
       id
       typeId
