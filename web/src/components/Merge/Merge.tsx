@@ -17,8 +17,11 @@ import {
 } from "src/global";
 import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import ReactDiffViewer from "react-diff-viewer";
+import {Spin} from "antd/es";
 
 const Merge = ( {qaObjectParent} ) => {
+
+  const [loading, setLoading] = useState( true );
 
   if ( qaObjectParent.typeId !== CASE ) return <></>;
 
@@ -109,48 +112,6 @@ const Merge = ( {qaObjectParent} ) => {
     return data.data.getQaObjectsByType;
   }
 
-  useEffect(()=> {
-    async function fetchAllObjects()
-    {
-
-      const serversArray = await getObjectByTypeId(SERVER);
-      setServers(serversArray);
-
-      const parent = await getObjectById(qaObjectParent.id);
-      setParent(parent);
-
-      const children = await getChildren(qaObjectParent.id);
-      await children.map( async (children) => {
-        const tmp = await getObjectById( children.childrenId );
-        switch ( tmp.typeId ) {
-          case BODY:
-            setBody( tmp );
-            break;
-          case TEST:
-            setTest( tmp );
-            const testChildren = await getChildren( tmp.id );
-            testChildren.map( async (c) => {
-              const testChildrenTmp = await getObjectById( c.childrenId );
-              switch ( testChildrenTmp.typeId ) {
-                case REPLACE:
-                  setReplace( testChildrenTmp );
-                  break;
-                case REMOVE:
-                  setRemove( testChildrenTmp );
-                  break;
-                case RESULT:
-                  setResult( testChildrenTmp );
-                  break;
-              }
-            });
-            break;
-        }
-      });
-
-    }
-    fetchAllObjects();
-  }, []);
-
   const wrap = (typeId) => {
     return <span className='qaObjectTypeClass' style={{backgroundColor: `${typeIdToColor(typeId)}`}}>{typeIdToName(typeId)}</span>
   }
@@ -191,7 +152,51 @@ const Merge = ( {qaObjectParent} ) => {
 
     <>
       <Tooltip title="Show Merge">
-        <FontAwesomeIcon icon={faCodeFork} style={{fontSize:'20px', cursor: 'pointer'}} onClick={()=>setIsModalVisible(true)}/>
+        <FontAwesomeIcon
+          icon={faCodeFork}
+          style={{fontSize:'20px', cursor: 'pointer'}}
+          onClick={ () => {
+            setIsModalVisible(true);
+            async function fetchAllObjects()
+            {
+
+              const serversArray = await getObjectByTypeId(SERVER);
+              setServers(serversArray);
+
+              const parent = await getObjectById(qaObjectParent.id);
+              setParent(parent);
+
+              const children = await getChildren(qaObjectParent.id);
+              await children.map( async (children) => {
+                const tmp = await getObjectById( children.childrenId );
+                switch ( tmp.typeId ) {
+                  case BODY:
+                    setBody( tmp );
+                    break;
+                  case TEST:
+                    setTest( tmp );
+                    const testChildren = await getChildren( tmp.id );
+                    testChildren.map( async (c) => {
+                      const testChildrenTmp = await getObjectById( c.childrenId );
+                      switch ( testChildrenTmp.typeId ) {
+                        case REPLACE:
+                          setReplace( testChildrenTmp );
+                          break;
+                        case REMOVE:
+                          setRemove( testChildrenTmp );
+                          break;
+                        case RESULT:
+                          setResult( testChildrenTmp );
+                          break;
+                      }
+                    });
+                    break;
+                }
+              });
+              setLoading( false );
+            }
+            fetchAllObjects();
+          } }/>
       </Tooltip>
 
       <Modal
@@ -202,6 +207,7 @@ const Merge = ( {qaObjectParent} ) => {
         // footer={null}
         width={'90%'}
       >
+        { loading && <Spin/> }
 
         {((!parent||!body||!test||!replace||!remove||!result)) && <div>In order to show diff, {wrap(CASE)} must have {wrap(BODY)} and {wrap(TEST)}. {wrap(TEST)} must have {wrap(REPLACE)}, {wrap(REMOVE)} and {wrap(RESULT)}</div>}
 
