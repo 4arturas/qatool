@@ -4,6 +4,8 @@ import {DEFAULT_TABLE_PAGE_SIZE} from "src/global";
 import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
 import {Tooltip} from "antd";
 import {useAuth} from "@redwoodjs/auth";
+import {Toaster} from "@redwoodjs/web/toast";
+import React from "react";
 
 type QaLayoutProps = {
   children?: React.ReactNode
@@ -14,6 +16,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
   const { currentUser, logOut, hasRole } = useAuth()
 
   return <>
+    <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
     <div className="rw-scaffold">
       <header className="rw-header">
 

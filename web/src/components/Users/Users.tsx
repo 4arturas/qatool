@@ -167,7 +167,6 @@ const Users = ( {users} ) => {
     },
     ];
   return <>
-    <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
     <EditUserModal user={null} OnUserAction={OnUserInsert}/>
     <Table dataSource={data} columns={columns} pagination={{ pageSize: 5 }} rowKey={'id'}/>
   </>
