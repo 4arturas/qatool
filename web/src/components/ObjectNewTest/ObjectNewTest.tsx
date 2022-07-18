@@ -358,7 +358,6 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
               });
 
               children.map( (childrenId) => {
-                console.log( childrenId );
                 const castInput = { parentId: id, childrenId: parseInt(childrenId.childrenId), childrenObjectTypeId: parseInt(childrenId.childrenObjectTypeId) };
                 createQaObjectRelationship({ variables: { input: castInput } });
               });
@@ -366,7 +365,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
               toast.success('QaObject updated')
 
               setIsModalVisible(false);
-              afterSave( /*qaObject*/ );
+              afterSave( id );
             });
           }
         }}
