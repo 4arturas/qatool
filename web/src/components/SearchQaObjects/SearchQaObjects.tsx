@@ -205,7 +205,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
                       afterSave={ ( id ) => {
                         client.query({
                           query: gql`
-                              query FindQaObjectByIdQuery($id: Int!) {
+                              query FindQaObjectByIdQueryForSearch($id: Int!) {
                                 qaObject: qaObject(id: $id) {
                                   id
                                   typeId
