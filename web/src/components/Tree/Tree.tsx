@@ -163,9 +163,8 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
         cloneObject={false}
         parentId={null}
         beforeSave={()=>{}}
-        afterSave={ ( id ) => {
-          refreshTree( id );
-          // window.location.reload();
+        afterSave={ ( updatedQaObject ) => {
+          refreshTree( updatedQaObject.id );
         }}/>
     </span>
     <span key={`clone${parentId}`} style={stylingObject.editQaObject}>
