@@ -5,21 +5,6 @@ import type {
   QaObjectResolvers,
 } from 'types/graphql'
 import {QaObjectRelationship} from "src/models";
-import {
-  BODY,
-  CASE, COLLECTION,
-  getRandomIntInclusive, MSG_OUTGOING,
-  REMOVE,
-  REPLACE,
-  RESPONSE,
-  RESULT,
-  SERVER,
-  SUITE,
-  TEST
-} from "src/functions/global";
-import {createExperimentResult} from "src/services/experimentResults/experimentResults";
-import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
-import QaObjectModel  from 'src/models/QaObject'
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
   return db.qaObject.findMany()
@@ -43,22 +28,21 @@ export const qaObjectsByTypeId: QueryResolvers['qaObjectsByTypeId'] = ({ typeId 
   })
 }
 
-export const createQaObject: MutationResolvers['createQaObject'] = ({
-  input,
-}) => {
-  return  db.qaObject.create({
-    data: input,
+export const createQaObject: MutationResolvers['createQaObject'] = async ({ input}) => {
+  const qaObject = await db.qaObject.create({
+    data: { ...input, userId: context.currentUser.id },
   });
+
+  return { ...qaObject, ...{ user: { email: context.currentUser.email } } };
 }
 
-export const updateQaObject: MutationResolvers['updateQaObject'] = ({
-  id,
-  input,
-}) => {
-  return db.qaObject.update({
+export const updateQaObject: MutationResolvers['updateQaObject'] = async ( { id,  input }) => {
+  const qaObject = await db.qaObject.update({
     data: input,
     where: { id },
-  })
+  });
+
+  return { ...qaObject, ...{ user: { email: context.currentUser.email } } };
 }
 
 export const deleteQaObject: MutationResolvers['deleteQaObject'] = ({ id }) => {
@@ -84,14 +68,26 @@ export const qaObjectsPage = ({ page, pageSize }) => {
 }
 
 export const deleteQaObjectWithChildren = async ({ id }) => {
+  await db.qaObjectRelationship.deleteMany({
+    where: {
+      OR: [
+        {
+          parentId: {
+            equals: id
+          }
+        },
+        {
+          childrenId: {
+            equals: id
+          }
+        }
+      ]
+    }
+  });
 
-  const parent = await QaObjectRelationship.where({ parentId: id});
-  parent.map( c => c.destroy({ throw: true }) );
-  const children = await QaObjectRelationship.where({ childrenId: id});
-  children.map( c => c.destroy({ throw: true }) );
-
-  const qaObjectModel = await QaObjectModel.where( {id:id} );
-  qaObjectModel.map( q => q.destroy( { throw: true } ) );
+  await db.qaObject.delete({
+    where: { id },
+  });
 
   return id;
 }
@@ -103,6 +99,24 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
   const findClause = {
     take: pageSize,
     skip: offset,
+
+    /*select: {
+      user: { select: { email: true } },
+      children: {
+        select: { childrenId: true }
+      }
+    },*/
+
+    include: {
+      user:     { select: { email: true } },
+      // parent:   { select: { parentId: true } },
+      parent: {  },
+      children:  {  }
+/*      select: {
+        children:  { childrenId: true }
+      }*/
+    },
+
       // views: { where: { createdAt: dateFilter } },
 
     // where: whereClause

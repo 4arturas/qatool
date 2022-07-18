@@ -591,6 +591,313 @@ module.exports = {
       uniqueFields: [],
       uniqueIndexes: [],
       isGenerated: false
+    },
+    {
+      name: "User",
+      dbName: null,
+      fields: [
+        {
+          name: "id",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: true,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "Int",
+          default: {
+            name: "autoincrement",
+            args: []
+          },
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "uuid",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: true,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "String",
+          default: {
+            name: "cuid",
+            args: []
+          },
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "email",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: true,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "hashedPassword",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "salt",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "resetToken",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "resetTokenExpiresAt",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "DateTime",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "active",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "Boolean",
+          default: false,
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "createdAt",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "DateTime",
+          default: {
+            name: "now",
+            args: []
+          },
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "updatedAt",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "DateTime",
+          default: {
+            name: "now",
+            args: []
+          },
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "userRoles",
+          kind: "object",
+          isList: true,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "UserRole",
+          relationName: "UserToUserRole",
+          relationFromFields: [],
+          relationToFields: [],
+          isGenerated: false,
+          isUpdatedAt: false
+        }
+      ],
+      primaryKey: null,
+      uniqueFields: [],
+      uniqueIndexes: [],
+      isGenerated: false
+    },
+    {
+      name: "UserRole",
+      dbName: null,
+      fields: [
+        {
+          name: "id",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: true,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "Int",
+          default: {
+            name: "autoincrement",
+            args: []
+          },
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "name",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "String",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "user",
+          kind: "object",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: false,
+          type: "User",
+          relationName: "UserToUserRole",
+          relationFromFields: [
+            "userId"
+          ],
+          relationToFields: [
+            "id"
+          ],
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "userId",
+          kind: "scalar",
+          isList: false,
+          isRequired: false,
+          isUnique: false,
+          isId: false,
+          isReadOnly: true,
+          hasDefaultValue: false,
+          type: "Int",
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "active",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "Boolean",
+          default: true,
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "createdAt",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "DateTime",
+          default: {
+            name: "now",
+            args: []
+          },
+          isGenerated: false,
+          isUpdatedAt: false
+        },
+        {
+          name: "updatedAt",
+          kind: "scalar",
+          isList: false,
+          isRequired: true,
+          isUnique: false,
+          isId: false,
+          isReadOnly: false,
+          hasDefaultValue: true,
+          type: "DateTime",
+          default: {
+            name: "now",
+            args: []
+          },
+          isGenerated: false,
+          isUpdatedAt: false
+        }
+      ],
+      primaryKey: null,
+      uniqueFields: [
+        [
+          "name",
+          "userId"
+        ]
+      ],
+      uniqueIndexes: [
+        {
+          name: null,
+          fields: [
+            "name",
+            "userId"
+          ]
+        }
+      ],
+      isGenerated: false
     }
   ],
   types: []

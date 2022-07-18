@@ -30,6 +30,9 @@ export const TYPES = [
   RESPONSE
 ];
 
+export const ROLE_ADMIN:string    = 'admin';
+export const ROLE_CUSTOMER:string = 'customer';
+
 export const typeIdToName = (typeId: number) =>
 {
   switch ( typeId )
@@ -236,6 +239,7 @@ export const CREATE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
       id
       parentId
       childrenId
+      childrenObjectTypeId
     }
   }`;
 

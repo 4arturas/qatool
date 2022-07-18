@@ -3,6 +3,7 @@ export const schema = gql`
     id: Int!
     parentId: Int!
     childrenId: Int!
+    childrenObjectTypeId: Int!
   }
 
   type Query {
@@ -14,6 +15,7 @@ export const schema = gql`
   input CreateQaObjectRelationshipInput {
     parentId: Int!
     childrenId: Int!
+    childrenObjectTypeId: Int!
   }
 
   input UpdateQaObjectRelationshipInput {

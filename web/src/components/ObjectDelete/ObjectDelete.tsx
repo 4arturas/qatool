@@ -35,7 +35,9 @@ const ObjectDelete = ( { id, beforeSave, afterSave, typeId=null/*needed for the 
         onConfirm={ () => {
             beforeSave();
             deleteQaObjectWithChildren({ variables: { id } })
-            afterSave(id);
+              .then( ret => {
+                afterSave(id);
+              })
           }
         }
         // onCancel={cancel}

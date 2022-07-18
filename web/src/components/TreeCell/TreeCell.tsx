@@ -28,6 +28,9 @@ export const QUERY = gql`
         createdAt
         updatedAt
         executed
+        userId
+        user { email }
+        parent { id parentId childrenId childrenObjectTypeId }
       }
     }
   }
@@ -43,7 +46,6 @@ export const Failure = ( { error }: CellFailureProps<FindTreeQueryVariables>) =>
 
 export const Success = ( { tree }: CellSuccessProps<FindTreeQuery, FindTreeQueryVariables> ) => {
   return <div key={'divTreeContainer'} style={{marginLeft: '50px'}}>
-    <Toaster toastOptions={{ className: 'rw-toast', duration: 30000 }} />
     <Tree tree={tree} relationId={null} treeParentId={tree.parentId}/>
   </div>
 }

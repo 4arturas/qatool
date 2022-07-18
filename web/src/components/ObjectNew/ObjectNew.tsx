@@ -1,5 +1,4 @@
-import {PlusCircleOutlined} from "@ant-design/icons";
-import {Modal, Tooltip} from "antd";
+import {Modal} from "antd";
 import QaObjectForm from "src/components/QaObjectForm";
 import React, {useState} from "react";
 import {toast} from "@redwoodjs/web/toast";
@@ -11,10 +10,10 @@ import {
 } from "src/global";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCirclePlus} from "@fortawesome/free-solid-svg-icons";
-import {Link, NavLink, routes} from "@redwoodjs/router";
+import {routes} from "@redwoodjs/router";
 
 const CREATE_QA_OBJECT_MUTATION = gql`
-  mutation CreateQaObjectMutationNewQaObject($input: CreateQaObjectInput!) {
+  mutation CreateQaObjectMutationNewQaObject2($input: CreateQaObjectInput!) {
     createQaObject(input: $input) {
       id
       typeId
@@ -81,8 +80,14 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
           onOk={()=>setIsModalVisible(false)}
           onCancel={()=>setIsModalVisible(false)}
           footer={null}
-          width={'50%'}
+          width={'100%'}
         >
+          <table>
+            <tbody>
+            <tr>
+              <td>new form</td>
+              <td>
+
           <QaObjectForm
             qaObject={{typeId: typeId}}
             onSave={(input) => {
@@ -118,6 +123,10 @@ const ObjectNew = ({parentId, typeId, beforeSave, afterSave}) => {
             error={errorSavingNew}
             loading={loadingSaveNew}
             submitName={ 'Create New Object' } />
+              </td>
+            </tr>
+            </tbody>
+          </table>
         </Modal>
       </>
     );

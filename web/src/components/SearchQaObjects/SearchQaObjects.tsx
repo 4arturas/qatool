@@ -1,9 +1,10 @@
 import {Badge, Button, Form, Input, Pagination, Select, Table, Tag, Tooltip} from "antd";
 import React, {useEffect, useState} from "react";
 import {
+  CASE,
   COLLECTION, EXPERIMENT,
   getChildrenTypeIdByParentTypeId,
-  mySubstr, SERVER,
+  mySubstr, SUITE, TEST,
   typeIdToColor,
   typeIdToName, typeIdToTag,
   TYPES, validateJSONata
@@ -14,12 +15,10 @@ import QaTrees from "src/components/QaTrees/QaTrees";
 import {BarChartOutlined, ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
 import BelongingsCell from 'src/components/BelongingsCell'
-import ObjectClone from "src/components/ObjectClone/ObjectClone";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
-import ObjectNew from "src/components/ObjectNew/ObjectNew";
-import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import Merge from "src/components/Merge/Merge";
 import JSONModal from "src/components/JSONModal/JSONModal";
+import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int, $count: Int) {
@@ -40,6 +39,13 @@ export const QUERY = gql`
         createdAt
         updatedAt
         executed
+        userId
+        user {
+          email
+        }
+        parent {
+          id parentId childrenId childrenObjectTypeId
+        }
       }
       count
       page
@@ -127,26 +133,82 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
         <>{(record.json && record.jsonata) && (validateJSONata(record.jsonata, record.json) ? <Badge status="success" />:<Badge status="error" />)}{mySubstr(record.jsonata, 5)}</>
     },
     {
+      title: 'Owner',
+      dataIndex: 'userId',
+      key: 'userId',
+      width: 100,
+      render: (_, record) => record.user.email
+    },
+    {
       title: 'Action',
       key: 'action',
       render: (_, record) => (
         <span id={`edibBlock${record.id}${record.typeId}`}>
-          <ObjectEdit qaObject={record} beforeSave={()=>{}} afterSave={()=>{}}/>&nbsp;&nbsp;&nbsp;
-          <ObjectClone parentId={(record.typeId===COLLECTION || record.typeId===SERVER) ? null : record.id} qaObject={record} beforeSave={()=>{}} afterSave={(newObject)=>{} }/>&nbsp;&nbsp;&nbsp;
+          <ObjectNewTest
+            typeId={record.typeId}
+            qaObject={record}
+            children={ record.parent.map( p => { return { id: p.childrenId, typeId: p.childrenObjectTypeId } } ) }
+            cloneObject={false}
+            parentId={null}
+            beforeSave={()=>{}}
+            afterSave={ ( editQaObject ) => {
+              const newPage = { ...qaObjectPage };
+              newPage.qaObjects = qaObjectPage.qaObjects.map( q => {
+                return q.id === editQaObject.id ? editQaObject : q
+              });
+              setQaObjectPage( newPage );
+            }}/>
+          &nbsp;&nbsp;&nbsp;
+          <ObjectNewTest
+            typeId={record.typeId}
+            qaObject={record}
+            children={[]}
+            cloneObject={true}
+            parentId={null}
+            beforeSave={()=>{}}
+            afterSave={ ( cloneQaObject ) => {
+              const newPage = { ...qaObjectPage };
+              newPage.qaObjects = [];
+              newPage.qaObjects.push( cloneQaObject );
+              qaObjectPage.qaObjects.map( q => newPage.qaObjects.push( q ) );
+              setQaObjectPage( newPage );
+            }}/>
+          &nbsp;&nbsp;&nbsp;
           <ObjectDelete key={`delete${record.id}`}
                         id={record.id}
                         typeId={record.typeId}
                         beforeSave={()=>{}}
                         afterSave={(id)=> {
-                          document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
+                          const newPage = { ...qaObjectPage };
+                          newPage.qaObjects = qaObjectPage.qaObjects.filter( q => q.id !== id );
+                          newPage.count = qaObjectPage.count-1;
+                          setQaObjectPage( newPage );
+                          // document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
                         }
                       }/>&nbsp;&nbsp;&nbsp;
           {
             getChildrenTypeIdByParentTypeId(record.typeId).map( (typeId, i) =>
-              <span key={`new${i}${record.id}${typeId}`}>
-                <ObjectNew typeId={typeId} parentId={record.id} beforeSave={()=>{}} afterSave={(newObject)=>{ console.log(newObject); } }/>
-              </span>
-            )
+            {
+              {
+                return (
+                  ( record.typeId === COLLECTION || record.typeId === SUITE ) ||
+                    ( ( record.typeId === EXPERIMENT || record.typeId === TEST || record.typeId === CASE) && !record.parent.find(p => typeId === p.childrenObjectTypeId ) ) ) &&
+
+                  <span key={`new${i}${record.id}${typeId}`}>
+                    <ObjectNewTest
+                      typeId={typeId}
+                      qaObject={null}
+                      children={ [] }
+                      cloneObject={false}
+                      parentId={record.id}
+                      beforeSave={()=>{}}
+                      afterSave={ ( id ) => {
+                        console.log( 'TODO: not implemented after add new children' );
+                        // window.location.reload();
+                      }}/>
+                  </span>
+              }
+            })
           }
         </span>
       ),

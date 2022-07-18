@@ -10,9 +10,13 @@ RedwoodRecord.schema = datamodel
 import ExperimentResult from 'src/models/ExperimentResult'
 import QaObject from 'src/models/QaObject'
 import QaObjectRelationship from 'src/models/QaObjectRelationship'
+import User from 'src/models/User'
+import UserRole from 'src/models/UserRole'
 
 ExperimentResult.requiredModels = []
 QaObject.requiredModels = []
 QaObjectRelationship.requiredModels = []
+User.requiredModels = [UserRole]
+UserRole.requiredModels = [User]
 
-export { ExperimentResult, QaObject, QaObjectRelationship }
+export { ExperimentResult, QaObject, QaObjectRelationship, User, UserRole }

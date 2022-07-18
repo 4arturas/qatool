@@ -1,7 +1,7 @@
 datasource db {
   provider = "sqlite"
-//  provider = "postgresql"
-//  provider = "sqlserver"
+  //  provider = "postgresql"
+  //  provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
 
@@ -29,38 +29,81 @@ model QaObject {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  executed    Boolean @default(false) // This one is only neede for experiment, if it is true, that means that experiment was executed
+  executed Boolean @default(false) // This one is only neede for experiment, if it is true, that means that experiment was executed
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  parent   QaObjectRelationship[] @relation("Parent")
+  children QaObjectRelationship[] @relation("Children")
 }
 
 model QaObjectType {
-  id          Int        @id @default(autoincrement())
-  name        String
-  QaObject    QaObject[]
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  QaObject             QaObject[]
+  qaObjectRelationship QaObjectRelationship[] @relation("ChildrenObjectType")
 }
 
 model QaObjectRelationship {
-  id         Int        @id @default(autoincrement())
-  parentId   Int
+  id Int @id @default(autoincrement())
+
+  parent   QaObject @relation("Parent", fields: [parentId], references: [id])
+  parentId Int
+
+  children   QaObject @relation("Children", fields: [childrenId], references: [id])
   childrenId Int
+
+  childrenObjectType   QaObjectType @relation("ChildrenObjectType", fields: [childrenObjectTypeId], references: [id])
+  childrenObjectTypeId Int
+
   @@unique([parentId, childrenId])
 }
 
 model ExperimentResult {
-  id              Int           @id @default(autoincrement())
-  type            Int
-  experimentId    Int?
-  collectionId    Int?
-  suiteId         Int?
-  caseId          Int?
-  thread          Int?
-  loop            Int?
-  paymentId       String?
-  request         String?
-  response        String?
-  requestDate     DateTime?
-  responseDate    DateTime?
-  status          Int?
-  statusText      String?
-  txnId           String?
-  jsonata         String?
+  id           Int       @id @default(autoincrement())
+  type         Int
+  experimentId Int?
+  collectionId Int?
+  suiteId      Int?
+  caseId       Int?
+  thread       Int?
+  loop         Int?
+  paymentId    String?
+  request      String?
+  response     String?
+  requestDate  DateTime?
+  responseDate DateTime?
+  status       Int?
+  statusText   String?
+  txnId        String?
+  jsonata      String?
+}
+
+model User {
+  id                  Int        @id @default(autoincrement())
+  uuid                String     @unique @default(cuid())
+  email               String     @unique
+  hashedPassword      String // <─┐
+  salt                String // <─┼─ add these lines
+  resetToken          String? // <─┤
+  resetTokenExpiresAt DateTime? // <─┘
+  active              Boolean    @default(false)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @default(now())
+  deleted             DateTime?
+  userRoles           UserRole[]
+  qaObject            QaObject[]
+}
+
+model UserRole {
+  id        Int      @id @default(autoincrement())
+  name      String
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@unique([name, userId])
 }

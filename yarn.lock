@@ -27008,6 +27008,7 @@ __metadata:
     "@fortawesome/fontawesome-svg-core": ^6.1.1
     "@fortawesome/free-solid-svg-icons": ^6.1.1
     "@fortawesome/react-fontawesome": ^0.2.0
+    "@redwoodjs/auth": 1.5.2
     "@redwoodjs/forms": 1.5.2
     "@redwoodjs/router": 1.5.2
     "@redwoodjs/web": 1.5.2
