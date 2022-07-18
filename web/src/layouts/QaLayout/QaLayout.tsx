@@ -1,6 +1,6 @@
 import {navigate, NavLink, routes} from "@redwoodjs/router";
 import 'antd/dist/antd.css';
-import {DEFAULT_TABLE_PAGE_SIZE} from "src/global";
+import {DEFAULT_TABLE_PAGE_SIZE, ROLE_ADMIN, ROLE_CUSTOMER} from "src/global";
 import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
 import {Tooltip} from "antd";
 import {useAuth} from "@redwoodjs/auth";
@@ -36,27 +36,35 @@ const QaLayout = ({ children }: QaLayoutProps) => {
             </td>
             <td style={{paddingLeft:'20px'}}>
               <ul>
-                <li style={{display:'inline', marginRight: "20px"}}>
-                  <NavLink
-                    to={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0} )}
-                    className="rw-link"
-                    // activeMatchParams
-                    activeClassName="activeLink"
-                    onClick={()=>window.location.replace(routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0} ))}
-                  >
-                    QA Objects
-                  </NavLink>
-                </li>
-                <li style={{display:'inline', marginRight: "20px"}}>
-                  <NavLink
-                    to={routes.experimentResults( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0} )}
-                    className="rw-link"
-                    // activeMatchParams
-                    activeClassName="activeLink">
-                    Experiment Results
-                  </NavLink>
-                </li>
-                { hasRole( ['admin'] ) &&
+                { hasRole([ ROLE_ADMIN, ROLE_CUSTOMER ] ) &&
+                  <li style={{display: 'inline', marginRight: "20px"}}>
+                    <NavLink
+                      to={routes.qaObjects({page: 1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0})}
+                      className="rw-link"
+                      // activeMatchParams
+                      activeClassName="activeLink"
+                      onClick={() => window.location.replace(routes.qaObjects({
+                        page: 1,
+                        pageSize: DEFAULT_TABLE_PAGE_SIZE,
+                        count: 0
+                      }))}
+                    >
+                      QA Objects
+                    </NavLink>
+                  </li>
+                }
+                { hasRole([ROLE_ADMIN, ROLE_CUSTOMER]) &&
+                  <li style={{display: 'inline', marginRight: "20px"}}>
+                    <NavLink
+                      to={routes.experimentResults({page: 1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0})}
+                      className="rw-link"
+                      // activeMatchParams
+                      activeClassName="activeLink">
+                      Experiment Results
+                    </NavLink>
+                  </li>
+                }
+                { hasRole( [ROLE_ADMIN] ) &&
                   <li style={{display: 'inline', marginRight: "20px"}}>
                     <NavLink
                       to={routes.users()}
