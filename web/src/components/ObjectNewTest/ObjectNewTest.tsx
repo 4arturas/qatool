@@ -52,11 +52,14 @@ const CREATE_QA_OBJECT_MUTATION = gql`
       header
       createdAt
       updatedAt
+      userId
+      user { email }
+      parent { id parentId childrenId childrenObjectTypeId }
     }
   }`;
 
 const UPDATE_QA_OBJECT_MUTATION = gql`
-  mutation UpdateQaObjectMutation($id: Int!, $input: UpdateQaObjectInput!) {
+  mutation UpdateQaObjectMutation2($id: Int!, $input: UpdateQaObjectInput!) {
     updateQaObject(id: $id, input: $input) {
       id
       typeId
@@ -72,6 +75,10 @@ const UPDATE_QA_OBJECT_MUTATION = gql`
       header
       createdAt
       updatedAt
+      executed
+      userId
+      user { email }
+      parent { id parentId childrenId childrenObjectTypeId }
     }
   }
 `
@@ -365,7 +372,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
               toast.success('QaObject updated')
 
               setIsModalVisible(false);
-              afterSave( id );
+              afterSave( ret.data.updateQaObject );
             });
           }
         }}
