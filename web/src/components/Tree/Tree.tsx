@@ -72,7 +72,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   const qaObjectChildrenNew = childrenHierarchy.map( ch => {
     return { relationId: ch.id, object: objects.find( o => o.id === ch.childrenId ) }
-  });
+  }).sort( ( a, b ) => { return (a.object.typeId - b.object.typeId) } );
 
   const availableChildrenForObject: Array<number> =
     getChildrenTypeIdByParentTypeId( qaObject.typeId );

@@ -24,8 +24,8 @@ VALUES(2, 'customer', 2, 1);
 --------------------------------
 
 INSERT INTO QaObjectType (name) VALUES('EXPERIMENT');
-INSERT INTO QaObjectType (name) VALUES('COLLECTION');
 INSERT INTO QaObjectType (name) VALUES('SERVER');
+INSERT INTO QaObjectType (name) VALUES('COLLECTION');
 INSERT INTO QaObjectType (name) VALUES('SUITE');
 INSERT INTO QaObjectType (name) VALUES('CASE');
 INSERT INTO QaObjectType (name) VALUES('BODY');
@@ -37,11 +37,11 @@ INSERT INTO QaObjectType (name) VALUES('RESPONSE');
 
 INSERT INTO QaObject
 (typeId, name, description, batchId, threads, loops, json, jsonata, address, "method", header, createdAt, updatedAt, userId)
-VALUES(3, 'Server Init', 'Server Init', NULL, NULL, NULL, NULL, NULL, 'https://isx.sepagateway.eu/api/Payment/CreatePayment', 'POST', '{"accept":"application/json","Authorization":"Fixed baba","Content-Type":"application/json"}', '1656049916399', '1656065773669', 1);
+VALUES(2, 'Server Init', 'Server Init', NULL, NULL, NULL, NULL, NULL, 'https://isx.sepagateway.eu/api/Payment/CreatePayment', 'POST', '{"accept":"application/json","Authorization":"Fixed baba","Content-Type":"application/json"}', '1656049916399', '1656065773669', 1);
 
 INSERT INTO QaObject
 (typeId, name, description, batchId, threads, loops, json, jsonata, address, "method", header, createdAt, updatedAt, userId)
-VALUES(2, 'Collection Init', 'Collection Init', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1655784679688', '1655784715245', 1);
+VALUES(3, 'Collection Init', 'Collection Init', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1655784679688', '1655784715245', 1);
 
 INSERT INTO QaObject
 (typeId, name, description, batchId, threads, loops, json, jsonata, address, "method", header, createdAt, updatedAt, userId)
