@@ -204,6 +204,19 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
       }
     } );
   }
+  const jsonValidator = (_,value) => {
+    if ( value.length === 0 )
+      return Promise.reject('Please add JSON!');
+    try
+    {
+      JSON.parse(value);
+      return Promise.resolve();
+    }
+    catch ( e )
+    {
+      return Promise.reject('Please check JSON format!');
+    }
+  }
   useEffect( () => {
     fetchChildren( typeId );
 
@@ -478,7 +491,9 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
                 <Form.Item
                   label="Headers"
                   name="header"
-                  rules={[{ required: true, message: 'Please add Headers!' }]}
+                  rules={[
+                    { validator:  jsonValidator }
+                  ]}
                   style={stylingObject.formItem}
                 >
                   <TextArea rows={4}/>
@@ -492,6 +507,9 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
                 label="JSON"
                 name="json"
                 style={stylingObject.formItem}
+                rules={[
+                  { validator:  jsonValidator }
+                ]}
               >
                 <TextArea
                   rows={4}
@@ -503,6 +521,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
               <Form.Item
                 label="JSONata"
                 name="jsonata"
+                rules={[{ required: true, message: 'Please add JSONata!' }]}
                 style={stylingObject.formItem}
               >
                 <TextArea rows={4} placeholder={'Add JSONata which will be used to check response from the server'}/>
