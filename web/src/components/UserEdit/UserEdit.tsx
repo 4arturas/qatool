@@ -56,9 +56,10 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
       })
       .then( res => {
         const updatedUser = res.data.updateUser;
-        console.log( updatedUser );
         OnSubmitFormFunction( updatedUser );
-      });
+        toast.success( 'User was updated' );
+      })
+      .catch( error => toast.error( error.message ) );
 
 
     }
@@ -72,7 +73,7 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
         const newValues = { id: null, ...values };
         newValues.id = parseInt( response.message );
         OnSubmitFormFunction( newValues );
-        // toast(response.message)
+        toast.success('User was created');
       }
       else if (response.error)
       {

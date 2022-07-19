@@ -6,7 +6,6 @@ import {useApolloClient} from "@apollo/client";
 import UserEditCell from 'src/components/UserEditCell'
 import {dateFormatYYYYMMDDHHmmss} from "src/global";
 import UserEdit from "src/components/UserEdit/UserEdit";
-import {Toaster} from "@redwoodjs/web/toast";
 
 const stylingObject = {
   edit: {
