@@ -3,9 +3,9 @@ import React, {useState} from "react";
 import {faPen, faTrash,faCirclePlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useApolloClient} from "@apollo/client";
-import UserEditCell from 'src/components/UserEditCell'
+import UserEditCell from 'src/components/User/UserEditCell'
 import {dateFormatYYYYMMDDHHmmss} from "src/global";
-import UserEdit from "src/components/UserEdit/UserEdit";
+import UserEdit from "src/components/User/UserEdit/UserEdit";
 
 const stylingObject = {
   edit: {
