@@ -23,17 +23,17 @@ INSERT INTO UserRole
 VALUES(2, 'customer', 2, 1);
 --------------------------------
 
-INSERT INTO QaObjectType (name) VALUES('EXPERIMENT');
-INSERT INTO QaObjectType (name) VALUES('SERVER');
-INSERT INTO QaObjectType (name) VALUES('COLLECTION');
-INSERT INTO QaObjectType (name) VALUES('SUITE');
-INSERT INTO QaObjectType (name) VALUES('CASE');
-INSERT INTO QaObjectType (name) VALUES('BODY');
-INSERT INTO QaObjectType (name) VALUES('TEST');
-INSERT INTO QaObjectType (name) VALUES('REPLACE');
-INSERT INTO QaObjectType (name) VALUES('REMOVE');
-INSERT INTO QaObjectType (name) VALUES('RESULT');
-INSERT INTO QaObjectType (name) VALUES('RESPONSE');
+INSERT INTO QaObjectType (id, name) VALUES(1, 'EXPERIMENT');
+INSERT INTO QaObjectType (id, name) VALUES(2, 'SERVER');
+INSERT INTO QaObjectType (id, name) VALUES(3, 'COLLECTION');
+INSERT INTO QaObjectType (id, name) VALUES(4, 'SUITE');
+INSERT INTO QaObjectType (id, name) VALUES(5, 'CASE');
+INSERT INTO QaObjectType (id, name) VALUES(6, 'BODY');
+INSERT INTO QaObjectType (id, name) VALUES(7, 'TEST');
+INSERT INTO QaObjectType (id, name) VALUES(8, 'REPLACE');
+INSERT INTO QaObjectType (id, name) VALUES(9, 'REMOVE');
+INSERT INTO QaObjectType (id, name) VALUES(10, 'RESULT');
+INSERT INTO QaObjectType (id, name) VALUES(11, 'RESPONSE');
 
 INSERT INTO QaObject
 (typeId, name, description, batchId, threads, loops, json, jsonata, address, "method", header, createdAt, updatedAt, userId)
