@@ -7,6 +7,8 @@ export const schema = gql`
     email: String!
     deleted: Date
     userRoles: [UserRole]
+    orgId: Int!
+    organization:  Organization
   }
 
   type Query {
@@ -17,11 +19,12 @@ export const schema = gql`
   input UpdateUserInput {
     email: String!
     deleted: Date
-    userRoles: [String]
+    userRoles: [String]!
+    orgId: Int!
   }
 
   type Mutation {
-    deleteUser(id: Int!): Int! @requireAuth(roles: ["admin"])
     updateUser(id: Int!, input: UpdateUserInput!): User! @requireAuth(roles: ["admin"])
+    deleteUser(id: Int!): Int! @requireAuth(roles: ["admin"])
   }
 `

@@ -15,6 +15,13 @@ export const getUser = async ( { id: id } )  =>
         select: {
           name: true
         }
+      },
+      orgId: true,
+      organization: {
+        select: {
+          id: true,
+          name: true
+        }
       }
     }
   });
@@ -26,8 +33,15 @@ export const getUsers = async ()  =>
       id: true,
       email: true,
       deleted: true,
+      orgId: true,
       userRoles:  {
         select: {
+          name: true
+        }
+      },
+      organization: {
+        select: {
+          id: true,
           name: true
         }
       }
@@ -47,7 +61,7 @@ export const deleteUser = async ( { id: id } ) =>
 export const updateUser = async ( { id, input } ) =>
 {
   await db.user.update({
-    data: { email: input.email },
+    data: { email: input.email, orgId: input.orgId },
     where: { id },
   })
 
@@ -65,7 +79,6 @@ export const updateUser = async ( { id, input } ) =>
       await UserRole.create({ name: incomingUserRole, userId: id })
   });
 
-  input.id = id;
   // return user;
-  return { ...input, userRoles: input.userRoles.map( roleName => { return { name: roleName } } ) };
+  return getUser( { id: id } );
 }

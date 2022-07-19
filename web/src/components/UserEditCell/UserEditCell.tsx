@@ -10,6 +10,11 @@ export const QUERY = gql`
       userRoles: userRoles {
         name
       }
+      orgId
+      organization {
+        id
+        name
+      }
     }
   }
 `
