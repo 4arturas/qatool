@@ -1,8 +1,9 @@
 import {
-  CASE,
+  BODY,
+  CASE, COLLECTION,
   DEFAULT_TABLE_PAGE_SIZE,
   EXPERIMENT,
-  getChildrenTypeIdByParentTypeId,
+  getChildrenTypeIdByParentTypeId, REMOVE, REPLACE, RESPONSE, RESULT, SERVER,
   TEST,
   typeIdToColor, typeIdToName,
   typeIdToTag
@@ -12,7 +13,7 @@ import Merge from "src/components/Merge/Merge";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
 import {navigate, routes} from "@redwoodjs/router";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 import {useApolloClient} from "@apollo/client";
 import {toast} from "@redwoodjs/web/toast";
@@ -60,10 +61,17 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   let ctx = 0;
 
-  const [parentId, setParentId] = useState( tree.parentId );
-  const [hierarchy, setHierarchy] = useState( tree.hierarchy );
-  const [objects, setObjects] = useState( tree.objects );
-  const [qaObject, setQaObject] = useState( tree.objects.find( o => o.id === tree.parentId ) );
+  const [parentId, setParentId] = useState( null );
+  const [hierarchy, setHierarchy] = useState( [] );
+  const [objects, setObjects] = useState( [] );
+  const [qaObject, setQaObject] = useState( [] );
+  const setState = ( tree ) =>
+  {
+    setParentId( tree.parentId );
+    setHierarchy( tree.hierarchy );
+    setObjects( tree.objects );
+    setQaObject( tree.objects.find( o => o.id === tree.parentId ) );
+  }
 
   let childrenHierarchy:Array<{ id:number,parentId:number,childrenId:number}> =
     Array.from( new Set ( /*Unique*/
@@ -72,35 +80,45 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   const qaObjectChildrenNew = childrenHierarchy.map( ch => {
     return { relationId: ch.id, object: objects.find( o => o.id === ch.childrenId ) }
-  }).sort( ( a, b ) => { return (a.object.typeId - b.object.typeId) } );
+  })
+  .sort( ( a, b ) => { return ((a.object ? a.object.typeId : -1) -(b.object ? b.object.typeId : -1)) } );
 
-  const availableChildrenForObject: Array<number> =
-    getChildrenTypeIdByParentTypeId( qaObject.typeId );
+  useEffect( () => {
+    setState( tree );
+  }, [] );
 
-  const returnNonExisting = ( arrChildren:Array<number>, arrObjects ): Array<number> => {
+  const returnNonExisting = ( qaObject ): Array<number> => {
+    const findAndAdd = ( arr:Array<number>, typeId:number, qaObject:any ) =>
+    {
+      if ( !qaObject.parent.find( p => p.childrenObjectTypeId === typeId ) )
+        arr.push( typeId );
+    }
     const arrRet: Array<number> = [];
-    for ( let i = 0; i < arrChildren.length; i++ ) {
-      const typeId = arrChildren[i];
-      let exists: boolean = false;
-      for (let j = 0; j < arrObjects.length; j++) {
-        const object = arrObjects[j];
-        if ( object.object.typeId === typeId )
-        {
-          exists = true;
-          break;
-        } // end if
-      } // end for j
-      if ( !exists )
-        arrRet.push( typeId );
-    } // end for i
+    if ( qaObject.typeId === EXPERIMENT )
+    {
+      findAndAdd( arrRet, SERVER, qaObject );
+      findAndAdd( arrRet, COLLECTION, qaObject );
+    }
+    else if ( qaObject.typeId === CASE )
+    {
+      findAndAdd( arrRet, BODY, qaObject );
+      findAndAdd( arrRet, TEST, qaObject );
+    }
+    else if ( qaObject.typeId === TEST )
+    {
+      findAndAdd( arrRet, REPLACE, qaObject );
+      findAndAdd( arrRet, RESPONSE, qaObject );
+      findAndAdd( arrRet, REMOVE, qaObject );
+      findAndAdd( arrRet, RESULT, qaObject );
+    }
+    else
+    {
+      arrRet.push( ...getChildrenTypeIdByParentTypeId( qaObject.typeId ) );
+    }
     return arrRet;
   }
 
-  const possibleToAddChildren: Array<number> =
-    ( (qaObject.typeId === EXPERIMENT || qaObject.typeId === CASE || qaObject.typeId === TEST) ) ?
-      returnNonExisting( availableChildrenForObject, qaObjectChildrenNew )
-      :
-      getChildrenTypeIdByParentTypeId( qaObject.typeId );
+  const possibleToAddChildren: Array<number> = returnNonExisting( qaObject );
 
   const stylingObject = {
     treeComponent: {
@@ -138,10 +156,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
       query: FETCH_TREE,
       variables: { id: id }
     }).then( ret => {
-      setParentId( ret.data.tree.parentId );
-      setHierarchy( ret.data.tree.hierarchy );
-      setObjects( ret.data.tree.objects );
-      setQaObject( ret.data.tree.objects.find( o => o.id === ret.data.tree.parentId ) );
+      setState( ret.data.tree );
     });
   }
 
