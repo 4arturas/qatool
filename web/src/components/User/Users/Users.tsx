@@ -3,10 +3,9 @@ import React, {useState} from "react";
 import {faPen, faTrash,faCirclePlus} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useApolloClient} from "@apollo/client";
-import UserEditCell from 'src/components/UserEditCell'
+import UserEditCell from 'src/components/User/UserEditCell'
 import {dateFormatYYYYMMDDHHmmss} from "src/global";
-import UserEdit from "src/components/UserEdit/UserEdit";
-import {Toaster} from "@redwoodjs/web/toast";
+import UserEdit from "src/components/User/UserEdit/UserEdit";
 
 const stylingObject = {
   edit: {
@@ -74,23 +73,15 @@ const Users = ( {users} ) => {
   const reformatUserRoles = ( formValues ) => formValues.map( roleName => { return { name: roleName } } );
   const OnUserUpdate = ( formValues ) =>
   {
-    const newDataArray = data.map( u => {
-      if ( u.id !== formValues.id )
-        return u;
-      const replaceData = { ...u }
-      replaceData.email = formValues.email;
-      replaceData.userRoles = reformatUserRoles( formValues.userRoles );
-
-      return replaceData;
-    } );
+    const newDataArray = data.map( u => ( u.id !== formValues.id ) ? u : formValues );
     setData(newDataArray);
   }
 
   const OnUserInsert = ( formValues ) =>
   {
-    const newDataArray = [...data];
-    const newUser = { id: formValues.id, email: formValues.email, userRoles: reformatUserRoles( formValues.userRoles) };
-    newDataArray.push( newUser );
+    const newUser = { id: formValues.id, email: formValues.email, userRoles: reformatUserRoles( formValues.userRoles), orgId: formValues.orgId, organization: {id:formValues.orgId, name:formValues.organizationName} };
+    const newDataArray = [newUser];
+    newDataArray.push( ...data );
 
     setData(newDataArray);
   }
@@ -109,6 +100,13 @@ const Users = ( {users} ) => {
       key: 'userRoles',
       render: (_, record) =>
         record.userRoles.map( role => <Tag key={`${role.name}${record.id}`}>{role.name}</Tag> )
+    },
+    {
+      title: 'Organization',
+      dataIndex: 'orgId',
+      key: 'orgId',
+      render: (_, record) =>
+        record.organization.name
     },
     {
       title: 'Deleted',

@@ -1,10 +1,17 @@
+INSERT INTO Organization
+(id, name, active, createdAt, updatedAt)
+VALUES(1, 'Org1', 1, '2022-07-18 11:27:54', '2022-07-18 11:27:54');
+INSERT INTO Organization
+(id, name, active, createdAt, updatedAt)
+VALUES(2, 'Org2', 1, '2022-07-18 11:28:07', '2022-07-18 11:28:07');
+
 --------------------------------
 INSERT INTO "User"
-(id, uuid, email, hashedPassword, salt, resetToken, resetTokenExpiresAt, active)
-VALUES(1, 'cl5jhpoms0001jyia8xn2l8gp', 'a', '19d7f55d11286141519a12442c5ff51c6b1997a6fb65fe6766f0f54b6945044b', '0026cf3ae2907da543a795bfb37d3f44', NULL, NULL, 0);
+(id, uuid, email, hashedPassword, salt, resetToken, resetTokenExpiresAt, active, orgId)
+VALUES(1, 'cl5jhpoms0001jyia8xn2l8gp', 'a', '19d7f55d11286141519a12442c5ff51c6b1997a6fb65fe6766f0f54b6945044b', '0026cf3ae2907da543a795bfb37d3f44', NULL, NULL, 0, 1);
 INSERT INTO "User"
-(id, uuid, email, hashedPassword, salt, resetToken, resetTokenExpiresAt, active)
-VALUES(2, 'cl5jj1x7v0002boiae0hclijt', 'c', '23a0708921eca9e0a3a9cb4d97307a24eb7ae082a7f86bf458fd34ed2a5ce3a8', 'b8f4487964ed5abf48dbcd0b2a4aae81', NULL, NULL, 0);
+(id, uuid, email, hashedPassword, salt, resetToken, resetTokenExpiresAt, active, orgId)
+VALUES(2, 'cl5jj1x7v0002boiae0hclijt', 'c', '23a0708921eca9e0a3a9cb4d97307a24eb7ae082a7f86bf458fd34ed2a5ce3a8', 'b8f4487964ed5abf48dbcd0b2a4aae81', NULL, NULL, 0, 1);
 
 --------------------------------
 INSERT INTO UserRole
@@ -16,25 +23,25 @@ INSERT INTO UserRole
 VALUES(2, 'customer', 2, 1);
 --------------------------------
 
-INSERT INTO QaObjectType (name) VALUES('EXPERIMENT');
-INSERT INTO QaObjectType (name) VALUES('COLLECTION');
-INSERT INTO QaObjectType (name) VALUES('SERVER');
-INSERT INTO QaObjectType (name) VALUES('SUITE');
-INSERT INTO QaObjectType (name) VALUES('CASE');
-INSERT INTO QaObjectType (name) VALUES('BODY');
-INSERT INTO QaObjectType (name) VALUES('TEST');
-INSERT INTO QaObjectType (name) VALUES('REPLACE');
-INSERT INTO QaObjectType (name) VALUES('REMOVE');
-INSERT INTO QaObjectType (name) VALUES('RESULT');
-INSERT INTO QaObjectType (name) VALUES('RESPONSE');
+INSERT INTO QaObjectType (id, name) VALUES(1, 'EXPERIMENT');
+INSERT INTO QaObjectType (id, name) VALUES(2, 'SERVER');
+INSERT INTO QaObjectType (id, name) VALUES(3, 'COLLECTION');
+INSERT INTO QaObjectType (id, name) VALUES(4, 'SUITE');
+INSERT INTO QaObjectType (id, name) VALUES(5, 'CASE');
+INSERT INTO QaObjectType (id, name) VALUES(6, 'BODY');
+INSERT INTO QaObjectType (id, name) VALUES(7, 'TEST');
+INSERT INTO QaObjectType (id, name) VALUES(8, 'REPLACE');
+INSERT INTO QaObjectType (id, name) VALUES(9, 'REMOVE');
+INSERT INTO QaObjectType (id, name) VALUES(10, 'RESULT');
+INSERT INTO QaObjectType (id, name) VALUES(11, 'RESPONSE');
 
 INSERT INTO QaObject
 (typeId, name, description, batchId, threads, loops, json, jsonata, address, "method", header, createdAt, updatedAt, userId)
-VALUES(3, 'Server Init', 'Server Init', NULL, NULL, NULL, NULL, NULL, 'https://isx.sepagateway.eu/api/Payment/CreatePayment', 'POST', '{"accept":"application/json","Authorization":"Fixed baba","Content-Type":"application/json"}', '1656049916399', '1656065773669', 1);
+VALUES(2, 'Server Init', 'Server Init', NULL, NULL, NULL, NULL, NULL, 'https://isx.sepagateway.eu/api/Payment/CreatePayment', 'POST', '{"accept":"application/json","Authorization":"Fixed baba","Content-Type":"application/json"}', '1656049916399', '1656065773669', 1);
 
 INSERT INTO QaObject
 (typeId, name, description, batchId, threads, loops, json, jsonata, address, "method", header, createdAt, updatedAt, userId)
-VALUES(2, 'Collection Init', 'Collection Init', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1655784679688', '1655784715245', 1);
+VALUES(3, 'Collection Init', 'Collection Init', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1655784679688', '1655784715245', 1);
 
 INSERT INTO QaObject
 (typeId, name, description, batchId, threads, loops, json, jsonata, address, "method", header, createdAt, updatedAt, userId)

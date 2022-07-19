@@ -1,14 +1,33 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Button, Form, Input, Select} from "antd";
 import {useApolloClient} from "@apollo/client";
 import {toast} from "@redwoodjs/web/toast";
 import {useAuth} from "@redwoodjs/auth";
+import {updateUser} from "src/services/user/user";
+
+export const QUERY = gql`
+  query OrganizationsQueryForTheUser {
+    organizations: getOrganizations {
+      id
+      name
+    }
+  }
+`
 
 const UserEdit = ( { user, OnSubmitFormFunction }) => {
 
   const [form] = Form.useForm();
   const client = useApolloClient();
-  const { signUp } = useAuth()
+  const { signUp } = useAuth();
+  const [organizations, setOrganizations] = useState([]);
+
+  useEffect( () => {
+    client.query( { query: QUERY }  )
+    .then( res => {
+      setOrganizations( res.data.organizations );
+    } )
+      .catch( error => toast( error.message ) );
+  }, [] );
 
   const onFinish = async (values: any) => {
     if ( user )
@@ -21,21 +40,32 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
                       userRoles {
                         name
                       }
+                      orgId
+                      organization {
+                        id
+                        name
+                      }
                     }
                   }`;
 
       const userRoles = values.userRoles.map( roleName => roleName );
 
-      const ret = await client.mutate({
+      client.mutate({
         mutation: UPDATE_USER,
-        variables: { id: user.id, input: {email: values.email, userRoles: userRoles } }
-      });
+        variables: { id: user.id, input: {email: values.email, userRoles: userRoles, orgId: values.orgId } }
+      })
+      .then( res => {
+        const updatedUser = res.data.updateUser;
+        OnSubmitFormFunction( updatedUser );
+        toast.success( 'User was updated' );
+      })
+      .catch( error => toast.error( error.message ) );
 
-      OnSubmitFormFunction(values)
+
     }
     else
     {
-      const response = await signUp({ username: values.email, password: values.password, userRoles: values.userRoles } );
+      const response = await signUp({ username: values.email, password: values.password, userRoles: values.userRoles, orgId: values.orgId } );
 
       if (response.message)
       {
@@ -43,7 +73,7 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
         const newValues = { id: null, ...values };
         newValues.id = parseInt( response.message );
         OnSubmitFormFunction( newValues );
-        // toast(response.message)
+        toast.success('User was created');
       }
       else if (response.error)
       {
@@ -107,10 +137,35 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
         placeholder="Select role"
         mode='multiple'
         options={[
-          {value:'admin', label: 'Admin' },
-          {value:'customer', label: 'Customer' },
+          {value:'admin', label: 'admin' },
+          {value:'customer', label: 'customer' },
         ]
       }/>
+    </Form.Item>
+
+    <Form.Item
+      label="OrganizationName"
+      name="organizationName"
+      rules={[{ required: false }]}
+      style={{display:'none'}}
+    >
+
+      <Input />
+    </Form.Item>
+
+    <Form.Item
+      label="Organization"
+      name="orgId"
+      rules={[{ required: true, message: 'Please select organization!' }]}
+    >
+
+      <Select
+        placeholder="Select Organization"
+        onChange={ ( v, c ) => {
+          form.setFieldsValue({organizationName: c.label });
+        } }
+        options={ organizations.map( o => { return { value: o.id, label: o.name } } ) }
+      />
     </Form.Item>
 
     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

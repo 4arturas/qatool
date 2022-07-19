@@ -5,8 +5,8 @@ import jsonata from "jsonata";
 
 export const HAS_NO_PARENT = 0;
 export const EXPERIMENT = 1;
-export const COLLECTION = 2;
-export const SERVER = 3;
+export const SERVER = 2;
+export const COLLECTION = 3;
 export const SUITE = 4;
 export const CASE = 5;
 export const BODY = 6;

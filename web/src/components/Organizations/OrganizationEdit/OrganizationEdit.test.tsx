@@ -1,14 +1,14 @@
 import { render } from '@redwoodjs/testing/web'
 
-import ObjectEdit from './ObjectEdit'
+import OrganizationEdit from './OrganizationEdit'
 
 //   Improve this test with help from the Redwood Testing Doc:
 //    https://redwoodjs.com/docs/testing#testing-components
 
-describe('ObjectEdit', () => {
+describe('OrganizationEdit', () => {
   it('renders successfully', () => {
     expect(() => {
-      render(<ObjectEdit />)
+      render(<OrganizationEdit />)
     }).not.toThrow()
   })
 })

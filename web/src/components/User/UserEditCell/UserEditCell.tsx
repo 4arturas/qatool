@@ -1,6 +1,6 @@
 import type { FindUserEditQuery, FindUserEditQueryVariables } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import UserEdit from "src/components/UserEdit/UserEdit";
+import UserEdit from "src/components/User/UserEdit/UserEdit";
 
 export const QUERY = gql`
   query FindUserEditQuery($id: Int!) {
@@ -8,6 +8,11 @@ export const QUERY = gql`
       id
       email
       userRoles: userRoles {
+        name
+      }
+      orgId
+      organization {
+        id
         name
       }
     }

@@ -94,6 +94,8 @@ model User {
   deleted             DateTime?
   userRoles           UserRole[]
   qaObject            QaObject[]
+  organization        Organization @relation(fields: [orgId], references: [id])
+  orgId               Int
 }
 
 model UserRole {
@@ -106,4 +108,13 @@ model UserRole {
   updatedAt DateTime @default(now())
 
   @@unique([name, userId])
+}
+
+model Organization {
+  id        Int     @id @default(autoincrement())
+  name      String
+  active    Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  users     User[]
 }

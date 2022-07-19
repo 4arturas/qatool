@@ -9,7 +9,7 @@ import {
   typeIdToName, typeIdToTag,
   TYPES, validateJSONata
 } from "src/global";
-import {useLazyQuery} from "@apollo/client";
+import {useApolloClient, useLazyQuery} from "@apollo/client";
 import {Link, navigate, routes, useParams} from "@redwoodjs/router";
 import QaTrees from "src/components/QaTrees/QaTrees";
 import {BarChartOutlined, ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
@@ -55,7 +55,7 @@ export const QUERY = gql`
 `
 
 const SearchQaObjects = ({currentPage, pageSize, count}) => {
-
+  const client = useApolloClient();
   const [page, setPage] = useState(currentPage);
   const [form] = Form.useForm();
   const columns = [
@@ -203,7 +203,41 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
                       parentId={record.id}
                       beforeSave={()=>{}}
                       afterSave={ ( id ) => {
-                        console.log( 'TODO: not implemented after add new children' );
+                        client.query({
+                          query: gql`
+                              query FindQaObjectByIdQueryForSearch($id: Int!) {
+                                qaObject: qaObject(id: $id) {
+                                  id
+                                  typeId
+                                  name
+                                  description
+                                  batchId
+                                  threads
+                                  loops
+                                  json
+                                  jsonata
+                                  address
+                                  method
+                                  header
+                                  createdAt
+                                  updatedAt
+                                  user {
+                                    email
+                                  }
+                                  parent {
+                                    id parentId childrenId childrenObjectTypeId
+                                  }
+                                }
+                              }`,
+                          variables: { id: record.id }
+                        }).then( ret => {
+                          const refreshedQaObject = ret.data.qaObject;
+                          const newPage = { ...qaObjectPage };
+                          newPage.qaObjects = qaObjectPage.qaObjects.map( q => {
+                            return q.id === refreshedQaObject.id ? refreshedQaObject : q;
+                          });
+                          setQaObjectPage( newPage );
+                        } );
                         // window.location.reload();
                       }}/>
                   </span>

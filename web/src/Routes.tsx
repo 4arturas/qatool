@@ -18,6 +18,7 @@ const Routes = () => {
   return (
     <Router>
 
+
       <Route path="/forbidden" page={ForbiddenPage} name="forbidden" />
 
       <Route path="/login" page={LoginPage} name="login" />
@@ -39,6 +40,7 @@ const Routes = () => {
           <Private unauthenticated="forbidden" roles={['admin']}>
             <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
             <Route path="/users" page={UsersPage} name="users" />
+            <Route path="/organizations" page={OrganizationsPage} name="organizations" />
           </Private>
 
         </Private>

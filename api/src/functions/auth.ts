@@ -112,6 +112,7 @@ export const handler = async (event, context) => {
           hashedPassword: hashedPassword,
           salt: salt,
           // name: userAttributes.name
+          orgId: userAttributes.orgId
         },
       });
 

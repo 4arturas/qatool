@@ -1,14 +1,14 @@
 import { render } from '@redwoodjs/testing/web'
 
-import ObjectClone from './ObjectClone'
+import Organizations from './Organizations'
 
 //   Improve this test with help from the Redwood Testing Doc:
 //    https://redwoodjs.com/docs/testing#testing-components
 
-describe('ObjectClone', () => {
+describe('Organizations', () => {
   it('renders successfully', () => {
     expect(() => {
-      render(<ObjectClone />)
+      render(<Organizations />)
     }).not.toThrow()
   })
 })

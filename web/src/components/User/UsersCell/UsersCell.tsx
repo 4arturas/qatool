@@ -1,6 +1,6 @@
 import type { UsersQuery } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
-import Users from "src/components/Users/Users";
+import Users from "src/components/User/Users/Users";
 
 
 export const QUERY = gql`
@@ -10,6 +10,11 @@ export const QUERY = gql`
       email
       deleted
       userRoles {
+        name
+      }
+      orgId
+      organization {
+        id
         name
       }
     }
