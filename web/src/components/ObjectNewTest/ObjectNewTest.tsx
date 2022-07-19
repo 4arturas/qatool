@@ -300,7 +300,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
       onCancel={()=>setIsModalVisible(false)}
       destroyOnClose={true}
       footer={null}
-      width={'100%'}
+      width={'50%'}
     >
       <Form
         form={form}
