@@ -15,9 +15,9 @@ import {
   typeIdToColor,
   typeIdToName
 } from "src/global";
-import ObjectEdit from "src/components/ObjectEdit/ObjectEdit";
 import ReactDiffViewer from "react-diff-viewer";
 import {Spin} from "antd/es";
+import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 
 const Merge = ( {qaObjectParent} ) => {
 
@@ -121,7 +121,7 @@ const Merge = ( {qaObjectParent} ) => {
       className='qaObjectTypeClass'
       style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
       <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - <span id={`objEditName${qaObject.id}`}>"{qaObject.name}"</span>
-              <ObjectEdit qaObject={qaObject} beforeSave={() => {
+              <ObjectNewTest typeId={qaObject.typeId} qaObject={qaObject} cloneObject={false} parentId={null} children={[]} beforeSave={() => {
               }} afterSave={(obj) => {
                 document.getElementById(`objEditName${obj.id}`).innerHTML = obj.name;
                 switch ( obj.typeId )
