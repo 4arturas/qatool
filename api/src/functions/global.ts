@@ -1,6 +1,6 @@
 export const EXPERIMENT = 1;
-export const COLLECTION = 2;
-export const SERVER = 3;
+export const SERVER = 2;
+export const COLLECTION = 3;
 export const SUITE = 4;
 export const CASE = 5;
 export const BODY = 6;
@@ -12,8 +12,8 @@ export const RESPONSE = 11;
 
 export const TYPES = [
   EXPERIMENT,
-  COLLECTION,
   SERVER,
+  COLLECTION,
   SUITE,
   CASE,
   BODY,
