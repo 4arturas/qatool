@@ -217,26 +217,6 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
       return Promise.reject('Please check JSON format!');
     }
   }
-  useEffect( () => {
-    fetchChildren( typeId );
-
-    if ( componentQaObject )
-    {
-      const newQaObject = { ...qaObject };
-      // newQaObject['childrenId3'] = [{ value: "19-3", label: "S" }];
-      // newQaObject['childrenId2'] = [{ value: "20-2", label: "C" }];
-      children.map( (qaObjectChildren) => {
-        const memberName = `childrenId${qaObjectChildren.typeId}`
-        if ( !newQaObject[memberName] )
-          newQaObject[memberName] = [];
-        newQaObject[memberName].push( `${qaObjectChildren.id}${SPLIT_SYMBOL}${qaObjectChildren.typeId}`);
-      });
-      setComponentQaObject( newQaObject );
-    }
-
-  }, [] );
-
-
 
   const [form] = Form.useForm();
 
@@ -283,7 +263,24 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
     <FontAwesomeIcon
       icon={ cloneObject ? faCopy : componentQaObject ? faPen : faCirclePlus}
       style={stylingObject.icon}
-      onClick={ ()=>setIsModalVisible(true) }/>
+      onClick={ () => {
+        fetchChildren( typeId );
+
+        if ( componentQaObject )
+        {
+          const newQaObject = { ...qaObject };
+          // newQaObject['childrenId3'] = [{ value: "19-3", label: "S" }];
+          // newQaObject['childrenId2'] = [{ value: "20-2", label: "C" }];
+          children.map( (qaObjectChildren) => {
+            const memberName = `childrenId${qaObjectChildren.typeId}`
+            if ( !newQaObject[memberName] )
+              newQaObject[memberName] = [];
+            newQaObject[memberName].push( `${qaObjectChildren.id}${SPLIT_SYMBOL}${qaObjectChildren.typeId}`);
+          });
+          setComponentQaObject( newQaObject );
+        }
+        setIsModalVisible(true) } }
+    />
 
     { !componentQaObject &&
       <span style={{marginLeft:'3px'}}>
