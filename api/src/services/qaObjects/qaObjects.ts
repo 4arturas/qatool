@@ -42,11 +42,18 @@ export const createQaObject: MutationResolvers['createQaObject'] = async ({ inpu
 }
 
 export const updateQaObject: MutationResolvers['updateQaObject'] = async ( { id,  input }) => {
-  const qaObject = await db.qaObject.update({
-    data: input,
-    where: { id },
-  });
-
+  let qaObject: any;
+  delete input['id'];
+  try {
+    qaObject = await db.qaObject.update({
+      data: input,
+      where: {id},
+    });
+  }
+  catch ( e )
+  {
+    console.log( e );
+  }
   return { ...qaObject, ...{ user: { email: context.currentUser.email } } };
 }
 

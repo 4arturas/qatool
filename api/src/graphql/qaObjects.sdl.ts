@@ -77,6 +77,7 @@ export const schema = gql`
     method:      String
     header:      String
     executed: Boolean
+    userId: Int
   }
 
   type Mutation {

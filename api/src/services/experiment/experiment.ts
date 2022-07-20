@@ -151,9 +151,8 @@ export const runExperiment = async ({experimentId}) =>
       }
     });
 
-    const experiment = await qaObject( { id: experimentId } );
-    experiment.executed = true;
-    await updateQaObject( { id: experimentId, input: experiment })
+    const experiment = await QaObject.find( experimentId );
+    await experiment.update({ executed: true })
 
     return generateResponse(null);
   }
