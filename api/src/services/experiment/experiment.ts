@@ -181,9 +181,10 @@ async function makeCall(url, method, headers, data) {
 
 const generatePaymentId = ( collection, suite, cAse, counter:number ):string =>
 {
-  const prefix = 'QA-OUT';
+  // const prefix = 'QA-OUT';
   const random = getRandomIntInclusive(1000,9999);
-  return `${prefix}-${new Date().getTime()}-${random}-${collection.batchId}-${suite.batchId}-${cAse.batchId}-${counter}`;
+  // return `${prefix}-${new Date().getTime()}-${random}-${collection.batchId}-${suite.batchId}-${cAse.batchId}-${counter}`;
+  return `${random}-${collection.batchId}-${suite.batchId}-${cAse.batchId}-${counter}`;
 }
 
 const merge = (paymentId:string, body, replace, remove) =>
