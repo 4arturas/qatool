@@ -2,7 +2,7 @@ import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
 import {DeleteOutlined} from "@ant-design/icons";
 import {Popconfirm, Tooltip} from "antd";
-import {typeIdToColor} from "src/global";
+import {typeIdToColor, typeIdToName} from "src/global";
 
 const DELETE_QA_OBJECT_WITH_CHILDREN = gql`
   mutation DeleteQaObjectWithChildrenMutation($id: Int!) {
@@ -30,6 +30,7 @@ const ObjectDelete = ( { id, beforeSave, afterSave, typeId=null/*needed for the 
   }
 
     return (
+      <Tooltip title={`Delete ${typeIdToName(typeId)}`}>
       <Popconfirm
         title="Are you sure to delete this item?"
         onConfirm={ () => {
@@ -47,7 +48,7 @@ const ObjectDelete = ( { id, beforeSave, afterSave, typeId=null/*needed for the 
        <DeleteOutlined style={stylingObject.icon}/>
 
       </Popconfirm>
-
+      </Tooltip>
     )
   }
 

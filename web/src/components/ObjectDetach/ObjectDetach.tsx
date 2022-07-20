@@ -1,7 +1,7 @@
 import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
-import {typeIdToColor} from "src/global";
-import {Popconfirm} from "antd";
+import {typeIdToColor, typeIdToName} from "src/global";
+import {Popconfirm, Tooltip} from "antd";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faLink} from "@fortawesome/free-solid-svg-icons";
 import React from "react";
@@ -32,6 +32,7 @@ const ObjectDetach = ( { relationId, qaObject, beforeSave, afterSave }) => {
   }
 
   return (
+    <Tooltip title={`Detach ${typeIdToName(qaObject.typeId)}`}>
     <Popconfirm
       title="Are you sure to detach this item?"
       onConfirm={ () => {
@@ -51,7 +52,7 @@ const ObjectDetach = ( { relationId, qaObject, beforeSave, afterSave }) => {
 
 
     </Popconfirm>
-
+    </Tooltip>
   )
 }
 
