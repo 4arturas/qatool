@@ -234,7 +234,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
 
     if ( !options ) return <></>
 
-    if ( options.length === 0 ) return <div style={{float:'right'}}><Spin/></div>
+    if ( options.length === 0 ) return <div style={{textAlign:'right', padding:'10px'}}>Loading {typeIdToName(typeId)} <Spin/></div>
 
     const label = typeIdToName(typeId);
 
