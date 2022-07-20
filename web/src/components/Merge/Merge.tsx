@@ -1,5 +1,5 @@
 import {Modal, Tooltip} from "antd";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {faCodeFork} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useApolloClient} from "@apollo/client";
