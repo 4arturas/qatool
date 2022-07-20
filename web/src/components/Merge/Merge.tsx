@@ -18,9 +18,10 @@ import {
 import ReactDiffViewer from "react-diff-viewer";
 import {Spin} from "antd/es";
 import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
+import {useAuth} from "@redwoodjs/auth";
 
 const Merge = ( {qaObjectParent} ) => {
-
+  const { hasRole } = useAuth();
   const [loading, setLoading] = useState( true );
 
   if ( qaObjectParent.typeId !== CASE ) return <></>;
@@ -122,7 +123,7 @@ const Merge = ( {qaObjectParent} ) => {
       className='qaObjectTypeClass'
       style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`, padding: '8px'}}>
       <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - <span id={`objEditName${qaObject.id}`}>"{qaObject.name}"</span>
-        <span style={{backgroundColor:'gray', borderRadius:'10px', padding: '5px', paddingBottom: '6px', paddingLeft: '6px', marginLeft:'3px'}}>
+      { hasRole(['admin']) && <span style={{backgroundColor:'gray', borderRadius:'10px', padding: '5px', paddingBottom: '6px', paddingLeft: '6px', marginLeft:'3px'}}>
           <ObjectNewTest
             typeId={qaObject.typeId}
             qaObject={qaObject}
@@ -152,7 +153,7 @@ const Merge = ( {qaObjectParent} ) => {
                     }
 
                   }}/>
-          </span>
+          </span>}
         </span>
   }
 
