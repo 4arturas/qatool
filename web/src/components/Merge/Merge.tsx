@@ -9,7 +9,7 @@ import {
   mergeObjectsFromTestObject,
   REMOVE,
   REPLACE,
-  RESULT,
+  RESULT, ROLE_ADMIN,
   SERVER,
   TEST,
   typeIdToColor,
