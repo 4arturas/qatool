@@ -98,6 +98,8 @@ const UserEdit = ( { user, OnSubmitFormFunction }) => {
     onFinish={onFinish}
     onFinishFailed={onFinishFailed}
     autoComplete="off"
+    labelCol={{ span: 8 }}
+    wrapperCol={{ span: 16 }}
     initialValues={user && {...user, userRoles: user.userRoles.map(ur=>ur.name)}}
   >
 
