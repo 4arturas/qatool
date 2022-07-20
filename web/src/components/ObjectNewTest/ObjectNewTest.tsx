@@ -13,7 +13,7 @@ import {
   TYPES
 } from "src/global";
 import React, {useEffect, useState} from "react";
-import {Button, Form, Input, InputNumber, Modal, Select, Tag} from "antd";
+import {Button, Form, Input, InputNumber, Modal, Select, Tag, Tooltip} from "antd";
 import {useApolloClient} from "@apollo/client";
 import {Spin} from "antd/es";
 import {toast} from "@redwoodjs/web/toast";
@@ -259,9 +259,13 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
     </Form.Item>
   }
 
+  const [icon] = useState(cloneObject ? faCopy : componentQaObject ? faPen : faCirclePlus);
+
   return <>
+
+    <Tooltip title={icon===faCopy?`Clone ${typeIdToName(typeId)}`: (icon===faPen) ? `Edit ${typeIdToName(typeId)}` : `New ${typeIdToName(typeId)}`}>
     <FontAwesomeIcon
-      icon={ cloneObject ? faCopy : componentQaObject ? faPen : faCirclePlus}
+      icon={icon}
       style={stylingObject.icon}
       onClick={ () => {
         fetchChildren( typeId );
@@ -281,7 +285,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
         }
         setIsModalVisible(true) } }
     />
-
+    </Tooltip>
     <Modal
       title={ <Tag color={typeIdToColor(objectTypeId)} style={{color:'black'}}>{cloneObject ? 'Clone ' : componentQaObject ? 'Update ' : 'Create New '} {typeIdToName(objectTypeId)}</Tag> }
       visible={isModalVisible}
