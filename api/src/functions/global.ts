@@ -36,5 +36,6 @@ export function getRandomIntInclusive(min, max) {
 export function generatePaymentId(prefix:string):string
 {
   const random = getRandomIntInclusive(1000,9999);
+  // return `${prefix}-${new Date().getTime()}-${random}`;
   return `${prefix}-${new Date().getTime()}-${random}`;
 }
