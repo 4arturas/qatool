@@ -4,7 +4,7 @@ import {
   CASE,
   COLLECTION, DEFAULT_TABLE_PAGE_SIZE, EXPERIMENT,
   getChildrenTypeIdByParentTypeId,
-  mySubstr, SUITE, TEST,
+  mySubstr, ROLE_ADMIN, SUITE, TEST,
   typeIdToColor,
   typeIdToName, typeIdToTag,
   TYPES, validateJSONata
@@ -145,7 +145,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
     {
       title: 'Action',
       key: 'action',
-      render: (_, record) => hasRole(['admin'] ) && <>
+      render: (_, record) => hasRole([ROLE_ADMIN] ) && <>
         <span id={`edibBlock${record.id}${record.typeId}`}>
           <ObjectNewTest
             typeId={record.typeId}

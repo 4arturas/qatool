@@ -3,7 +3,7 @@ import {
   CASE, COLLECTION,
   DEFAULT_TABLE_PAGE_SIZE,
   EXPERIMENT,
-  getChildrenTypeIdByParentTypeId, REMOVE, REPLACE, RESPONSE, RESULT, SERVER,
+  getChildrenTypeIdByParentTypeId, REMOVE, REPLACE, RESPONSE, RESULT, ROLE_ADMIN, SERVER,
   TEST,
   typeIdToColor, typeIdToName,
   typeIdToTag
@@ -172,7 +172,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
     - {qaObject.name}
 
-    { hasRole(['admin']) && <>
+    { hasRole([ROLE_ADMIN]) && <>
     <span key={`edit${parentId}`} style={stylingObject.editQaObject}>
       <ObjectNewTest
         typeId={qaObject.typeId}
