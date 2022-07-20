@@ -189,7 +189,11 @@ const generatePaymentId = ( collection, suite, cAse, counter:number ):string =>
 
 const merge = (paymentId:string, body, replace, remove) =>
 {
-  replace.paymentId = paymentId;
+  if (body['paymentId'])
+    replace.paymentId = paymentId;
+  else
+    replace.paymentNo = paymentId;
+
   Object.keys(replace).map( (r) => body[r] = replace[r] );
 
   remove.map( (r) => delete body[r] );
