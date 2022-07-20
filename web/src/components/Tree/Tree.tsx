@@ -18,6 +18,7 @@ import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 import {useApolloClient} from "@apollo/client";
 import {toast} from "@redwoodjs/web/toast";
 import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
+import {useAuth} from "@redwoodjs/auth";
 
 export const FETCH_TREE = gql`
   query FetchTree($id: Int!) {
@@ -55,6 +56,7 @@ export const FETCH_TREE = gql`
 const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   const client = useApolloClient();
+  const { hasRole } = useAuth();
 
   const [experimentIsRunning, setExperimentIsRunning] = useState( false );
   const [experimentIsExecuted, setExperimentIsExecuted] = useState( false );
@@ -170,6 +172,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
     - {qaObject.name}
 
+    { hasRole(['admin']) && <>
     <span key={`edit${parentId}`} style={stylingObject.editQaObject}>
       <ObjectNewTest
         typeId={qaObject.typeId}
@@ -253,7 +256,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
         }
       </span>
     }
-
+    </> }
     {
       qaObject.typeId === CASE &&
       <span key={`merge${parentId}`} style={stylingObject.merge}>
