@@ -440,6 +440,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
               <Form.Item
                 label="Batch ID"
                 name="batchId"
+                rules={[{ required: true, message: 'Please input batch id!' }]}
                 style={stylingObject.formItem}
               >
                 <InputNumber/>
