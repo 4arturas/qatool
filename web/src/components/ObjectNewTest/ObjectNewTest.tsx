@@ -282,14 +282,6 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
         setIsModalVisible(true) } }
     />
 
-    { !componentQaObject &&
-      <span style={{marginLeft:'3px'}}>
-        <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${typeId}`} )}>
-          {typeIdToTag(typeId)}
-        </a>
-      </span>
-    }
-
     <Modal
       title={ <Tag color={typeIdToColor(objectTypeId)} style={{color:'black'}}>{cloneObject ? 'Clone ' : componentQaObject ? 'Update ' : 'Create New '} {typeIdToName(objectTypeId)}</Tag> }
       visible={isModalVisible}
