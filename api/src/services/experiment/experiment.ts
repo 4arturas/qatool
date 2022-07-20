@@ -163,7 +163,7 @@ export const runExperiment = async ({experimentId}) =>
 }
 
 async function makeCall(url, method, headers, data) {
-  process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+  // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
   // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   // Default options are marked with *
   const response = await fetch(url, {
