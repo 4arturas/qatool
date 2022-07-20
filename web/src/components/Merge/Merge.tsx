@@ -119,9 +119,10 @@ const Merge = ( {qaObjectParent} ) => {
   const wrap2 = (qaObject) => {
     return <span
       className='qaObjectTypeClass'
-      style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`}}>
+      style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`, padding: '8px'}}>
       <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - <span id={`objEditName${qaObject.id}`}>"{qaObject.name}"</span>
-              <ObjectNewTest typeId={qaObject.typeId} qaObject={qaObject} cloneObject={false} parentId={null} children={[]} beforeSave={() => {
+      <span style={{backgroundColor:'gray', borderRadius:'10px', padding: '5px', paddingBottom: '6px', paddingLeft: '6px', marginLeft:'3px'}}>
+      <ObjectNewTest typeId={qaObject.typeId} qaObject={qaObject} cloneObject={false} parentId={null} children={[]} beforeSave={() => {
               }} afterSave={(obj) => {
                 document.getElementById(`objEditName${obj.id}`).innerHTML = obj.name;
                 switch ( obj.typeId )
@@ -144,6 +145,7 @@ const Merge = ( {qaObjectParent} ) => {
                 }
 
               }}/>
+        </span>
           </span>
   }
 
