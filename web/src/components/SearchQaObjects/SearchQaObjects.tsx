@@ -265,7 +265,20 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
     const childTypeId: Array<number> = getChildrenTypeIdByParentTypeId(typeId);
     return (
       <>
-        <ObjectNewTest typeId={typeId} qaObject={null} children={null} cloneObject={false} parentId={null} beforeSave={()=>{}} afterSave={()=>{}}/>
+        <ObjectNewTest
+          typeId={typeId}
+          qaObject={null}
+          children={null}
+          cloneObject={false}
+          parentId={null}
+          beforeSave={()=>{}}
+          afterSave={( newQaObject )=>{
+            const newPage = { ...qaObjectPage };
+            newPage.qaObjects = [];
+            newPage.qaObjects.push( newQaObject );
+            qaObjectPage.qaObjects.map( q => newPage.qaObjects.push( q ) );
+            setQaObjectPage( newPage );
+          }}/>
         <span
           style={{marginLeft:'3px', cursor:'pointer'}}
           onClick={ () => {
