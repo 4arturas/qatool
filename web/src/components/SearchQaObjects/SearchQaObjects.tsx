@@ -18,6 +18,7 @@ import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import Merge from "src/components/Merge/Merge";
 import JSONModal from "src/components/JSONModal/JSONModal";
 import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
+import {useAuth} from "@redwoodjs/auth";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int, $count: Int) {
@@ -57,6 +58,7 @@ export const QUERY = gql`
 
 const SearchQaObjects = ({currentPage, pageSize, count}) => {
   const client = useApolloClient();
+  const { hasRole } = useAuth();
   const [page, setPage] = useState(currentPage);
   const [form] = Form.useForm();
   const columns = [
@@ -143,7 +145,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
     {
       title: 'Action',
       key: 'action',
-      render: (_, record) => (
+      render: (_, record) => hasRole(['admin'] ) && <>
         <span id={`edibBlock${record.id}${record.typeId}`}>
           <ObjectNewTest
             typeId={record.typeId}
@@ -246,7 +248,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             })
           }
         </span>
-      ),
+      </>,
     },
   ];
 
