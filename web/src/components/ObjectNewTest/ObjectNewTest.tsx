@@ -495,14 +495,14 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
               </>
             }
 
-            { ( objectTypeId===REPLACE || objectTypeId===REMOVE || objectTypeId===RESULT || objectTypeId===RESPONSE ) &&
+            { ( objectTypeId===BODY || objectTypeId===REPLACE || objectTypeId===REMOVE || objectTypeId===RESULT || objectTypeId===RESPONSE ) &&
 
               <Form.Item
                 label="JSON"
                 name="json"
                 style={stylingObject.formItem}
                 rules={[
-                  { validator:  jsonValidator }
+                  { required: true, validator:  jsonValidator }
                 ]}
               >
                 <TextArea
