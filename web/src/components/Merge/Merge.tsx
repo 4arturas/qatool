@@ -76,6 +76,7 @@ const Merge = ( {qaObjectParent} ) => {
             header
             createdAt
             updatedAt
+            parent { id parentId childrenId childrenObjectTypeId }
           }
         }
     `,
@@ -121,32 +122,38 @@ const Merge = ( {qaObjectParent} ) => {
       className='qaObjectTypeClass'
       style={{backgroundColor: `${typeIdToColor(qaObject.typeId)}`, padding: '8px'}}>
       <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObject.typeId)}</span> - <span id={`objEditName${qaObject.id}`}>"{qaObject.name}"</span>
-      <span style={{backgroundColor:'gray', borderRadius:'10px', padding: '5px', paddingBottom: '6px', paddingLeft: '6px', marginLeft:'3px'}}>
-      <ObjectNewTest typeId={qaObject.typeId} qaObject={qaObject} cloneObject={false} parentId={null} children={[]} beforeSave={() => {
-              }} afterSave={(obj) => {
-                document.getElementById(`objEditName${obj.id}`).innerHTML = obj.name;
-                switch ( obj.typeId )
-                {
-                  case BODY:
-                    setBody(obj);
-                    break;
-                  case TEST:
-                    setTest(obj);
-                    break;
-                  case REPLACE:
-                    setReplace( obj );
-                    break;
-                  case REMOVE:
-                    setRemove( obj );
-                    break;
-                  case RESULT:
-                    setResult( obj );
-                    break;
-                }
+        <span style={{backgroundColor:'gray', borderRadius:'10px', padding: '5px', paddingBottom: '6px', paddingLeft: '6px', marginLeft:'3px'}}>
+          <ObjectNewTest
+            typeId={qaObject.typeId}
+            qaObject={qaObject}
+            cloneObject={false}
+            parentId={null}
+            children={qaObject.parent.map( p => { return { id: p.childrenId, typeId: p.childrenObjectTypeId } } )}
+            beforeSave={() => {}}
+            afterSave={(obj) => {
+                    document.getElementById(`objEditName${obj.id}`).innerHTML = obj.name;
+                    switch ( obj.typeId )
+                    {
+                      case BODY:
+                        setBody(obj);
+                        break;
+                      case TEST:
+                        setTest(obj);
+                        break;
+                      case REPLACE:
+                        setReplace( obj );
+                        break;
+                      case REMOVE:
+                        setRemove( obj );
+                        break;
+                      case RESULT:
+                        setResult( obj );
+                        break;
+                    }
 
-              }}/>
-        </span>
+                  }}/>
           </span>
+        </span>
   }
 
 
