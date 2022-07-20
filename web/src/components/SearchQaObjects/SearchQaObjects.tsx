@@ -11,7 +11,6 @@ import {
 } from "src/global";
 import {useApolloClient, useLazyQuery} from "@apollo/client";
 import {Link, navigate, routes, useParams} from "@redwoodjs/router";
-import QaTrees from "src/components/QaTrees/QaTrees";
 import {BarChartOutlined, ExperimentOutlined, SearchOutlined} from "@ant-design/icons";
 const { Option } = Select;
 import BelongingsCell from 'src/components/BelongingsCell'
@@ -53,6 +52,22 @@ export const QUERY = gql`
     }
   }
 `
+
+const QaTrees = ({typeId}) => {
+  const childTypeId: Array<number> = getChildrenTypeIdByParentTypeId(typeId);
+  return (
+    <>
+      <ObjectNewTest typeId={typeId} qaObject={null} children={null} cloneObject={false} parentId={null} beforeSave={()=>{}} afterSave={()=>{}}/>
+      {
+        childTypeId.map( (childTypeId) =>
+          <div key={`${childTypeId}div`} style={{marginLeft:'10px', marginBottom: '10px', marginTop: '10px', whiteSpace:'nowrap'}}>
+            <QaTrees typeId={childTypeId}/>
+          </div>
+        )
+      }
+    </>
+  )
+}
 
 const SearchQaObjects = ({currentPage, pageSize, count}) => {
   const client = useApolloClient();
