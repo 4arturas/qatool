@@ -206,7 +206,7 @@ const Merge = ( {qaObjectParent} ) => {
         visible={isModalVisible}
         onOk={()=>setIsModalVisible(false)}
         onCancel={()=>setIsModalVisible(false)}
-        // footer={null}
+        footer={null}
         width={'90%'}
       >
         { loading && <Spin/> }
