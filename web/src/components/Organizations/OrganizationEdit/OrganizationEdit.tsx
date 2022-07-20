@@ -66,6 +66,8 @@ const OrganizationEdit = ( { organization, OnSubmitFormFunction } ) => {
       onFinishFailed={onFinishFailed}
       autoComplete="off"
       initialValues={organization}
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
     >
       <Form.Item
         label="Id"
