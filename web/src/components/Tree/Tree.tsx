@@ -278,13 +278,14 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
               <Tooltip title={'Run Experiment'}>
                 <Popconfirm
                   title="Are you sure you want to run this experiment?"
-                  onConfirm={ async () => {
+                  onConfirm={ () => {
                     if ( experimentIsRunning ) return;
                     setExperimentIsRunning( true );
 
-                    const runExperiment = async ( id:number ) =>
-                    {
-                      const RUN_EXPERIMENT = gql`
+                    new Promise( async (resolve, reject) => {
+                      const runExperiment = async ( id:number ) =>
+                      {
+                        const RUN_EXPERIMENT = gql`
                         query RunExperiment($experimentId: Int!) {
                           runExperiment(experimentId: $experimentId) {
                             experimentId
@@ -292,25 +293,26 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
                           }
                         }
                       `
-                      const ret = await client.query({
-                        query: RUN_EXPERIMENT,
-                        variables: { experimentId: id }
-                      });
+                        const ret = await client.query({
+                          query: RUN_EXPERIMENT,
+                          variables: { experimentId: id }
+                        });
 
-                      const { experimentId, error } = ret.data.runExperiment;
-                      return { experimentId, error };
-                    };
+                        const { experimentId, error } = ret.data.runExperiment;
+                        return { experimentId, error };
+                      };
 
-                    setExperimentIsRunning( false );
+                      const { experimentId, error } = await runExperiment( qaObject.id );
+                      if ( error )
+                      {
+                        toast.error( error );
+                        return;
+                      }
+                      toast.success( 'Experiment was executed successfully' );
+                      setExperimentIsRunning( false );
+                      setExperimentIsExecuted( true );
+                    })
 
-                    const { experimentId, error } = await runExperiment( qaObject.id );
-                    if ( error )
-                    {
-                      toast.error( error, { duration: 5000 } );
-                      return;
-                    }
-                    toast.success( 'Experiment was executed successfully', { duration: 5000 } );
-                    setExperimentIsExecuted( true );
                   }}
                   // onCancel={cancel}
                   okText="Yes"
