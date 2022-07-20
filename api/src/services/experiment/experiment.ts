@@ -187,12 +187,27 @@ const generatePaymentId = ( collection, suite, cAse, counter:number ):string =>
   return `${random}-${collection.batchId}-${suite.batchId}-${cAse.batchId}-${counter}`;
 }
 
+function process(key,value) {
+  // console.log(key + " : "+value);
+}
+function traverse( o, func, paymentId )
+{
+  for (let i in o) {
+    if ( i === 'paymentId' || i === 'paymentNo' )
+    {
+      o[i] = paymentId;
+    }
+    func.apply(this,[i,o[i]]);
+    if (o[i] !== null && typeof(o[i])=="object") {
+      //going one step down in the object tree!!
+      traverse( o[i], func, paymentId );
+    }
+  }
+}
+
 const merge = (paymentId:string, body, replace, remove) =>
 {
-  if (body['paymentId'])
-    replace.paymentId = paymentId;
-  else
-    replace.paymentNo = paymentId;
+  traverse( body, process, paymentId );
 
   Object.keys(replace).map( (r) => body[r] = replace[r] );
 
