@@ -2,7 +2,7 @@ import {Badge, Button, Form, Input, Pagination, Select, Table, Tag, Tooltip} fro
 import React, {useEffect, useState} from "react";
 import {
   CASE,
-  COLLECTION, EXPERIMENT,
+  COLLECTION, DEFAULT_TABLE_PAGE_SIZE, EXPERIMENT,
   getChildrenTypeIdByParentTypeId,
   mySubstr, SUITE, TEST,
   typeIdToColor,
@@ -53,21 +53,7 @@ export const QUERY = gql`
   }
 `
 
-const QaTrees = ({typeId}) => {
-  const childTypeId: Array<number> = getChildrenTypeIdByParentTypeId(typeId);
-  return (
-    <>
-      <ObjectNewTest typeId={typeId} qaObject={null} children={null} cloneObject={false} parentId={null} beforeSave={()=>{}} afterSave={()=>{}}/>
-      {
-        childTypeId.map( (childTypeId) =>
-          <div key={`${childTypeId}div`} style={{marginLeft:'10px', marginBottom: '10px', marginTop: '10px', whiteSpace:'nowrap'}}>
-            <QaTrees typeId={childTypeId}/>
-          </div>
-        )
-      }
-    </>
-  )
-}
+
 
 const SearchQaObjects = ({currentPage, pageSize, count}) => {
   const client = useApolloClient();
@@ -274,6 +260,30 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       setQaObjectPage( data.searchQaObjects );
     }
   });
+
+  const QaTrees = ({typeId}) => {
+    const childTypeId: Array<number> = getChildrenTypeIdByParentTypeId(typeId);
+    return (
+      <>
+        <ObjectNewTest typeId={typeId} qaObject={null} children={null} cloneObject={false} parentId={null} beforeSave={()=>{}} afterSave={()=>{}}/>
+        <span
+          style={{marginLeft:'3px', cursor:'pointer'}}
+          onClick={ () => {
+            searchQaObjects({variables: { searchCriteria: {typeId: typeId}, page: 1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0 }});
+          }}
+        >
+          {typeIdToTag(typeId)}
+      </span>
+        {
+          childTypeId.map( (childTypeId) =>
+            <div key={`${childTypeId}div`} style={{marginLeft:'10px', marginBottom: '10px', marginTop: '10px', whiteSpace:'nowrap'}}>
+              <QaTrees typeId={childTypeId}/>
+            </div>
+          )
+        }
+      </>
+    )
+  }
 
   const tagRender = (props) => {
     const { label, value, closable, onClose } = props;
