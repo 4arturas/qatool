@@ -21,6 +21,7 @@ import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 import {useAuth} from "@redwoodjs/auth";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faQuestionCircle} from "@fortawesome/free-solid-svg-icons";
+import Help from "src/components/Help/Help";
 
 export const FETCH_TREE = gql`
   query FetchTree($id: Int!) {
@@ -166,27 +167,13 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   const divTreeFragment = 'tree'
 
-  const HelpComponent = ( {typeId} ) =>
-  {
-    return <QuestionCircleOutlined
-      style={{fontSize: '15px', cursor: "pointer", marginLeft: '5px', marginRight:'-2px', color: 'black' }}
-      onClick={ ()=> {
-        const modal = Modal.info();
-        modal.update({
-          title: typeIdToTag(typeId),
-          content: typeIdToHelp( typeId ),
-          icon: <QuestionCircleOutlined style={{color:'black'}}/>
-        });
-      } }/>
-  }
-
   return <div id={`${divTreeFragment}${parentId}`} style={stylingObject.treeComponent}>
 
     <Tag color={typeIdToColor(qaObject.typeId)}>
       <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${qaObject.typeId}`} )} style={{color:'black'}}>
         {typeIdToName(qaObject.typeId)}
       </a>
-      <HelpComponent typeId={qaObject.typeId}/>
+      <Help anchor={`anchor${qaObject.typeId}`}/>
     </Tag>
 
     - {qaObject.name}
