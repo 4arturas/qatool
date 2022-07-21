@@ -15547,6 +15547,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"https@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "https@npm:1.0.0"
+  checksum: e36eb4c38f09264bb273925b2d658c38bb8dda655cdff679b75dc45ccac26b1520fadcf00be677ccc4432a62f44a408b522f66cfc802ce30f4effe75decfd554
+  languageName: node
+  linkType: hard
+
 "human-signals@npm:^2.1.0":
   version: 2.1.0
   resolution: "human-signals@npm:2.1.0"
@@ -27013,6 +27020,7 @@ __metadata:
     "@redwoodjs/router": 1.5.2
     "@redwoodjs/web": 1.5.2
     antd: ^4.21.3
+    https: ^1.0.0
     jsonata: ^1.8.6
     moment: ^2.29.3
     plotly.js: ^2.12.1
