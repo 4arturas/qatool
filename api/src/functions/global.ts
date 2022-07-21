@@ -27,6 +27,9 @@ export const TYPES = [
 export const MSG_OUTGOING:number = 1;
 export const MSG_INCOMING:number = 2;
 
+export const ROLE_ADMIN:string    = 'admin';
+export const ROLE_CUSTOMER:string = 'customer';
+
 export function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);

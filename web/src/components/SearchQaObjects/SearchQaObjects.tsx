@@ -67,6 +67,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       dataIndex: 'typeId',
       key: 'typeId',
       width: 100,
+      display: hasRole([ROLE_ADMIN]),
       render: (_, record) =>
         typeIdToTag(record.typeId)
     },
@@ -75,6 +76,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       dataIndex: 'name',
       key: 'name',
       width:300,
+      display: true,
       render: (_, record) =>
         <div>
           <Link to={routes.tree({id:record.id})}>
@@ -98,6 +100,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       dataIndex: 'description',
       key: 'description',
       width: 200,
+      display: true,
       render: (_, record) =>
         mySubstr(record.description, 9)
     },
@@ -105,25 +108,29 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       title: 'BatchId',
       dataIndex: 'batchId',
       key: 'batchId',
-      width: 50
+      width: 50,
+      display: hasRole([ROLE_ADMIN]),
     },
     {
       title: 'Threads',
       dataIndex: 'threads',
       key: 'threads',
-      width: 50
+      width: 50,
+      display: hasRole([ROLE_ADMIN]),
     },
     {
       title: 'Loops',
       dataIndex: 'loops',
       key: 'loops',
-      width: 50
+      width: 50,
+      display: hasRole([ROLE_ADMIN]),
     },
     {
       title: 'Json',
       dataIndex: 'json',
       key: 'json',
       width: 200,
+      display: hasRole([ROLE_ADMIN]),
       render: (_, record) =>
         <>{ record.json && <span style={{whiteSpace:'nowrap'}}>{mySubstr(record.json, 5)}&nbsp;<span style={{float:'right'}}><JSONModal title='JSON' json={record.json} /></span></span> }</>
     },
@@ -132,6 +139,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       dataIndex: 'jsonata',
       key: 'jsonata',
       width: 100,
+      display: hasRole([ROLE_ADMIN]),
       render: (_, record) =>
         <>{(record.json && record.jsonata) && (validateJSONata(record.jsonata, record.json) ? <Badge status="success" />:<Badge status="error" />)}{mySubstr(record.jsonata, 5)}</>
     },
@@ -140,11 +148,13 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       dataIndex: 'userId',
       key: 'userId',
       width: 100,
+      display: hasRole([ROLE_ADMIN]),
       render: (_, record) => record.user.email
     },
     {
       title: 'Action',
       key: 'action',
+      display: hasRole([ROLE_ADMIN]),
       render: (_, record) => hasRole([ROLE_ADMIN] ) && <>
         <span id={`edibBlock${record.id}${record.typeId}`}>
           <ObjectNewTest
@@ -353,23 +363,26 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             }}
             autoComplete="off"
           >
-            <Form.Item
-              label='Type'
-              name='typeId'
-            >
-              <Select
-                mode="multiple"
-                showArrow
-                tagRender={tagRender}
-                style={{minWidth: '200px'}}
-                allowClear
-                filterOption={(input, option) =>
-                  option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                }
-                options={ TYPES.map((t,i) => { return { value: t, label: typeIdToName(t) } }) }
-              />
-            </Form.Item>
-
+            { hasRole([ROLE_ADMIN]) &&
+              <Form.Item
+                label='Type'
+                name='typeId'
+              >
+                <Select
+                  mode="multiple"
+                  showArrow
+                  tagRender={tagRender}
+                  style={{minWidth: '200px'}}
+                  allowClear
+                  filterOption={(input, option) =>
+                    option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                  options={TYPES.map((t, i) => {
+                    return {value: t, label: typeIdToName(t)}
+                  })}
+                />
+              </Form.Item>
+            }
             <Form.Item
               label='Name'
               name='name'
@@ -393,20 +406,24 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
         <table style={{width:'100%'}} cellPadding={0} cellSpacing={0}>
           <tbody>
           <tr>
-            <td style={{verticalAlign:'top', paddingTop: '20px', paddingLeft: '5px', width:'10px'}}>
-              <div><QaTrees typeId={EXPERIMENT}/></div>
-            </td>
+            { hasRole([ROLE_ADMIN]) &&
+              <td style={{verticalAlign: 'top', paddingTop: '20px', paddingLeft: '5px', width: '10px'}}>
+                <div><QaTrees typeId={EXPERIMENT}/></div>
+              </td>
+            }
             <td style={{verticalAlign:'top'}}>
               <Table
                 dataSource={qaObjectPage.qaObjects}
-                columns={columns}
+                columns={columns.filter( c => c.display )}
                 pagination={false}
                 loading={loadingData}
                 bordered
-                expandable={{
+                expandable={!hasRole([ROLE_ADMIN]) ? null :
+                  {
                   expandedRowRender: record => <BelongingsCell parentId={record.id} />,
                   rowExpandable: record => (getChildrenTypeIdByParentTypeId(record.typeId).length>0),
-                }}
+                  }
+                }
                 rowKey={'id'}/>
             </td>
           </tr>

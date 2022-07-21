@@ -5,6 +5,7 @@ import type {
   QaObjectResolvers,
 } from 'types/graphql'
 import {QaObjectRelationship} from "src/models";
+import {EXPERIMENT, ROLE_ADMIN} from "src/functions/global";
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
   return db.qaObject.findMany()
@@ -118,7 +119,7 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
         select: { childrenId: true }
       }
     },*/
-
+    where: { AND: [] },
     include: {
       user:     { select: { email: true } },
       // parent:   { select: { parentId: true } },
@@ -135,25 +136,35 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
     // orderBy: { id: 'desc' },
   };
 
-  const whereClause = {};
+  const whereClause = { AND: [] };
   Object.keys(searchCriteria).map( k => {
-    if ( searchCriteria[k].length !== 0 ) {
-      if (Array.isArray(searchCriteria[k])) {
-        whereClause[k] = {in: searchCriteria[k]}
-      } else if (typeof (searchCriteria[k]) === 'string' && searchCriteria[k].length > 0) {
-        whereClause[k] = {contains: searchCriteria[k]};
-      } else {
-        whereClause[k] = searchCriteria[k];
+    if ( searchCriteria[k].length !== 0 )
+    {
+      if ( Array.isArray(searchCriteria[k]))
+      {
+        const inStr = `{ "${k}": {"in": [${searchCriteria[k]}]} }`;
+        whereClause.AND.push( JSON.parse( inStr ) );
+      }
+      else if (typeof (searchCriteria[k]) === 'string' && searchCriteria[k].length > 0)
+      {
+        const containsStr = `{ "${k}": {"contains": "${searchCriteria[k]}"} }`;
+        console.log( containsStr );
+        whereClause.AND.push( JSON.parse( containsStr ) );
+      }
+      else
+      {
+        // whereClause[k] = searchCriteria[k];
       }
     }
   });
 
-  const findClauseForCount = {};
-  if ( Object.keys(searchCriteria).length > 0 )
+  if ( !context.currentUser.roles.includes( ROLE_ADMIN ) )
   {
-    findClause.where = whereClause;
-    findClauseForCount.where = whereClause;
+    whereClause.AND.push( { typeId: { equals: EXPERIMENT } } );
   }
+
+  const findClauseForCount = { where: whereClause };
+  findClause.where = whereClause;
 
   const qaObjects = await db.qaObject.findMany(findClause);
 
