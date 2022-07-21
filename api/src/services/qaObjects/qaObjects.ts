@@ -64,22 +64,6 @@ export const deleteQaObject: MutationResolvers['deleteQaObject'] = ({ id }) => {
   })
 }
 
-export const qaObjectsPage = ({ page, pageSize }) => {
-
-  const offset = (page - 1) * pageSize
-
-  return {
-    qaObjects: db.qaObject.findMany({
-      take: pageSize,
-      skip: offset,
-      // orderBy: { id: 'desc' },
-    }),
-    count: db.qaObject.count(),
-    page: page,
-    pageSize: pageSize
-  };
-}
-
 export const deleteQaObjectWithChildren = async ({ id }) => {
   await db.qaObjectRelationship.deleteMany({
     where: {
