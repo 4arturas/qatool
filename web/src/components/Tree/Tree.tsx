@@ -308,6 +308,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
                       const { experimentId, error } = await runExperiment( qaObject.id );
                       if ( error )
                       {
+                        setExperimentIsRunning( false );
                         toast.error( error );
                         return;
                       }

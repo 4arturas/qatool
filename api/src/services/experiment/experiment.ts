@@ -35,7 +35,7 @@ export const runExperiment = async ({experimentId}) =>
   {
     return generateResponse( experimentWasExecutedMessage );
   }
-
+  const errors = [];
   const promises = [];
   try {
     const serverANDsuitesRelations = await QaObjectRelationship.where({parentId: experimentId});
@@ -85,51 +85,58 @@ export const runExperiment = async ({experimentId}) =>
         const response = replaceRemoveResultResponse.find(r => r.typeId === RESPONSE);
 
         let counter = 0;
+
         for (let thread = 0; thread < cAse.threads; thread++) {
           const promise = new Promise(async (resolve, reject) => {
             const loopArray = [];
             for (let loop = 0; loop < cAse.loops; loop++) {
+              try
+              {
+                const paymentId: string = generatePaymentId(collection, suite, cAse, counter++);
+                const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
 
-              const paymentId:string = generatePaymentId(collection, suite, cAse, counter++);
-              const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
 
+                const requestDate: Date = new Date();
+                // const response = await postData(server.address, JSON.parse(server.header), changedBody);
+                const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
+                const responseDate: Date = new Date();
 
-              const requestDate: Date = new Date();
-              // const response = await postData(server.address, JSON.parse(server.header), changedBody);
-              const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
-              const responseDate: Date = new Date();
+                let responseJSon: any;
+                try {
+                  responseJSon = await res.json();
+                } catch (e) {
+                  responseJSon = null;
+                }
 
-              let responseJSon: any;
-              try {
-                responseJSon = await res.json();
-              } catch (e) {
-                responseJSon = null;
+                const messageOutgoing = {
+                  type: MSG_OUTGOING,
+                  experimentId: experimentId,
+                  collectionId: collection.id,
+                  suiteId: suite.id,
+                  caseId: cAse.id,
+                  thread: thread,
+                  loop: loop,
+                  paymentId: paymentId,
+                  request: JSON.stringify(changedBody),
+                  response: JSON.stringify(responseJSon),
+                  requestDate: requestDate.toISOString(),
+                  responseDate: responseDate.toISOString(),
+                  status: res.status,
+                  statusText: res.statusText,
+                  txnId: responseJSon?.txnId,
+                  jsonata: result.jsonata
+                };
+                loopArray.push(messageOutgoing);
+
+                // const messageIncoming = messageOutgoing.txnId && await Message.first({txnId: messageOutgoing.txnId});
               }
-
-              const messageOutgoing = {
-                type:             MSG_OUTGOING,
-                experimentId:     experimentId,
-                collectionId:     collection.id,
-                suiteId:          suite.id,
-                caseId:           cAse.id,
-                thread:           thread,
-                loop:             loop,
-                paymentId:        paymentId,
-                request:          JSON.stringify(changedBody),
-                response:         JSON.stringify(responseJSon),
-                requestDate:      requestDate.toISOString(),
-                responseDate:     responseDate.toISOString(),
-                status:           res.status,
-                statusText:       res.statusText,
-                txnId:            responseJSon?.txnId,
-                jsonata:          result.jsonata
-              };
-              loopArray.push( messageOutgoing );
-
-              // const messageIncoming = messageOutgoing.txnId && await Message.first({txnId: messageOutgoing.txnId});
-
+              catch ( e )
+              {
+                errors.push( e );
+              }
             } // end for loop
-            resolve( loopArray );
+            resolve(loopArray);
+
           }); // end Promise
           promises.push( promise );
         } // end for thread
@@ -153,6 +160,13 @@ export const runExperiment = async ({experimentId}) =>
 
     const experiment = await QaObject.find( experimentId );
     await experiment.update({ executed: true })
+
+    if ( errors.length > 0 )
+    {
+      let err = '';
+      errors.map( e => { err += `${e.message}\n` } );
+      return generateResponse( err );
+    }
 
     return generateResponse(null);
   }
