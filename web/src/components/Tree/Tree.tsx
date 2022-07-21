@@ -5,20 +5,22 @@ import {
   EXPERIMENT,
   getChildrenTypeIdByParentTypeId, REMOVE, REPLACE, RESPONSE, RESULT, ROLE_ADMIN, SERVER,
   TEST,
-  typeIdToColor, typeIdToName,
+  typeIdToColor, typeIdToHelp, typeIdToName,
   typeIdToTag
 } from "src/global";
-import {Popconfirm, Tooltip} from "antd";
+import {Modal, Popconfirm, Tag, Tooltip} from "antd";
 import Merge from "src/components/Merge/Merge";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
 import {navigate, routes} from "@redwoodjs/router";
 import React, {useEffect, useState} from "react";
-import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
+import {BarChartOutlined, ExperimentOutlined, QuestionCircleOutlined} from "@ant-design/icons";
 import {useApolloClient} from "@apollo/client";
 import {toast} from "@redwoodjs/web/toast";
 import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 import {useAuth} from "@redwoodjs/auth";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faQuestionCircle} from "@fortawesome/free-solid-svg-icons";
 
 export const FETCH_TREE = gql`
   query FetchTree($id: Int!) {
@@ -164,11 +166,28 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   const divTreeFragment = 'tree'
 
+  const Help = ( {typeId} ) =>
+  {
+    return <QuestionCircleOutlined
+      style={{fontSize: '15px', cursor: "pointer", marginLeft: '5px', marginRight:'-2px', color: 'black' }}
+      onClick={ ()=> {
+        const modal = Modal.info();
+        modal.update({
+          title: typeIdToTag(typeId),
+          content: typeIdToHelp( typeId ),
+          icon: <QuestionCircleOutlined style={{color:'black'}}/>
+        });
+      } }/>
+  }
+
   return <div id={`${divTreeFragment}${parentId}`} style={stylingObject.treeComponent}>
 
-    <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${qaObject.typeId}`} )}>
-      {typeIdToTag(qaObject.typeId)}
-    </a>
+    <Tag color={typeIdToColor(qaObject.typeId)}>
+      <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${qaObject.typeId}`} )} style={{color:'black'}}>
+        {typeIdToName(qaObject.typeId)}
+      </a>
+      <Help typeId={qaObject.typeId}/>
+    </Tag>
 
     - {qaObject.name}
 

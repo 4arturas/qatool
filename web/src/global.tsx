@@ -257,3 +257,35 @@ export const prettifyJSon = (json:string): string => {
   }
 }
 
+export const typeIdToHelp = (typeId: number) =>
+{
+  return 'TODO: write help for ' + typeIdToName(typeId);
+  switch ( typeId )
+  {
+    case EXPERIMENT:
+      return 'gray';
+    case COLLECTION:
+      return '#BEEBE9';
+    case SERVER:
+      return '#F4DADA';
+    case SUITE:
+      return '#8AF0CE';
+    case CASE:
+      return '#F7B385';
+    case BODY:
+      return '#CDC2AE';
+    case TEST:
+      return '#F9CEEE';
+    case REPLACE:
+      return '#EFDAD7';
+    case REMOVE:
+      return '#FFF89A';
+    case RESULT:
+      return '#D7DDD5';
+    case RESPONSE:
+      return '#EBEAF0';
+    default:
+      return 'black';
+  }
+}
+
