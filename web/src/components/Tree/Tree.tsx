@@ -334,17 +334,14 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
     <div key={`treeChildren${parentId}`} style={{marginLeft: '20px'}}>
       {
-        qaObjectChildrenNew.map( q => {
-        { return !q.object ?
-          <span key={`dummyTreeChildrenInside${parentId}${ctx++}`}></span>/*TODO this needs to be solved, probably they are undefined because there are not deleted relationships*/ :
+        qaObjectChildrenNew.map( q =>
           <Tree
             key={`treeChildrenInside${q.object.id}`}
             tree={{ parentId: q.object.id, hierarchy: hierarchy, objects: objects }}
             relationId={q.relationId}
             treeParentId={parentId}
           />
-        }
-      })}
+      )}
     </div>
 
   </div>
