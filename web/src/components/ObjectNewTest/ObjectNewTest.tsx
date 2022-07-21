@@ -6,7 +6,7 @@ import {
   CASE,
   COLLECTION, CREATE_QA_OBJECT_RELATIONSHIP_MUTATION,
   DEFAULT_TABLE_PAGE_SIZE,
-  getChildrenTypeIdByParentTypeId, REMOVE, REPLACE, RESPONSE, RESULT, SERVER, SUITE, TEST,
+  getChildrenTypeIdByParentTypeId, prettifyJSon, REMOVE, REPLACE, RESPONSE, RESULT, SERVER, SUITE, TEST,
   typeIdToColor,
   typeIdToName,
   typeIdToTag,
@@ -261,6 +261,19 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
 
   const [icon] = useState(cloneObject ? faCopy : componentQaObject ? faPen : faCirclePlus);
 
+  const PrettifyButton = ( { textAreaId } ) =>
+  {
+    return <Button
+      style={{float:'right',marginTop:'-20px'}}
+      onClick={ () => {
+        const textArea = document.getElementById(textAreaId);
+        const prettifiedJSon = prettifyJSon( textArea.value );
+        textArea.value = prettifiedJSon;
+      }}>
+      Prettify
+    </Button>
+  }
+
   return <>
 
     <Tooltip title={icon===faCopy?`Clone ${typeIdToName(typeId)}`: (icon===faPen) ? `Edit ${typeIdToName(typeId)}` : `New ${typeIdToName(typeId)}`}>
@@ -486,29 +499,35 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
                   label="Headers"
                   name="header"
                   rules={[
-                    { validator:  jsonValidator }
+                    { required: true, validator:  jsonValidator }
                   ]}
                   style={stylingObject.formItem}
                 >
-                  <TextArea rows={4}/>
+                  <TextArea
+                    id='textAreaHeader'
+                    rows={4}/>
                 </Form.Item>
+                <PrettifyButton textAreaId='textAreaHeader'/>
               </>
             }
 
             { ( objectTypeId===BODY || objectTypeId===REPLACE || objectTypeId===REMOVE || objectTypeId===RESULT || objectTypeId===RESPONSE ) &&
-
-              <Form.Item
-                label="JSON"
-                name="json"
-                style={stylingObject.formItem}
-                rules={[
-                  { required: true, validator:  jsonValidator }
-                ]}
-              >
-                <TextArea
-                  rows={4}
-                  placeholder={`Add ${typeIdToName(objectTypeId)} example`}/>
-              </Form.Item>
+              <>
+                <Form.Item
+                  label="JSON"
+                  name="json"
+                  style={stylingObject.formItem}
+                  rules={[
+                    { required: true, validator:  jsonValidator }
+                  ]}
+                >
+                  <TextArea
+                    id='textAreaJSON'
+                    rows={4}
+                    placeholder={`Add ${typeIdToName(objectTypeId)} example`}/>
+                </Form.Item>
+                <PrettifyButton textAreaId='textAreaJSON'/>
+              </>
             }
 
             { objectTypeId===RESULT &&
