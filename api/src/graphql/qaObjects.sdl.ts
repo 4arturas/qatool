@@ -1,41 +1,41 @@
 export const schema = gql`
   type QaObject {
-    id: Int!
-    type: QaObjectType!
-    typeId: Int!
-    name: String!
-    description: String
-    batchId: Int
-    threads: Int
-    loops: Int
-    json: String
-    jsonata: String
-    address:     String
-    method:      String
-    header:      String
-    createdAt: DateTime!
-    updatedAt: DateTime!
-    executed: Boolean
-    userId: Int!
-    user: User
-    parent: [QaObjectRelationship]
+    id:           Int!
+    type:         QaObjectType!
+    typeId:       Int!
+    name:         String!
+    description:  String
+    batchId:      Int
+    threads:      Int
+    loops:        Int
+    json:         String
+    jsonata:      String
+    address:      String
+    method:       String
+    header:       String
+    createdAt:    DateTime!
+    updatedAt:    DateTime!
+    executed:     Boolean
+    userId:       Int!
+    user:         User
+    parent:       [QaObjectRelationship]
   }
 
   type QaObjectPage {
-    qaObjects: [QaObject]
-    count: Int!
-    page: Int!
-    pageSize: Int
+    qaObjects:    [QaObject]
+    count:        Int!
+    page:         Int!
+    pageSize:     Int
   }
 
   input QaObjectSearchCriteria {
-    typeId: [Int]
-    name: String
+    typeId:       [Int]
+    name:         String
   }
 
   type Relations {
-    parentId: Int
-    childrenId: Int
+    parentId:     Int
+    childrenId:   Int
   }
 
   type Query {
@@ -51,33 +51,33 @@ export const schema = gql`
 
 
   input CreateQaObjectInput {
-    typeId: Int!
-    name: String!
-    description: String
-    batchId: Int
-    threads: Int
-    loops: Int
-    json: String
-    jsonata: String
-    address:     String
-    method:      String
-    header:      String
+    typeId:       Int!
+    name:         String!
+    description:  String
+    batchId:      Int
+    threads:      Int
+    loops:        Int
+    json:         String
+    jsonata:      String
+    address:      String
+    method:       String
+    header:       String
   }
 
   input UpdateQaObjectInput {
-    typeId: Int
-    name: String
-    description: String
-    batchId: Int
-    threads: Int
-    loops: Int
-    json: String
-    jsonata: String
-    address:     String
-    method:      String
-    header:      String
-    executed: Boolean
-    userId: Int
+    typeId:       Int
+    name:         String
+    description:  String
+    batchId:      Int
+    threads:      Int
+    loops:        Int
+    json:         String
+    jsonata:      String
+    address:      String
+    method:       String
+    header:       String
+    executed:     Boolean
+    userId:       Int
   }
 
   type Mutation {
