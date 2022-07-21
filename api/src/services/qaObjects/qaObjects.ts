@@ -148,7 +148,6 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
       else if (typeof (searchCriteria[k]) === 'string' && searchCriteria[k].length > 0)
       {
         const containsStr = `{ "${k}": {"contains": "${searchCriteria[k]}"} }`;
-        console.log( containsStr );
         whereClause.AND.push( JSON.parse( containsStr ) );
       }
       else
