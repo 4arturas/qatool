@@ -179,32 +179,6 @@ export const belongings = async ( { parentId} ) =>
   return db.qaObject.findMany( { where: { id: { in: children.map( c => c.childrenId ) } } } );
 }
 
-
-const exp = async ( id ) =>
-{
-  try {
-
-    const parent = await db.qaObject.findUnique({where: {id: id}});
-    const suites = await QaObjectRelationship.where({parentId: id});
-    const children = [];
-    for (let i = 0; i < suites.length; i++) {
-      const suite = suites[i];
-      const child = await exp(suite.childrenId);
-      children.push(child);
-    }
-
-    return {
-      parent: parent,
-      children: children
-    };
-  }
-  catch ( e )
-  {
-    console.log( e );
-    return null;
-  }
-}
-
 const getRelations = async ( id, arr ) =>
 {
   const relations = await QaObjectRelationship.where({parentId: id});
