@@ -166,7 +166,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
 
   const divTreeFragment = 'tree'
 
-  const Help = ( {typeId} ) =>
+  const HelpComponent = ( {typeId} ) =>
   {
     return <QuestionCircleOutlined
       style={{fontSize: '15px', cursor: "pointer", marginLeft: '5px', marginRight:'-2px', color: 'black' }}
@@ -186,7 +186,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
       <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${qaObject.typeId}`} )} style={{color:'black'}}>
         {typeIdToName(qaObject.typeId)}
       </a>
-      <Help typeId={qaObject.typeId}/>
+      <HelpComponent typeId={qaObject.typeId}/>
     </Tag>
 
     - {qaObject.name}
