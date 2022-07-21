@@ -16,6 +16,7 @@ import {
 import {createExperimentResult} from "src/services/experimentResults/experimentResults";
 import {qaObject, updateQaObject} from "src/services/qaObjects/qaObjects";
 import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
+import * as https from "https";
 
 export const runExperiment = async ({experimentId}) =>
 {
@@ -176,6 +177,9 @@ export const runExperiment = async ({experimentId}) =>
   }
 }
 
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false,
+});
 async function makeCall(url, method, headers, data) {
   // process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
   // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -188,8 +192,9 @@ async function makeCall(url, method, headers, data) {
     headers: headers,
     // redirect: 'follow', // manual, *follow, error
     // referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-    body: JSON.stringify(data) // body data type must match "Content-Type" header
-  });
+    body: JSON.stringify(data), // body data type must match "Content-Type" header
+    agent: httpsAgent
+  } );
   return response; // parses JSON response into native JavaScript objects
 }
 
