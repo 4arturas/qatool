@@ -65,7 +65,6 @@ export const schema = gql`
   }
 
   input UpdateQaObjectInput {
-    typeId:       Int
     name:         String
     description:  String
     batchId:      Int

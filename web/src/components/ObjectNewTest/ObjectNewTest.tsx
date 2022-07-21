@@ -61,8 +61,6 @@ const CREATE_QA_OBJECT_MUTATION = gql`
 const UPDATE_QA_OBJECT_MUTATION = gql`
   mutation UpdateQaObjectMutation2($id: Int!, $input: UpdateQaObjectInput!) {
     updateQaObject(id: $id, input: $input) {
-      id
-      typeId
       name
       description
       batchId
@@ -371,6 +369,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
 
             // const castInput = Object.assign(input, { typeId: parseInt(input.typeId), batchId: parseInt(input.batchId), })
             const id = componentQaObject.id;
+            delete values.typeId;
             const data = updateQaObject({ variables: {  id, input: values } })
             data.then( async ( ret ) => {
               const queryResult = await client.query({
