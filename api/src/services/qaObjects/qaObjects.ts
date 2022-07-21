@@ -42,26 +42,38 @@ export const createQaObject: MutationResolvers['createQaObject'] = async ({ inpu
   return { ...qaObject, ...{ user: { email: context.currentUser.email } } };
 }
 
-export const updateQaObject: MutationResolvers['updateQaObject'] = async ( { id,  input }) => {
-  let qaObject: any;
-  delete input['id'];
-  try {
-    qaObject = await db.qaObject.update({
+export const updateQaObject: MutationResolvers['updateQaObject'] = ( { id,  input }) => {
+  return db.qaObject.update({
       data: input,
       where: {id},
+      include: {
+        user: { select: { email: true } },
+        parent: {},
+        children:  {}
+      },
     });
-  }
-  catch ( e )
-  {
-    console.log( e );
-  }
-  return { ...qaObject, ...{ user: { email: context.currentUser.email } } };
 }
 
 export const deleteQaObject: MutationResolvers['deleteQaObject'] = ({ id }) => {
   return db.qaObject.delete({
     where: { id },
   })
+}
+
+export const qaObjectsPage = ({ page, pageSize }) => {
+
+  const offset = (page - 1) * pageSize
+
+  return {
+    qaObjects: db.qaObject.findMany({
+      take: pageSize,
+      skip: offset,
+      // orderBy: { id: 'desc' },
+    }),
+    count: db.qaObject.count(),
+    page: page,
+    pageSize: pageSize
+  };
 }
 
 export const deleteQaObjectWithChildren = async ({ id }) => {
@@ -165,6 +177,32 @@ export const belongings = async ( { parentId} ) =>
 {
   const children = await QaObjectRelationship.where({ parentId: parentId});
   return db.qaObject.findMany( { where: { id: { in: children.map( c => c.childrenId ) } } } );
+}
+
+
+const exp = async ( id ) =>
+{
+  try {
+
+    const parent = await db.qaObject.findUnique({where: {id: id}});
+    const suites = await QaObjectRelationship.where({parentId: id});
+    const children = [];
+    for (let i = 0; i < suites.length; i++) {
+      const suite = suites[i];
+      const child = await exp(suite.childrenId);
+      children.push(child);
+    }
+
+    return {
+      parent: parent,
+      children: children
+    };
+  }
+  catch ( e )
+  {
+    console.log( e );
+    return null;
+  }
 }
 
 const getRelations = async ( id, arr ) =>
