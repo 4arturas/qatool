@@ -45,7 +45,7 @@ export const schema = gql`
     qaObjectsByTypeId(typeId: Int!): [QaObject] @requireAuth
     qaObjectsPage(page: Int, pageSize: Int): QaObjectPage @requireAuth
     searchQaObjects(searchCriteria: QaObjectSearchCriteria, page: Int, pageSize: Int, count: Int): QaObjectPage @requireAuth
-    belongings(parentId: Int): [QaObject] @requireAuth
+    belongings(parentId: Int): [QaObject] @requireAuth(roles: ["admin"])
   }
 
 
@@ -81,10 +81,9 @@ export const schema = gql`
   }
 
   type Mutation {
-    createQaObject(input: CreateQaObjectInput!): QaObject! @requireAuth
-    updateQaObject(id: Int!, input: UpdateQaObjectInput!): QaObject!
-      @requireAuth
-    deleteQaObject(id: Int!): QaObject! @requireAuth
-    deleteQaObjectWithChildren(id: Int!): Int! @requireAuth
+    createQaObject(input: CreateQaObjectInput!):            QaObject! @requireAuth(roles: ["admin"])
+    updateQaObject(id: Int!, input: UpdateQaObjectInput!):  QaObject! @requireAuth(roles: ["admin"])
+    deleteQaObject(id: Int!):                               QaObject! @requireAuth(roles: ["admin"])
+    deleteQaObjectWithChildren(id: Int!):                   Int!      @requireAuth(roles: ["admin"])
   }
 `
