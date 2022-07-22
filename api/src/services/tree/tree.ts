@@ -3,7 +3,7 @@ import {QaObjectRelationship} from "src/models";
 
 interface Relation
 {
-  id: number; parentId:number; childrenId:number;
+  id: number; parentId:number; childrenId:number,childrenObjectTypeId:number;
 }
 
 const findRelationships = async ( id:number, tree:Array<Relation> )  =>
