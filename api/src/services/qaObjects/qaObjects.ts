@@ -36,7 +36,7 @@ export const qaObjectsByTypeId: QueryResolvers['qaObjectsByTypeId'] = ({ typeId 
 
 export const createQaObject: MutationResolvers['createQaObject'] = ({ input}) => {
   return db.qaObject.create({
-    data: { ...input, orgId: context.currentUser.orgId },
+    data: input,
     include: {
       organization: { select: { id: true, name: true } },
       parent: {},

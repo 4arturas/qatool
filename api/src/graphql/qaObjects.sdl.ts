@@ -53,6 +53,7 @@ export const schema = gql`
   input CreateQaObjectInput {
     typeId:       Int!
     name:         String!
+    orgId:        Int!
     description:  String
     batchId:      Int
     threads:      Int
@@ -66,6 +67,7 @@ export const schema = gql`
 
   input UpdateQaObjectInput {
     name:         String
+    orgId:        Int
     description:  String
     batchId:      Int
     threads:      Int

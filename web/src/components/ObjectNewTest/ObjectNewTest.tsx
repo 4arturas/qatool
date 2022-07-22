@@ -18,6 +18,7 @@ import {useApolloClient} from "@apollo/client";
 import {Spin} from "antd/es";
 import {toast} from "@redwoodjs/web/toast";
 import {useMutation} from "@redwoodjs/web";
+import {useAuth} from "@redwoodjs/auth";
 const { TextArea } = Input;
 
 const FIND_QA_OBJECTS_BY_TYPE = gql`
@@ -105,6 +106,7 @@ const DELETE_QA_OBJECT_RELATIONSHIP_MUTATION = gql`
 const SPLIT_SYMBOL = '-';
 const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, beforeSave, afterSave }) => {
   const client = useApolloClient();
+  const { currentUser } = useAuth()
 
   const [componentQaObject, setComponentQaObject] = useState( qaObject );
   const [objectTypeId, setObjectTypeId] = useState( typeId );
@@ -121,6 +123,10 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
   const [remove, setRemove] = useState(null );
   const [result, setResult] = useState(null );
   const [response, setResponse] = useState(null );
+
+  const [organizations, setOrganizations] = useState( [] );
+  const [initialValues] = useState( componentQaObject ? componentQaObject : { typeId:typeId, orgId: currentUser.orgId } );
+
 
   const [createQaObject, {loading: loadingSaveNew, error: errorSavingNew, data: newObject}] = useMutation( CREATE_QA_OBJECT_MUTATION,
     {
@@ -283,6 +289,20 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
       onClick={ () => {
         fetchChildren( typeId );
 
+        const GET_ORGANIZATIONS = gql`
+          query GetOrganizations {
+            organizations: getOrganizations {
+              id
+              name
+            }
+          }
+        `
+        client.query({
+          query: GET_ORGANIZATIONS
+        }).then( ret => {
+          setOrganizations( ret.data.organizations );
+        } );
+
         if ( componentQaObject )
         {
           const newQaObject = { ...qaObject };
@@ -313,7 +333,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={ componentQaObject ? componentQaObject : {typeId:typeId} }
+        initialValues={ initialValues }
         onFinish={ (values: any) => {
           beforeSave();
           const children = [];
@@ -432,6 +452,18 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
               style={stylingObject.formItem}
             >
               <Input/>
+            </Form.Item>
+
+            <Form.Item
+              label="Organization"
+              name="orgId"
+              rules={[{ required: true, message: 'Please select organization!' }]}
+              style={stylingObject.formItem}
+            >
+              <Select
+                placeholder={`Select organization`}
+                options={ organizations.map(o=>{ return {value:o.id, label:o.name}; } ) }
+              />
             </Form.Item>
 
             <Form.Item
