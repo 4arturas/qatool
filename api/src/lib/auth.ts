@@ -22,7 +22,7 @@ import {UserRole} from "src/models";
 export const getCurrentUser = async (session) => {
   let user = await db.user.findUnique({
     where: { id: session.id },
-    select: { id: true, email: true },
+    select: { id: true, email: true, orgId: true }
   });
 
   const userRoles = await UserRole.where( { userId: session.id } )
