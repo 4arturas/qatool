@@ -34,12 +34,15 @@ export const qaObjectsByTypeId: QueryResolvers['qaObjectsByTypeId'] = ({ typeId 
   })
 }
 
-export const createQaObject: MutationResolvers['createQaObject'] = async ({ input}) => {
-  const qaObject = await db.qaObject.create({
+export const createQaObject: MutationResolvers['createQaObject'] = ({ input}) => {
+  return db.qaObject.create({
     data: { ...input, orgId: context.currentUser.orgId },
+    include: {
+      organization: { select: { id: true, name: true } },
+      parent: {},
+      children:  {}
+    },
   });
-
-  return { ...qaObject, ...{ user: { email: context.currentUser.email } } };
 }
 
 export const updateQaObject: MutationResolvers['updateQaObject'] = ( { id,  input }) => {

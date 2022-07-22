@@ -145,8 +145,8 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
     },
     {
       title: 'Owner',
-      dataIndex: 'userId',
-      key: 'userId',
+      dataIndex: 'orgId',
+      key: 'orgId',
       width: 100,
       display: hasRole([ROLE_ADMIN]),
       render: (_, record) => record.organization.name

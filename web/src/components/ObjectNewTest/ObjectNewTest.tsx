@@ -52,8 +52,8 @@ const CREATE_QA_OBJECT_MUTATION = gql`
       header
       createdAt
       updatedAt
-      userId
-      user { email }
+      orgId
+      organization { id name }
       parent { id parentId childrenId childrenObjectTypeId }
     }
   }`;
@@ -76,8 +76,8 @@ const UPDATE_QA_OBJECT_MUTATION = gql`
       createdAt
       updatedAt
       executed
-      userId
-      user { email }
+      orgId
+      organization { id name }
       parent { id parentId childrenId childrenObjectTypeId }
     }
   }

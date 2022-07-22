@@ -48,8 +48,8 @@ export const FETCH_TREE = gql`
         createdAt
         updatedAt
         executed
-        userId
-        user { email }
+        orgId
+        organization { id name }
         parent { id parentId childrenId childrenObjectTypeId }
       }
     }
