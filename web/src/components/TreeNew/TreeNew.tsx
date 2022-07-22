@@ -174,7 +174,7 @@ const TreeNew = ( { id }) => {
                       }}/>
                   </span>
 
-                          <span key={`clone${qaObject.id}`} style={stylingObject.editQaObject}>
+                  <span key={`clone${qaObject.id}`} style={stylingObject.editQaObject}>
                     <ObjectNewTest
                       typeId={qaObject.typeId}
                       qaObject={qaObject}
@@ -188,7 +188,7 @@ const TreeNew = ( { id }) => {
                       }}/>
                   </span>
 
-                          <span key={`delete${qaObject.id}`} style={stylingObject.deleteQaObject}>
+                  <span key={`delete${qaObject.id}`} style={stylingObject.deleteQaObject}>
                     <Tooltip title={'Delete object'}>
                       <ObjectDelete
                         id={qaObject.id}
