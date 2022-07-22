@@ -125,8 +125,6 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
   const [response, setResponse] = useState(null );
 
   const [organizations, setOrganizations] = useState( [] );
-  const [initialValues] = useState( componentQaObject ? componentQaObject : { typeId:typeId, orgId: currentUser.orgId } );
-
 
   const [createQaObject, {loading: loadingSaveNew, error: errorSavingNew, data: newObject}] = useMutation( CREATE_QA_OBJECT_MUTATION,
     {
@@ -333,7 +331,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        initialValues={ initialValues }
+        initialValues={ componentQaObject ? componentQaObject : { typeId:typeId, orgId: currentUser.orgId } }
         onFinish={ (values: any) => {
           beforeSave();
           const children = [];
