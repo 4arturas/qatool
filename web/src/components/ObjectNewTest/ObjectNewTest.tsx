@@ -1,18 +1,15 @@
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCirclePlus, faCopy, faPen} from "@fortawesome/free-solid-svg-icons";
-import {routes} from "@redwoodjs/router";
 import {
   BODY,
   CASE,
   COLLECTION, CREATE_QA_OBJECT_RELATIONSHIP_MUTATION,
-  DEFAULT_TABLE_PAGE_SIZE,
   getChildrenTypeIdByParentTypeId, prettifyJSon, REMOVE, REPLACE, RESPONSE, RESULT, SERVER, SUITE, TEST,
   typeIdToColor,
   typeIdToName,
-  typeIdToTag,
   TYPES
 } from "src/global";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {Button, Form, Input, InputNumber, Modal, Select, Tag, Tooltip} from "antd";
 import {useApolloClient} from "@apollo/client";
 import {Spin} from "antd/es";
