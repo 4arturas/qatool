@@ -234,8 +234,8 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
                                   header
                                   createdAt
                                   updatedAt
-                                  user {
-                                    email
+                                  organization {
+                                    name
                                   }
                                   parent {
                                     id parentId childrenId childrenObjectTypeId
