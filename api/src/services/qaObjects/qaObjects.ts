@@ -117,7 +117,7 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
     },*/
     where: { AND: [] },
     include: {
-      user:     { select: { email: true } },
+      organization:     { select: { id: true, name: true } },
       // parent:   { select: { parentId: true } },
       parent: {  },
       children:  {  }

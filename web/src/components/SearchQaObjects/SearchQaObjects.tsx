@@ -39,9 +39,9 @@ export const QUERY = gql`
         createdAt
         updatedAt
         executed
-        userId
-        user {
-          email
+        orgId
+        organization {
+          id name
         }
         parent {
           id parentId childrenId childrenObjectTypeId
@@ -149,7 +149,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       key: 'userId',
       width: 100,
       display: hasRole([ROLE_ADMIN]),
-      render: (_, record) => record.user.email
+      render: (_, record) => record.organization.name
     },
     {
       title: 'Action',

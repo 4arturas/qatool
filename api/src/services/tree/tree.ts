@@ -32,7 +32,7 @@ export const fetchHierarchy = async ( { id } ) => {
   const objects = await db.qaObject.findMany( {
     where: { id: { in: idUniqueArray } },
     include: {
-      user:   { select: { email: true } },
+      organization:   { select: { id: true, name: true } },
       parent: { select: { id: true, parentId: true, childrenId: true, childrenObjectTypeId: true } },
     },
   } );

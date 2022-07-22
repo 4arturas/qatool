@@ -16,8 +16,8 @@ export const schema = gql`
     createdAt:    DateTime!
     updatedAt:    DateTime!
     executed:     Boolean
-    userId:       Int!
-    user:         User
+    orgId:        Int!
+    organization: Organization
     parent:       [QaObjectRelationship]
   }
 

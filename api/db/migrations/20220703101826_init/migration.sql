@@ -9,7 +9,6 @@ CREATE TABLE "Organization" (
 );
 
 -- "User" definition
-
 CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "uuid" TEXT NOT NULL,
@@ -44,6 +43,7 @@ CREATE TABLE "UserRole" (
 CREATE UNIQUE INDEX "UserRole_name_userId_key" ON "UserRole"("name", "userId");
 
 -- CreateTable
+-- QaObject definition
 CREATE TABLE "QaObject" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "typeId" INTEGER NOT NULL,
@@ -60,9 +60,9 @@ CREATE TABLE "QaObject" (
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
     "executed" BOOLEAN NOT NULL DEFAULT false,
-    "userId" INTEGER NOT NULL,
+    "orgId" INTEGER NOT NULL,
     CONSTRAINT "QaObject_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "QaObjectType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "QaObject_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "QaObject_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
