@@ -158,7 +158,7 @@ const TreeNew = ( { id }) => {
 
           {hasRole([ROLE_ADMIN]) && <>
             {
-              loading ? <span style={{marginLeft: '10px'}}>Loading...</span> :
+              loading ? <span style={{marginLeft: '10px', padding: '5px'}}>Loading...</span> :
                 <>
                   <span key={`edit${qaObject.id}`} style={stylingObject.editQaObject}>
                     <ObjectNewTest
