@@ -204,7 +204,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
         }}/>
     </span>
 
-    <span key={`delete${parentId}`} style={stylingObject.deleteQaObject}>
+    <span key={`delete${parentId}`} style={stylingObject.deleteQaObject} className={`deleteClass${qaObject.id}`}>
       <Tooltip title={'Delete object'}>
         <ObjectDelete
           id={qaObject.id}
@@ -216,8 +216,8 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
               navigate(  routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0} ) );
               return;
             }
-            document.getElementById(`tree${parentId}`).style.display = 'none';
-            // refreshTree( treeParentId );
+            const deleteArr = document.getElementsByClassName(`deleteClass${qaObject.id}`);
+            Array.prototype.map.call(deleteArr, (d) => d.parentNode.style.display = 'none');
           }}
         />
       </Tooltip>
@@ -254,8 +254,7 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
                 parentId={parentId}
                 beforeSave={()=>{}}
                 afterSave={ (newQaObject) => {
-                  refreshTree( parentId );
-                  // window.location.reload();
+                  window.location.reload();
                 }}/>
             </span>
           })

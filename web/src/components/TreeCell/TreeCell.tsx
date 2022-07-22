@@ -45,6 +45,6 @@ export const Failure = ( { error }: CellFailureProps<FindTreeQueryVariables>) =>
 
 export const Success = ( { tree }: CellSuccessProps<FindTreeQuery, FindTreeQueryVariables> ) => {
   return <div key={'divTreeContainer'} style={{marginLeft: '50px'}}>
-    <Tree tree={tree} relationId={null} treeParentId={tree.parentId}/>
+    <Tree tree={tree} relationId={null} treeParentId={tree.parentId} parentRefreshTreeFunction={null}/>
   </div>
 }
