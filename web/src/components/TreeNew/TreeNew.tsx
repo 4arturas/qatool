@@ -62,12 +62,12 @@ const returnNonExisting = ( qaObject ): Array<number> => {
   if ( qaObject.typeId === EXPERIMENT )
   {
     findAndAdd( arrRet, SERVER, qaObject );
-    findAndAdd( arrRet, COLLECTION, qaObject );
+    arrRet.push( COLLECTION );
   }
   else if ( qaObject.typeId === CASE )
   {
     findAndAdd( arrRet, BODY, qaObject );
-    findAndAdd( arrRet, TEST, qaObject );
+    arrRet.push( TEST );
   }
   else if ( qaObject.typeId === TEST )
   {
