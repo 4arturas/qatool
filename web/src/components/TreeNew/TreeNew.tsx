@@ -1,7 +1,7 @@
 import {useApolloClient} from "@apollo/client";
 import {useAuth} from "@redwoodjs/auth";
 import React, {useEffect, useState} from "react";
-import {Tag, Tooltip} from "antd";
+import {Popconfirm, Tag, Tooltip} from "antd";
 import {
   BODY,
   CASE,
@@ -18,6 +18,8 @@ import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
 import Merge from "src/components/Merge/Merge";
+import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
+import {toast} from "@redwoodjs/web/toast";
 
 export const QUERY = gql`
   query FindTreeQueryNew($id: Int!) {
@@ -87,6 +89,10 @@ const returnNonExisting = ( qaObject ): Array<number> => {
 const TreeNew = ( { id }) => {
   const client = useApolloClient();
   const { hasRole } = useAuth();
+
+  const [experimentIsRunning, setExperimentIsRunning] = useState( false );
+  const [experimentIsExecuted, setExperimentIsExecuted] = useState( false );
+
 
   const [loading, setLoading] = useState( false );
 
@@ -221,6 +227,78 @@ const TreeNew = ( { id }) => {
                   }
 
                   {
+                    qaObject.typeId === EXPERIMENT &&
+                    <span key={`runExperiment${qaObject.id}`} style={stylingObject.runExperiment}>
+                    {
+                      (qaObject.executed||experimentIsExecuted) ?
+                        <Tooltip title={'View Experiment Results'}>
+                          <BarChartOutlined
+                            style={ { fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
+                            onClick={()=>{
+                              navigate( routes.experiment({id:qaObject.id}))
+                            }}
+                          />
+                        </Tooltip>
+                        :
+                        <Tooltip title={'Run Experiment'}>
+                          <Popconfirm
+                            title="Are you sure you want to run this experiment?"
+                            onConfirm={ () => {
+                              if ( experimentIsRunning ) return;
+                              setExperimentIsRunning( true );
+                              setLoading( true );
+
+                              new Promise( async (resolve, reject) => {
+                                const runExperiment = async ( id:number ) =>
+                                {
+                                  const RUN_EXPERIMENT = gql`
+                                  query RunExperiment($experimentId: Int!) {
+                                    runExperiment(experimentId: $experimentId) {
+                                      experimentId
+                                      error
+                                    }
+                                  }
+                                `
+                                  const ret = await client.query({
+                                    query: RUN_EXPERIMENT,
+                                    variables: { experimentId: id }
+                                  });
+
+                                  const { experimentId, error } = ret.data.runExperiment;
+                                  return { experimentId, error };
+                                };
+
+                                const { experimentId, error } = await runExperiment( qaObject.id );
+                                if ( error )
+                                {
+                                  setExperimentIsRunning( false );
+                                  setLoading( false );
+                                  toast.error( error );
+                                  return;
+                                }
+                                toast.success( 'Experiment was executed successfully' );
+                                setExperimentIsRunning( false );
+                                setExperimentIsExecuted( true );
+                                setLoading( false );
+                              })
+
+                            }}
+                            // onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            <ExperimentOutlined className={experimentIsRunning?'loading-spinner':''}
+                                                style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
+                            />
+                          </Popconfirm>
+
+                        </Tooltip>
+                    }
+                    </span>
+                  }
+
+
+                  {
                     possibleToAddChildren.length > 0 &&
                     <span key={`addChildrenBlock${qaObject.id}`} style={stylingObject.addChildrenBlock}>
                     <span key={`addChildrenTitle${qaObject.id}`} style={stylingObject.addChildrenTitle}>Add children</span>
@@ -251,7 +329,6 @@ const TreeNew = ( { id }) => {
           /*has role*/}
           <span style={{marginLeft:'7px'}}><Merge qaObject={qaObject}/></span>
         </div>
-
 
         {
           children.map( h => {
