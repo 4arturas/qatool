@@ -574,7 +574,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
             <SelectChildren typeId={SUITE} options={suite} multiple={true} children={children}/>
             <SelectChildren typeId={CASE} options={cAse} multiple={true} children={children}/>
             <SelectChildren typeId={BODY} options={body} multiple={false} children={children}/>
-            <SelectChildren typeId={TEST} options={test} multiple={false} children={children}/>
+            <SelectChildren typeId={TEST} options={test} multiple={true} children={children}/>
             <SelectChildren typeId={REPLACE} options={replace} multiple={false} children={children}/>
             <SelectChildren typeId={REMOVE} options={remove} multiple={false} children={children}/>
             <SelectChildren typeId={RESULT} options={result} multiple={false} children={children}/>
