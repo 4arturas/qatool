@@ -14,7 +14,6 @@ import {
   TEST
 } from "src/functions/global";
 import {createExperimentResult} from "src/services/experimentResults/experimentResults";
-import {qaObject, updateQaObject} from "src/services/qaObjects/qaObjects";
 import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
 import * as https from "https";
 
