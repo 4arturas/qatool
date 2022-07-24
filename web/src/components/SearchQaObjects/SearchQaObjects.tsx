@@ -83,7 +83,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             {record.name}
           </Link>
           <>
-            <span style={{float:'right', color: 'black'}}><Merge qaObjectParent={record} /></span>
+            <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
 
             {record.typeId === EXPERIMENT &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>

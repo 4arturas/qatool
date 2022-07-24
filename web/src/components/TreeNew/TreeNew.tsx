@@ -17,6 +17,7 @@ import Help from "src/components/Help/Help";
 import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 import ObjectDelete from "src/components/ObjectDelete/ObjectDelete";
 import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
+import Merge from "src/components/Merge/Merge";
 
 export const QUERY = gql`
   query FindTreeQueryNew($id: Int!) {
@@ -248,6 +249,7 @@ const TreeNew = ( { id }) => {
             /*loading*/}
             </>
           /*has role*/}
+          <span style={{marginLeft:'7px'}}><Merge qaObject={qaObject}/></span>
         </div>
 
 
