@@ -246,7 +246,6 @@ const TreeNew = ( { id }) => {
                             onConfirm={ () => {
                               if ( experimentIsRunning ) return;
                               setExperimentIsRunning( true );
-                              setLoading( true );
 
                               new Promise( async (resolve, reject) => {
                                 const runExperiment = async ( id:number ) =>
@@ -272,14 +271,12 @@ const TreeNew = ( { id }) => {
                                 if ( error )
                                 {
                                   setExperimentIsRunning( false );
-                                  setLoading( false );
                                   toast.error( error );
                                   return;
                                 }
                                 toast.success( 'Experiment was executed successfully' );
                                 setExperimentIsRunning( false );
                                 setExperimentIsExecuted( true );
-                                setLoading( false );
                               })
 
                             }}
