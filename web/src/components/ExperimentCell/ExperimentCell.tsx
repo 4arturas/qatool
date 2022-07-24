@@ -20,6 +20,7 @@ export const QUERY = gql`
       collectionId
       suiteId
       caseId
+      testId
       thread
       loop
       request
@@ -158,7 +159,7 @@ const Experiment = ( { experiment } ) =>
   });
 
   const funGroupExperiment = ( experiment ) => {
-    const generateGroupKey = ( e ) => `${e.experimentId}${e.collectionId}${e.suiteId}${e.caseId}`;
+    const generateGroupKey = ( e ) => `${e.experimentId}${e.collectionId}${e.suiteId}${e.caseId}${e.testId}`;
     let groupedExperiments = {};
     experiment.forEach( exp  =>
     {

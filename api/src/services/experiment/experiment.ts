@@ -68,79 +68,80 @@ export const runExperiment = async ({experimentId}) =>
         const caseChildrenRelations = await QaObjectRelationship.where({parentId: cAse.id});
         const caseChildrenId = caseChildrenRelations.flatMap(c => c.childrenId);
         const bodyANDtest = await db.qaObject.findMany({where: {id: {in: caseChildrenId}, typeId: {in: [BODY, TEST]}}});
+
         const body = bodyANDtest.find(b => b.typeId === BODY);
-        const test = bodyANDtest.find(t => t.typeId === TEST);
+        const testArr = bodyANDtest.filter(t => t.typeId === TEST);
+        for ( let tIdx = 0; tIdx < testArr.length; tIdx++ )
+        {
+          const test = testArr[tIdx];
+          const testChildren = await QaObjectRelationship.where({parentId: test.id});
+          const testChildrenId = testChildren.flatMap(t => t.childrenId);
+          const replaceRemoveResultResponse = await db.qaObject.findMany({
+            where: {
+              id: {in: testChildrenId},
+              typeId: {in: [REPLACE, REMOVE, RESULT, RESPONSE]}
+            }
+          });
+          const replace = replaceRemoveResultResponse.find(r => r.typeId === REPLACE);
+          const remove = replaceRemoveResultResponse.find(r => r.typeId === REMOVE);
+          const result = replaceRemoveResultResponse.find(r => r.typeId === RESULT);
+          const response = replaceRemoveResultResponse.find(r => r.typeId === RESPONSE);
 
-        const testChildren = await QaObjectRelationship.where({parentId: test.id});
-        const testChildrenId = testChildren.flatMap(t => t.childrenId);
-        const replaceRemoveResultResponse = await db.qaObject.findMany({
-          where: {
-            id: {in: testChildrenId},
-            typeId: {in: [REPLACE, REMOVE, RESULT, RESPONSE]}
-          }
-        });
-        const replace = replaceRemoveResultResponse.find(r => r.typeId === REPLACE);
-        const remove = replaceRemoveResultResponse.find(r => r.typeId === REMOVE);
-        const result = replaceRemoveResultResponse.find(r => r.typeId === RESULT);
-        const response = replaceRemoveResultResponse.find(r => r.typeId === RESPONSE);
+          let counter = 0;
 
-        let counter = 0;
-
-        for (let thread = 0; thread < cAse.threads; thread++) {
-          const promise = new Promise(async (resolve, reject) => {
-            const loopArray = [];
-            for (let loop = 0; loop < cAse.loops; loop++) {
-              try
-              {
-                const paymentId: string = generatePaymentId(collection, suite, cAse, counter++);
-                const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
-
-
-                const requestDate: Date = new Date();
-                // const response = await postData(server.address, JSON.parse(server.header), changedBody);
-                const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
-                const responseDate: Date = new Date();
-
-                let responseJSon: any;
+          for (let thread = 0; thread < cAse.threads; thread++) {
+            const promise = new Promise(async (resolve, reject) => {
+              const loopArray = [];
+              for (let loop = 0; loop < cAse.loops; loop++) {
                 try {
-                  responseJSon = await res.json();
+                  const paymentId: string = generatePaymentId(collection, suite, cAse, counter++);
+                  const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
+
+
+                  const requestDate: Date = new Date();
+                  // const response = await postData(server.address, JSON.parse(server.header), changedBody);
+                  const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
+                  const responseDate: Date = new Date();
+
+                  let responseJSon: any;
+                  try {
+                    responseJSon = await res.json();
+                  } catch (e) {
+                    responseJSon = null;
+                  }
+
+                  const messageOutgoing = {
+                    type: MSG_OUTGOING,
+                    experimentId: experimentId,
+                    collectionId: collection.id,
+                    suiteId: suite.id,
+                    caseId: cAse.id,
+                    testId: test.id,
+                    thread: thread,
+                    loop: loop,
+                    paymentId: paymentId,
+                    request: JSON.stringify(changedBody),
+                    response: JSON.stringify(responseJSon),
+                    requestDate: requestDate.toISOString(),
+                    responseDate: responseDate.toISOString(),
+                    status: res.status,
+                    statusText: res.statusText,
+                    txnId: responseJSon?.txnId,
+                    jsonata: result.jsonata
+                  };
+                  loopArray.push(messageOutgoing);
+
+                  // const messageIncoming = messageOutgoing.txnId && await Message.first({txnId: messageOutgoing.txnId});
                 } catch (e) {
-                  responseJSon = null;
+                  errors.push(e);
                 }
+              } // end for loop
+              resolve(loopArray);
 
-                const messageOutgoing = {
-                  type: MSG_OUTGOING,
-                  experimentId: experimentId,
-                  collectionId: collection.id,
-                  suiteId: suite.id,
-                  caseId: cAse.id,
-                  thread: thread,
-                  loop: loop,
-                  paymentId: paymentId,
-                  request: JSON.stringify(changedBody),
-                  response: JSON.stringify(responseJSon),
-                  requestDate: requestDate.toISOString(),
-                  responseDate: responseDate.toISOString(),
-                  status: res.status,
-                  statusText: res.statusText,
-                  txnId: responseJSon?.txnId,
-                  jsonata: result.jsonata
-                };
-                loopArray.push(messageOutgoing);
-
-                // const messageIncoming = messageOutgoing.txnId && await Message.first({txnId: messageOutgoing.txnId});
-              }
-              catch ( e )
-              {
-                errors.push( e );
-              }
-            } // end for loop
-            resolve(loopArray);
-
-          }); // end Promise
-          promises.push( promise );
-        } // end for thread
-
+            }); // end Promise
+            promises.push(promise);
+          } // end for thread
+        } // end for test
       } // end for case
     } // end for suite
 

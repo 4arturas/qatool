@@ -6,6 +6,7 @@ export const schema = gql`
     collectionId: Int
     suiteId: Int
     caseId: Int
+    testId: Int
     thread: Int
     loop: Int
     paymentId: String
@@ -41,6 +42,7 @@ export const schema = gql`
     collectionId: Int
     suiteId: Int
     caseId: Int
+    testId: Int
     thread: Int
     loop: Int
     paymentId: String
@@ -60,6 +62,7 @@ export const schema = gql`
     collectionId: Int
     suiteId: Int
     caseId: Int
+    testId: Int
     thread: Int
     loop: Int
     paymentId: String
