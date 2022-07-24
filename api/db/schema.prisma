@@ -67,6 +67,7 @@ model ExperimentResult {
   collectionId Int?
   suiteId      Int?
   caseId       Int?
+  testId       Int?
   thread       Int?
   loop         Int?
   paymentId    String?
