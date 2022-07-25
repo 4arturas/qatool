@@ -305,6 +305,8 @@ export const comp = [
 
 export const toolbox = {
   kind: 'flyoutToolbox',
+
+
   contents: [
     { kind: 'block', type: 'experiment' },
     { kind: 'block', type: 'server' },
@@ -318,17 +320,78 @@ export const toolbox = {
   ]
 };
 
-export const restore_Server = () => {
+export const restore_Blocks = () =>
+{
   return {
     "blocks": {
       "languageVersion": 0,
-      "blocks": [{
-        "type": "server",
-        "id": "v^=aDR=|ymZfF*GB#cTL",
-        "x": 419,
-        "y": 137,
-        "fields": {"NAME": "", "ADDRESS": "", "METHOD": "POST", "HEADERS": "{}"}
-      }]
+      "blocks": []
+    }
+  };
+}
+
+export const restore_Experiment = () => {
+  return {
+    "type": "experiment",
+    "x": 10,
+    "y": 10,
+    "inputs": {
+      // "SERVER": null,
+      // "COLLECTIONS": null
+    }
+  }
+}
+export const restore_Server = (name, address, method, headers) => {
+  return {
+    "block": {
+      "type": "server",
+      "fields": {"NAME": `${name}`, "ADDRESS": `${address}`, "METHOD": `${method}`, "HEADERS": `${headers}`}
+    }
+  };
+}
+export const restore_Collection = (name:string, batchId:number) => {
+  return {
+    "block": {
+      "type": "collection",
+      "fields": {"NAME": `${name}`, "BATCH": `${batchId}`},
+      "next": null,
+      "inputs": {
+        // "SUITES": null,
+      }
+    }
+  };
+}
+export const restore_Suite = (name:string, batchId:number) => {
+  return {
+    "block": {
+      "type": "suite",
+      "fields": {"NAME": `${name}`, "BATCH": `${batchId}`},
+      "next": null,
+      "inputs": {
+        // "CASES": null,
+      }
+    }
+  };
+}
+export const restore_Case = (name:string, batchId:number, threads:number, loops:number) => {
+  return {
+    "block": {
+      "type": "case",
+      "fields": {"NAME": `${name}`, "BATCH": `${batchId}`, "THREADS": `${threads}`, "LOOPS": `${loops}`},
+      "next": null,
+      "inputs": {
+        // "BODY": null,
+        // "TESTS": null,
+      }
+    }
+  };
+}
+
+export const restore_Body = (name:string, json:string) => {
+  return {
+    "block": {
+      "type": "body",
+      "fields": {"NAME": `${name}`, "JSON": `${json}`},
     }
   };
 }

@@ -1,12 +1,16 @@
 import {useEffect} from "react";
-import {comp, toolbox} from "./components";
+import {comp, restore_Server, toolbox} from "./components";
 import Blockly from 'blockly';
 
 const BlocklyComponent = () => {
 
   useEffect(()=> {
     Blockly.common.defineBlocksWithJsonArray(comp);
-    Blockly.inject('ide', { toolbox: toolbox } );
+    const workspace = Blockly.inject('ide', { toolbox: toolbox } );
+
+    const workspaceJSon = restore_Server();
+    console.log( workspaceJSon );
+    Blockly.serialization.workspaces.load(workspaceJSon, workspace);
   }, [] );
 
   return (
