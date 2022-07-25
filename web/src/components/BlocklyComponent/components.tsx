@@ -1,3 +1,5 @@
+import {BODY, CASE, COLLECTION, EXPERIMENT, REMOVE, REPLACE, SERVER, SUITE, TEST, typeIdToColor} from "src/global";
+
 export const comp = [
   {
     "type": "experiment",
@@ -17,7 +19,7 @@ export const comp = [
         "check": ["collection"]
       }
     ],
-    "colour": 230,
+    "colour": `${typeIdToColor(EXPERIMENT)}`,
     "tooltip": "",
     "helpUrl": ""
   },
@@ -69,7 +71,7 @@ export const comp = [
       }
     ],
     "output": null,
-    "colour": '100',
+    "colour": `${typeIdToColor(SERVER)}`,
     "tooltip": "",
     "helpUrl": ""
   },
@@ -103,7 +105,7 @@ export const comp = [
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 230,
+    "colour": `${typeIdToColor(COLLECTION)}`,
     "tooltip": "",
     "helpUrl": ""
   },
@@ -137,7 +139,7 @@ export const comp = [
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 230,
+    "colour": `${typeIdToColor(SUITE)}`,
     "tooltip": "",
     "helpUrl": ""
   },
@@ -191,7 +193,7 @@ export const comp = [
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 230,
+    "colour": `${typeIdToColor(CASE)}`,
     "tooltip": "",
     "helpUrl": ""
   },
@@ -218,7 +220,7 @@ export const comp = [
       }
     ],
     "output": null,
-    "colour": 230,
+    "colour": `${typeIdToColor(BODY)}`,
     "tooltip": "",
     "helpUrl": ""
   },
@@ -240,7 +242,7 @@ export const comp = [
     ],
     "previousStatement": null,
     "nextStatement": null,
-    "colour": 230,
+    "colour": `${typeIdToColor(TEST)}`,
     "tooltip": "",
     "helpUrl": ""
   },
@@ -267,7 +269,7 @@ export const comp = [
       }
     ],
     "output": null,
-    "colour": 230,
+    "colour": `${typeIdToColor(REPLACE)}`,
     "tooltip": "",
     "helpUrl": ""
   },
@@ -294,7 +296,7 @@ export const comp = [
       }
     ],
     "output": null,
-    "colour": 230,
+    "colour": `${typeIdToColor(REMOVE)}`,
     "tooltip": "",
     "helpUrl": ""
   }
