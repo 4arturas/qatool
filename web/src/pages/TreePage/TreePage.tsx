@@ -8,8 +8,8 @@ const TreePage = ( { id }) => {
     <>
       <MetaTags title="Tree" description="Tree page" />
 
-      <div id="ide" style={{width:'100%', height: '800px'}}></div>
-      <BlocklyTree id={id}/>
+      {/*<div id="ide" style={{width:'100%', height: '800px'}}></div>*/}
+      {/*<BlocklyTree id={id}/>*/}
 
       <TreeNew id={id} />
     </>
