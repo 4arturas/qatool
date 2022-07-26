@@ -1,12 +1,12 @@
 import { MetaTags } from '@redwoodjs/web'
 import ExperimentCell from 'src/components/ExperimentCell'
 
-const ExperimentPage = ({id}) => {
+const ExperimentPage = ({id, typeId}) => {
   return (
     <>
       <MetaTags title="Experiment" description="Experiment page" />
 
-     <ExperimentCell experimentId={id}/>
+     <ExperimentCell id={id} typeId={typeId}/>
 
     </>
   )

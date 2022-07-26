@@ -34,7 +34,7 @@ const Routes = () => {
 
           <Route path="/qa-objects/{page:Int}/{pageSize:Int}/{count:Int}" page={QaObjectsPage} name="qaObjects" />
 
-          <Route path="/experiment/{id:Int}" page={ExperimentPage} name="experiment" />
+          <Route path="/experiment/{id:Int}/{typeId:Int}" page={ExperimentPage} name="experiment" />
           <Route path="/experiments/{page:Int}/{pageSize:Int}/{count:Int}" page={ExperimentResultsPage} name="experimentResults" />
 
           <Private unauthenticated="forbidden" roles={['admin']}>

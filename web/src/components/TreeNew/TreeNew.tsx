@@ -171,34 +171,38 @@ const TreeNew = ( { id }) => {
             {
               loading ? <span style={{marginLeft: '10px', padding: '5px'}}>Loading...</span> :
                 <>
-                  <span key={`edit${qaObject.id}`} style={stylingObject.editQaObject}>
-                    <ObjectNewTest
-                      typeId={qaObject.typeId}
-                      qaObject={qaObject}
-                      children={children.map(ch => objects.find(o => o.id == ch.childrenId))}
-                      cloneObject={false}
-                      parentId={null}
-                      beforeSave={() => {
-                      }}
-                      afterSave={(updatedQaObject) => {
-                        fetchTree();
-                      }}/>
-                  </span>
-
-                  <span key={`clone${qaObject.id}`} style={stylingObject.editQaObject}>
-                    <ObjectNewTest
-                      typeId={qaObject.typeId}
-                      qaObject={qaObject}
-                      children={children.map(ch => objects.find(o => o.id == ch.childrenId))}
-                      cloneObject={true}
-                      parentId={null}
-                      beforeSave={() => {
-                      }}
-                      afterSave={(newQaObject) => {
-                        fetchTree();
-                      }}/>
-                  </span>
-
+                  {
+                    (!qaObject.executed) &&
+                    <span key={`edit${qaObject.id}`} style={stylingObject.editQaObject}>
+                      <ObjectNewTest
+                        typeId={qaObject.typeId}
+                        qaObject={qaObject}
+                        children={children.map(ch => objects.find(o => o.id == ch.childrenId))}
+                        cloneObject={false}
+                        parentId={null}
+                        beforeSave={() => {
+                        }}
+                        afterSave={(updatedQaObject) => {
+                          fetchTree();
+                        }}/>
+                    </span>
+                  }
+                  {
+                    (!qaObject.executed) &&
+                    <span key={`clone${qaObject.id}`} style={stylingObject.editQaObject}>
+                      <ObjectNewTest
+                        typeId={qaObject.typeId}
+                        qaObject={qaObject}
+                        children={children.map(ch => objects.find(o => o.id == ch.childrenId))}
+                        cloneObject={true}
+                        parentId={null}
+                        beforeSave={() => {
+                        }}
+                        afterSave={(newQaObject) => {
+                          fetchTree();
+                        }}/>
+                    </span>
+                  }
                   <span key={`deepClone${qaObject.id}`} style={stylingObject.deepClone}>
                     <ObjectDeepClone
                       qaObject={qaObject}
@@ -207,22 +211,24 @@ const TreeNew = ( { id }) => {
                     />
                   </span>
 
-                  <span key={`delete${qaObject.id}`} style={stylingObject.deleteQaObject}>
-                    <Tooltip title={'Delete object'}>
-                      <ObjectDelete
-                        id={qaObject.id}
-                        typeId={qaObject.typeId}
-                        beforeSave={() => {
-                        }}
-                        afterSave={() => {
-                          fetchTree();
-                        }}
-                      />
-                    </Tooltip>
-                  </span>
-
                   {
-                    qaObject.typeId !== EXPERIMENT &&
+                    (!qaObject.executed) &&
+                    <span key={`delete${qaObject.id}`} style={stylingObject.deleteQaObject}>
+                      <Tooltip title={'Delete object'}>
+                        <ObjectDelete
+                          id={qaObject.id}
+                          typeId={qaObject.typeId}
+                          beforeSave={() => {
+                          }}
+                          afterSave={() => {
+                            fetchTree();
+                          }}
+                        />
+                      </Tooltip>
+                    </span>
+                  }
+                  {
+                    (qaObject.typeId !== EXPERIMENT && !qaObject.executed) &&
                     <span key={`detach${qaObject.id}`} style={stylingObject.detachQaObject}>
                       <Tooltip title={'Delete object'}>
                         <ObjectDetach
@@ -238,20 +244,26 @@ const TreeNew = ( { id }) => {
                     </span>
                   }
 
+                  <span style={{marginLeft:'7px'}}><Merge qaObject={qaObject}/></span>
+
                   {
-                    qaObject.typeId === EXPERIMENT &&
+                    ( (qaObject.typeId === EXPERIMENT || qaObject.typeId === TEST) && qaObject.executed ) &&
+                    <Tooltip title={'View Experiment Results'}>
+                      <BarChartOutlined
+                        style={ { marginLeft: '10px', fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
+                        onClick={()=>{
+                          navigate( routes.experiment({id:qaObject.id, typeId:qaObject.typeId}))
+                        }}
+                      />
+                    </Tooltip>
+                  }
+
+                  {
+                    (qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
                     <span key={`runExperiment${qaObject.id}`} style={stylingObject.runExperiment}>
                     {
-                      (qaObject.executed||experimentIsExecuted) ?
-                        <Tooltip title={'View Experiment Results'}>
-                          <BarChartOutlined
-                            style={ { fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
-                            onClick={()=>{
-                              navigate( routes.experiment({id:qaObject.id}))
-                            }}
-                          />
-                        </Tooltip>
-                        :
+                      (!qaObject.executed||!experimentIsExecuted) &&
+
                         <Tooltip title={'Run Experiment'}>
                           <Popconfirm
                             title="Are you sure you want to run this experiment?"
@@ -308,7 +320,7 @@ const TreeNew = ( { id }) => {
 
 
                   {
-                    possibleToAddChildren.length > 0 &&
+                    (!qaObject.executed && possibleToAddChildren.length > 0) &&
                     <span key={`addChildrenBlock${qaObject.id}`} style={stylingObject.addChildrenBlock}>
                     <span key={`addChildrenTitle${qaObject.id}`} style={stylingObject.addChildrenTitle}>Add children</span>
                     {
@@ -336,7 +348,6 @@ const TreeNew = ( { id }) => {
             /*loading*/}
             </>
           /*has role*/}
-          <span style={{marginLeft:'7px'}}><Merge qaObject={qaObject}/></span>
         </div>
 
         {

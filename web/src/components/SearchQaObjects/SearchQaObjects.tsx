@@ -87,7 +87,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
 
             {record.typeId === EXPERIMENT &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
-              <Link to={routes.experiment( {id: record.id})} style={{float:'right', color: 'black'}}>
+              <Link to={routes.experiment( {id: record.id, typeId: record.typeId})} style={{float:'right', color: 'black'}}>
                 { record.executed ? <BarChartOutlined  style={{fontSize:'20px'}}/> : <ExperimentOutlined style={{fontSize:'20px'}}/> }
               </Link>
             </Tooltip>

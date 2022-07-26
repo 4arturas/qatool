@@ -2,7 +2,14 @@ import type { FindExperimentQuery, FindExperimentQueryVariables } from 'types/gr
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
 import {Button, Modal, Space, Table, Tag} from "antd";
 import React, {useState} from "react";
-import {dateFormatYYYYMMDDHHmmss, messageTypeToColor, messageTypeToNameShort, mySubstr, typeIdToTag} from "src/global";
+import {
+  dateFormatYYYYMMDDHHmmss,
+  messageTypeToColor,
+  messageTypeToNameShort,
+  mySubstr, typeIdToColor,
+  typeIdToName,
+  typeIdToTag
+} from "src/global";
 import JSONModal from "src/components/JSONModal/JSONModal";
 import JSONataJsonModal from "src/components/JSONataJsonModal/JSONataJsonModal";
 import {FieldTimeOutlined} from "@ant-design/icons";
@@ -10,27 +17,31 @@ import TimelineCell from "src/components/TimelineCell";
 import ExperimentRequestLengthBoxPlot
   from "src/components/ExperimentRequestLengthBoxPlot/ExperimentRequestLengthBoxPlot";
 import ExperimentThreadsLoops from "src/components/ExperimentThreadsLoops/ExperimentThreadsLoops";
+import {routes} from "@redwoodjs/router";
 
 export const QUERY = gql`
-  query FetchExperimentResults($experimentId: Int!) {
-    experiment: experimentResultsByExperimentId(experimentId: $experimentId) {
-      id
-      type
-      experimentId
-      collectionId
-      suiteId
-      caseId
-      testId
-      thread
-      loop
-      request
-      response
-      requestDate
-      responseDate
-      status
-      statusText
-      txnId
-      jsonata
+  query FetchExperimentResults($id: Int!, $typeId: Int!) {
+    experiment: experimentResultsByExperimentId(id: $id, typeId: $typeId) {
+      experimentOwner { id typeId name }
+      experimentResults {
+        id
+        type
+        experimentId
+        collectionId
+        suiteId
+        caseId
+        testId
+        thread
+        loop
+        request
+        response
+        requestDate
+        responseDate
+        status
+        statusText
+        txnId
+        jsonata
+      }
     }
   }
 `
@@ -153,24 +164,11 @@ const Experiment = ( { experiment } ) =>
     },
   ];
 
-  const timeDiff = experiment.map( e => {
+  const timeDiff = experiment.experimentResults.map( e => {
     const { responseDate, requestDate} = e;
     return new Date(responseDate).getTime() - new Date(requestDate).getTime()
   });
 
-  const funGroupExperiment = ( experiment ) => {
-    const generateGroupKey = ( e ) => `${e.experimentId}${e.collectionId}${e.suiteId}${e.caseId}${e.testId}`;
-    let groupedExperiments = {};
-    experiment.forEach( exp  =>
-    {
-      const groupByCurrent = generateGroupKey( exp );
-      if (!groupedExperiments[groupByCurrent])
-        groupedExperiments[groupByCurrent] = [];
-      groupedExperiments[groupByCurrent].push(exp);
-    } );
-    return groupedExperiments;
-  }
-  const groupedExperiment = funGroupExperiment( experiment );
 
   const CompMinMaxAvg = ( { arr } ) => {
     function calculateMedian( array:Array<number> ):number {
@@ -200,13 +198,13 @@ const Experiment = ( { experiment } ) =>
 
   return <>
     <div style={{marginBottom: '20px'}}>
-      &nbsp;<b>All experiment statistics:</b>&nbsp;
+      &nbsp;<b>Statistics for object <Tag color={typeIdToColor(experiment.experimentOwner.typeId)}>{typeIdToName(experiment.experimentOwner.typeId)}</Tag>- <a href={routes.tree({id:experiment.experimentOwner.id})}>{experiment.experimentOwner.name}</a>:</b>&nbsp;&nbsp;&nbsp;
       <ExperimentThreadsLoops
-        experiments={experiment}
+        experiments={experiment.experimentResults}
         generateChartElement={
           (experiment) => {
-            const {thread, loop, requestDate, responseDate, collectionId, suiteId, caseId} = experiment;
-            return [`User(${collectionId}${suiteId}${caseId}): ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
+            const {thread, loop, requestDate, responseDate, collectionId, suiteId, caseId, testId} = experiment.experimentResults;
+            return [`User(${collectionId}${suiteId}${caseId}${testId}): ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
           }
         }
       />
@@ -214,36 +212,8 @@ const Experiment = ( { experiment } ) =>
       <ExperimentRequestLengthBoxPlot experiments={experiment}/>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<CompMinMaxAvg arr={timeDiff} />
     </div>
-    { Object.keys(groupedExperiment).map( (group) => {
 
-      const timeDiffGroup = groupedExperiment[group].map( e => {
-        const { responseDate, requestDate} = e;
-        return new Date(responseDate).getTime() - new Date(requestDate).getTime()
-      });
-
-      return <div key={group}>
-        <Tag color={'red'}>Experiment Group - <b>{group}</b></Tag>
-
-        <ExperimentThreadsLoops
-          experiments={groupedExperiment[group]}
-          generateChartElement={
-            (experiment) =>
-            {
-              const {thread, loop, requestDate, responseDate} = experiment;
-              return [`User: ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
-            }
-          }
-        />
-        &nbsp;
-        <ExperimentRequestLengthBoxPlot
-          experiments={groupedExperiment[group]}/>
-
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<CompMinMaxAvg arr={timeDiffGroup} />
-
-
-        <Table dataSource={groupedExperiment[group]} columns={columns} pagination={{ pageSize: 5 }} rowKey={'id'}/>
-      </div>
-    } )}
+    <Table dataSource={experiment.experimentResults} columns={columns} pagination={{ pageSize: 5 }} rowKey={'id'}/>
   </>
 }
 
