@@ -6,6 +6,8 @@ import type {
 } from 'types/graphql'
 import {QaObjectRelationship} from "src/models";
 import {EXPERIMENT, ROLE_ADMIN} from "src/functions/global";
+import ObjectNewTest from "web/src/components/ObjectNewTest/ObjectNewTest";
+import {createQaObjectRelationship} from "src/services/qaObjectRelationships/qaObjectRelationships";
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
   return db.qaObject.findMany()
@@ -187,10 +189,57 @@ const getRelations = async ( id, arr ) =>
   const relations = await QaObjectRelationship.where({parentId: id});
   for (let i = 0; i < relations.length; i++) {
     const relation = relations[i];
-    const { parentId, childrenId } = relation;
-    arr.push( { parentId: parentId, childrenId: childrenId } );
+    const { parentId, childrenId, childrenObjectTypeId } = relation;
+    arr.push( { parentId: parentId, childrenId: childrenId, childrenObjectTypeId: childrenObjectTypeId } );
     await getRelations( childrenId, arr );
   }
+}
+
+export const deepClone = async ( { id, name } ) =>
+{
+
+  const relations = [];
+  await getRelations( id, relations );
+  console.log( relations );
+
+  let hashTable = {};
+  for ( let i = 0; i < relations.length; i++ )
+  {
+    const r = relations[i];
+    if ( !hashTable[r.parentId] )
+      hashTable[r.parentId] = { original: await db.qaObject.findUnique({ where: { id: r.parentId } }), clone: null };
+    if ( !hashTable[r.childrenId] )
+      hashTable[r.childrenId] = { original: await db.qaObject.findUnique({ where: { id: r.childrenId } }), clone: null }
+  }
+
+  // Assign new name
+  hashTable[id].original.name = name;
+
+  // Clone objects
+  const keys = Object.keys( hashTable );
+  for ( let i = 0; i < keys.length; i++ )
+  {
+    const key = keys[i];
+    const original = hashTable[key].original;
+    delete original.id;
+    delete original.createdAt;
+    delete original.updatedAt;
+    original.executed = false;
+
+    hashTable[key].clone = await db.qaObject.create( { data: original } );
+  }
+
+
+  for ( let i = 0; i < relations.length; i++ )
+  {
+    relations[i].parentId = hashTable[relations[i].parentId].clone.id;
+    relations[i].childrenId = hashTable[relations[i].childrenId].clone.id;
+    await createQaObjectRelationship( {input:relations[i]} );
+  }
+
+
+
+  return hashTable[id].clone;
 }
 
 

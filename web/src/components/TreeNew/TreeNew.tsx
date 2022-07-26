@@ -20,6 +20,7 @@ import ObjectDetach from "src/components/ObjectDetach/ObjectDetach";
 import Merge from "src/components/Merge/Merge";
 import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 import {toast} from "@redwoodjs/web/toast";
+import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
 
 export const QUERY = gql`
   query FindTreeQueryNew($id: Int!) {
@@ -127,6 +128,9 @@ const TreeNew = ( { id }) => {
       cloneQaObject: {
         marginLeft: '10px'
       },
+      deepClone: {
+        marginLeft: '10px'
+      },
       deleteQaObject: {
         marginLeft: '10px'
       },
@@ -193,6 +197,14 @@ const TreeNew = ( { id }) => {
                       afterSave={(newQaObject) => {
                         fetchTree();
                       }}/>
+                  </span>
+
+                  <span key={`deepClone${qaObject.id}`} style={stylingObject.deepClone}>
+                    <ObjectDeepClone
+                      qaObject={qaObject}
+                      beforeSave={() => { }}
+                      afterSave={(newQaObject) => {}}
+                    />
                   </span>
 
                   <span key={`delete${qaObject.id}`} style={stylingObject.deleteQaObject}>

@@ -86,5 +86,6 @@ export const schema = gql`
     updateQaObject(id: Int!, input: UpdateQaObjectInput!):  QaObject! @requireAuth(roles: ["admin"])
     deleteQaObject(id: Int!):                               QaObject! @requireAuth(roles: ["admin"])
     deleteQaObjectWithChildren(id: Int!):                   Int!      @requireAuth(roles: ["admin"])
+    deepClone(id: Int!, name: String!):                     QaObject! @requireAuth(roles: ["admin"])
   }
 `
