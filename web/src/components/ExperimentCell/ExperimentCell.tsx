@@ -203,13 +203,13 @@ const Experiment = ( { experiment } ) =>
         experiments={experiment.experimentResults}
         generateChartElement={
           (experiment) => {
-            const {thread, loop, requestDate, responseDate, collectionId, suiteId, caseId, testId} = experiment.experimentResults;
+            const {thread, loop, requestDate, responseDate, collectionId, suiteId, caseId, testId} = experiment;
             return [`User(${collectionId}${suiteId}${caseId}${testId}): ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
           }
         }
       />
       &nbsp;
-      <ExperimentRequestLengthBoxPlot experiments={experiment}/>
+      <ExperimentRequestLengthBoxPlot experiments={experiment.experimentResults}/>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<CompMinMaxAvg arr={timeDiff} />
     </div>
 
