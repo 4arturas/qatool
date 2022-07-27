@@ -32,7 +32,6 @@ export const qaObject = ({ id }) => {
   addFilterDependentOnRoles( query.where.AND );
 
   return db.qaObject.findFirst( query );
-  // return db.qaObject.findUnique( query );
 }
 
 export const getQaObjectsByType: QueryResolvers['getQaObjectsByType'] = ({ typeId }) => {
