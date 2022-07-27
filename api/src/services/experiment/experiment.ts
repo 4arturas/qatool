@@ -24,8 +24,8 @@ export const runExperiment = async ({experimentId}) =>
   }
 
   const experimentWasExecutedMessage: string = 'This experiment was already executed, you can not execute experiment more than once';
-  const qaObjectExecuted = await QaObject.findBy( { id: experimentId, executed: true } );
-  if ( qaObjectExecuted )
+  const qaObjectExecuted = await QaObject.findBy( { id: experimentId } );
+  if ( qaObjectExecuted.executed )
   {
     return generateResponse( experimentWasExecutedMessage );
   }
@@ -169,7 +169,7 @@ export const runExperiment = async ({experimentId}) =>
       {
         const id = executedObjectId[e];
         await db.qaObject.update({
-          data: { executed:true },
+          data: { executed: new Date().toISOString() },
           where: { id }
         });
       }
@@ -186,9 +186,6 @@ export const runExperiment = async ({experimentId}) =>
         }
       }
     });
-
-    const experiment = await QaObject.find( experimentId );
-    await experiment.update({ executed: true })
 
     if ( errors.length > 0 )
     {

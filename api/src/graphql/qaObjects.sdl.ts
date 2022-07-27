@@ -15,7 +15,7 @@ export const schema = gql`
     header:       String
     createdAt:    DateTime!
     updatedAt:    DateTime!
-    executed:     Boolean
+    executed:     DateTime
     orgId:        Int!
     organization: Organization
     parent:       [QaObjectRelationship]
@@ -77,7 +77,6 @@ export const schema = gql`
     address:      String
     method:       String
     header:       String
-    executed:     Boolean
     userId:       Int
   }
 

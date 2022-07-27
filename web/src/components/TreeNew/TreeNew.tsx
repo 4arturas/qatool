@@ -92,8 +92,6 @@ const TreeNew = ( { id }) => {
   const { hasRole } = useAuth();
 
   const [experimentIsRunning, setExperimentIsRunning] = useState( false );
-  const [experimentIsExecuted, setExperimentIsExecuted] = useState( false );
-
 
   const [loading, setLoading] = useState( false );
 
@@ -166,6 +164,83 @@ const TreeNew = ( { id }) => {
           </Tag>
 
           - {qaObject.name}
+
+          {
+            (hasRole([ROLE_ADMIN]) && qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
+            <span key={`runExperiment${qaObject.id}`} style={stylingObject.runExperiment}>
+              {
+                (!qaObject.executed) &&
+
+                <Tooltip title={'Run Experiment'}>
+                  <Popconfirm
+                    title="Are you sure you want to run this experiment?"
+                    onConfirm={ () => {
+                      if ( experimentIsRunning ) return;
+                      setExperimentIsRunning( true );
+                      setLoading( true );
+
+                      new Promise( async (resolve, reject) => {
+                        const runExperiment = async ( id:number ) =>
+                        {
+                          const RUN_EXPERIMENT = gql`
+                            query RunExperiment($experimentId: Int!) {
+                              runExperiment(experimentId: $experimentId) {
+                                experimentId
+                                error
+                              }
+                            }
+                          `
+                          const ret = await client.query({
+                            query: RUN_EXPERIMENT,
+                            variables: { experimentId: id }
+                          });
+
+                          const { experimentId, error } = ret.data.runExperiment;
+                          return { experimentId, error };
+                        };
+
+                        const { experimentId, error } = await runExperiment( qaObject.id );
+                        if ( error )
+                        {
+                          setExperimentIsRunning( false );
+                          setLoading( false );
+                          toast.error( error );
+                          return;
+                        }
+                        toast.success( 'Experiment was executed successfully' );
+                        setExperimentIsRunning( false );
+                        fetchTree();
+                      })
+
+                    }}
+                    // onCancel={cancel}
+                    okText="Yes"
+                    cancelText="No"
+                  >
+                    <ExperimentOutlined className={experimentIsRunning?'loading-spinner':''}
+                                        style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
+                    />
+                  </Popconfirm>
+
+                </Tooltip>
+              }
+            </span>
+          }
+
+          {
+            ( (qaObject.typeId === EXPERIMENT || qaObject.typeId === TEST) && qaObject.executed ) &&
+            <Tooltip title={'View Experiment Results'}>
+              <BarChartOutlined
+                style={ { marginLeft: '10px', fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
+                onClick={()=>{
+                  if ( qaObject.typeId === EXPERIMENT )
+                    navigate( routes.experiment({id:qaObject.id}))
+                  else
+                    navigate( routes.experimentTest({caseId:parentId, testId: qaObject.id}))
+                }}
+              />
+            </Tooltip>
+          }
 
           {hasRole([ROLE_ADMIN]) && <>
             {
@@ -247,82 +322,6 @@ const TreeNew = ( { id }) => {
                   <span style={{marginLeft:'7px'}}><Merge qaObject={qaObject}/></span>
 
                   {
-                    ( (qaObject.typeId === EXPERIMENT || qaObject.typeId === TEST) && qaObject.executed ) &&
-                    <Tooltip title={'View Experiment Results'}>
-                      <BarChartOutlined
-                        style={ { marginLeft: '10px', fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
-                        onClick={()=>{
-                          if ( qaObject.typeId === EXPERIMENT )
-                            navigate( routes.experiment({id:qaObject.id}))
-                          else
-                            navigate( routes.experimentTest({caseId:parentId, testId: qaObject.id}))
-                        }}
-                      />
-                    </Tooltip>
-                  }
-
-                  {
-                    (qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
-                    <span key={`runExperiment${qaObject.id}`} style={stylingObject.runExperiment}>
-                    {
-                      (!qaObject.executed||!experimentIsExecuted) &&
-
-                        <Tooltip title={'Run Experiment'}>
-                          <Popconfirm
-                            title="Are you sure you want to run this experiment?"
-                            onConfirm={ () => {
-                              if ( experimentIsRunning ) return;
-                              setExperimentIsRunning( true );
-
-                              new Promise( async (resolve, reject) => {
-                                const runExperiment = async ( id:number ) =>
-                                {
-                                  const RUN_EXPERIMENT = gql`
-                                  query RunExperiment($experimentId: Int!) {
-                                    runExperiment(experimentId: $experimentId) {
-                                      experimentId
-                                      error
-                                    }
-                                  }
-                                `
-                                  const ret = await client.query({
-                                    query: RUN_EXPERIMENT,
-                                    variables: { experimentId: id }
-                                  });
-
-                                  const { experimentId, error } = ret.data.runExperiment;
-                                  return { experimentId, error };
-                                };
-
-                                const { experimentId, error } = await runExperiment( qaObject.id );
-                                if ( error )
-                                {
-                                  setExperimentIsRunning( false );
-                                  toast.error( error );
-                                  return;
-                                }
-                                toast.success( 'Experiment was executed successfully' );
-                                setExperimentIsRunning( false );
-                                setExperimentIsExecuted( true );
-                              })
-
-                            }}
-                            // onCancel={cancel}
-                            okText="Yes"
-                            cancelText="No"
-                          >
-                            <ExperimentOutlined className={experimentIsRunning?'loading-spinner':''}
-                                                style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
-                            />
-                          </Popconfirm>
-
-                        </Tooltip>
-                    }
-                    </span>
-                  }
-
-
-                  {
                     (!qaObject.executed && possibleToAddChildren.length > 0) &&
                     <span key={`addChildrenBlock${qaObject.id}`} style={stylingObject.addChildrenBlock}>
                     <span key={`addChildrenTitle${qaObject.id}`} style={stylingObject.addChildrenTitle}>Add children</span>
@@ -349,6 +348,7 @@ const TreeNew = ( { id }) => {
 
                 </>
             /*loading*/}
+
             </>
           /*has role*/}
         </div>

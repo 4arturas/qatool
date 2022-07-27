@@ -59,7 +59,7 @@ CREATE TABLE "QaObject" (
     "header" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    "executed" BOOLEAN NOT NULL DEFAULT false,
+    "executed" DATETIME,
     "orgId" INTEGER NOT NULL,
     CONSTRAINT "QaObject_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "QaObjectType" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "QaObject_orgId_fkey" FOREIGN KEY ("orgId") REFERENCES "Organization" ("id") ON DELETE RESTRICT ON UPDATE CASCADE

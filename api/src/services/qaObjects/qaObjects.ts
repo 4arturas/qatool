@@ -224,7 +224,7 @@ export const deepClone = async ( { id, name } ) =>
     delete original.id;
     delete original.createdAt;
     delete original.updatedAt;
-    original.executed = false;
+    original.executed = null;
 
     hashTable[key].clone = await db.qaObject.create( { data: original } );
   }
