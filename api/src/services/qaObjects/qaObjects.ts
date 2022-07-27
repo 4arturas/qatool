@@ -19,9 +19,9 @@ export const qaObjects: QueryResolvers['qaObjects'] = () => {
   return db.qaObject.findMany()
 }
 
-export const qaObject: QueryResolvers['qaObject'] = ({ id }) => {
+export const qaObject = ({ id }) => {
   const query = {
-    where: { id, AND: [], },
+    where: { AND: [ { id: { equals:id } } ] },
     include: {
       organization: { select: { id: true, name: true } },
       parent: {  },
@@ -31,7 +31,8 @@ export const qaObject: QueryResolvers['qaObject'] = ({ id }) => {
 
   addFilterDependentOnRoles( query.where.AND );
 
-  return db.qaObject.findUnique( query );
+  return db.qaObject.findFirst( query );
+  // return db.qaObject.findUnique( query );
 }
 
 export const getQaObjectsByType: QueryResolvers['getQaObjectsByType'] = ({ typeId }) => {
