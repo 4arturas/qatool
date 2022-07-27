@@ -1,12 +1,11 @@
-import type { FindExperimentQuery, FindExperimentQueryVariables } from 'types/graphql'
+import type { FindExperimentTestQuery, FindExperimentTestQueryVariables } from 'types/graphql'
 import type { CellSuccessProps, CellFailureProps } from '@redwoodjs/web'
+import ExperimentResult from "src/components/ExperimentResult/ExperimentResult";
 import React from "react";
 
-import ExperimentResult from "src/components/ExperimentResult/ExperimentResult";
-
 export const QUERY = gql`
-  query FetchExperimentResults($id: Int!) {
-    experiment: experimentResultsByExperimentId(id: $id) {
+  query FetchExperimentTestResults($caseId: Int!, $testId: Int!) {
+    experiment: experimentResultsByTestId(caseId: $caseId, testId: $testId) {
       experimentOwner { id typeId name }
       experimentResults {
         id
@@ -35,10 +34,12 @@ export const Loading = () => <div>Loading...</div>
 
 export const Empty = () => <div>Empty</div>
 
-export const Failure = ( { error }: CellFailureProps<FindExperimentQueryVariables>) => (
+export const Failure = ({
+  error,
+}: CellFailureProps<FindExperimentTestQueryVariables>) => (
   <div style={{ color: 'red' }}>Error: {error.message}</div>
 )
 
-export const Success = ({ experiment }: CellSuccessProps<FindExperimentQuery, FindExperimentQueryVariables>) => {
+export const Success = ({ experiment }: CellSuccessProps<FindExperimentTestQuery, FindExperimentTestQueryVariables>) => {
   return <ExperimentResult experiment={experiment} />
 }

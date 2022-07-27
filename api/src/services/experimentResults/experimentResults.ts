@@ -1,29 +1,36 @@
 import { db } from 'src/lib/db'
 import type { QueryResolvers, MutationResolvers } from 'types/graphql'
 import ExperimentResult from 'src/models/ExperimentResult'
-import {EXPERIMENT} from "src/functions/global";
 import {qaObject} from "src/services/qaObjects/qaObjects";
 
 export const experimentResults: QueryResolvers['experimentResults'] = () => {
   return db.experimentResult.findMany()
 }
 
-export const experimentResultsByExperimentId: QueryResolvers['experimentResultsByExperimentId'] = async ({ id, typeId }) => {
+export const experimentResultsByExperimentId: QueryResolvers['experimentResultsByExperimentId'] = async ({ id}) => {
   const experimentOwner = await qaObject( {id:id} );
   let experimentResults: any;
-  if ( typeId === EXPERIMENT )
-  {
-    experimentResults = await db.experimentResult.findMany({
-      where: {experimentId: {equals: id}},
-    });
 
+  experimentResults = await db.experimentResult.findMany({
+    where: {experimentId: {equals: id}},
+  });
+
+  return {
+    experimentOwner: experimentOwner,
+    experimentResults: experimentResults
   }
-  else
-  {
-    experimentResults = await db.experimentResult.findMany({
-      where: { testId: { equals: id } },
-    });
-  }
+}
+
+export const experimentResultsByTestId: QueryResolvers['experimentResultsByTestId'] = async ({ caseId, testId}) => {
+  const experimentOwner = await qaObject( {id:testId} );
+  let experimentResults: any;
+
+  experimentResults = await db.experimentResult.findMany({
+    where: { caseId: { equals: caseId }, testId: { equals: testId } },
+  });
+
+  console.log( experimentOwner );
+  console.log( experimentResults );
 
   return {
     experimentOwner: experimentOwner,

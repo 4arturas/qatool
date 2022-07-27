@@ -115,7 +115,7 @@ const TreeNew = ( { id }) => {
       });
   }
 
-  const Tree = ( { qaObject, hierarchy, objects, relationId } ) =>
+  const Tree = ( { qaObject, hierarchy, objects, relationId, parentId } ) =>
   {
 
     const stylingObject = {
@@ -252,7 +252,10 @@ const TreeNew = ( { id }) => {
                       <BarChartOutlined
                         style={ { marginLeft: '10px', fontSize:'20px', color: `${typeIdToColor(qaObject.typeId)}` } }
                         onClick={()=>{
-                          navigate( routes.experiment({id:qaObject.id, typeId:qaObject.typeId}))
+                          if ( qaObject.typeId === EXPERIMENT )
+                            navigate( routes.experiment({id:qaObject.id}))
+                          else
+                            navigate( routes.experimentTest({caseId:parentId, testId: qaObject.id}))
                         }}
                       />
                     </Tooltip>
@@ -356,7 +359,7 @@ const TreeNew = ( { id }) => {
             return (
               childObject &&
               <div key={`children${h.id}`} style={{marginLeft:'20px', marginTop: '10px'}}>
-                <Tree qaObject={childObject} objects={objects} hierarchy={hierarchy} relationId={h.id}/>
+                <Tree qaObject={childObject} objects={objects} hierarchy={hierarchy} relationId={h.id} parentId={qaObject.id}/>
               </div>
             )
           } )
@@ -371,7 +374,7 @@ const TreeNew = ( { id }) => {
 
   return qaObject &&
     <div style={{marginLeft:'40px'}}>
-      <Tree qaObject={ qaObject } hierarchy={ hierarchy } objects={ objects } relationId={null} />
+      <Tree qaObject={ qaObject } hierarchy={ hierarchy } objects={ objects } relationId={null} parentId={null}/>
     </div>
 
 }

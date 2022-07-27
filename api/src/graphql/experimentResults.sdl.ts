@@ -28,14 +28,15 @@ export const schema = gql`
   }
 
   type ExperimentResultAndExperimentOwner {
-    experimentOwner: QaObject!
+    experimentOwner: QaObject
     experimentResults: [ExperimentResult]
   }
 
 
   type Query {
     experimentResults: [ExperimentResult!]! @requireAuth
-    experimentResultsByExperimentId(id: Int!, typeId: Int!): ExperimentResultAndExperimentOwner! @requireAuth
+    experimentResultsByExperimentId(id: Int!): ExperimentResultAndExperimentOwner! @requireAuth
+    experimentResultsByTestId(caseId: Int!, testId: Int!): ExperimentResultAndExperimentOwner! @requireAuth
     experimentResult(id: Int!): ExperimentResult @requireAuth
     timeline(id: Int!): [ExperimentResult] @requireAuth
     experimentResultsPage(page: Int, pageSize: Int, count: Int): ExperimentResultPage @requireAuth
