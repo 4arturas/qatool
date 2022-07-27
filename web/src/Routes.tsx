@@ -18,10 +18,6 @@ const Routes = () => {
   return (
     <Router>
 
-
-
-
-
       <Route path="/forbidden" page={ForbiddenPage} name="forbidden" />
 
       <Route path="/login" page={LoginPage} name="login" />
