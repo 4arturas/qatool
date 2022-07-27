@@ -376,11 +376,12 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             layout='inline'
             initialValues={tmpSearchCriteria}
             onFinish={ (values: any) => {
+              Object.keys( values ).map( m => { if ( !values[m] ) delete values[m]; } );
               tmpSearchCriteria = values;
               setLoadingData( true );
-              navigate(routes.qaObjects({page:1, pageSize:pageSize, count: 0, ...values}));
+              navigate(routes.qaObjects({page:1, pageSize:pageSize, count: 0, ...tmpSearchCriteria}));
               setPage(1);
-              searchQaObjects({variables: { searchCriteria: values, page: 1, pageSize: pageSize, count: 0 }});
+              searchQaObjects({variables: { searchCriteria: tmpSearchCriteria, page: 1, pageSize: pageSize, count: 0 }});
             }}
             onFinishFailed={(errorInfo: any) => {
               console.log('Failed:', errorInfo);
