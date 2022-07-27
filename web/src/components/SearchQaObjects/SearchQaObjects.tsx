@@ -158,35 +158,43 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       display: hasRole([ROLE_ADMIN]),
       render: (_, record) => hasRole([ROLE_ADMIN] ) && <>
         <span id={`edibBlock${record.id}${record.typeId}`} style={{whiteSpace:'nowrap'}}>
-          <ObjectNewTest
-            typeId={record.typeId}
-            qaObject={record}
-            children={ record.parent.map( p => { return { id: p.childrenId, typeId: p.childrenObjectTypeId } } ) }
-            cloneObject={false}
-            parentId={null}
-            beforeSave={()=>{}}
-            afterSave={ ( editQaObject ) => {
-              const newPage = { ...qaObjectPage };
-              newPage.qaObjects = qaObjectPage.qaObjects.map( q => {
-                return q.id === editQaObject.id ? editQaObject : q
-              });
-              setQaObjectPage( newPage );
-            }}/>
+          { !record.executed &&
+            <ObjectNewTest
+              typeId={record.typeId}
+              qaObject={record}
+              children={record.parent.map(p => {
+                return {id: p.childrenId, typeId: p.childrenObjectTypeId}
+              })}
+              cloneObject={false}
+              parentId={null}
+              beforeSave={() => {
+              }}
+              afterSave={(editQaObject) => {
+                const newPage = {...qaObjectPage};
+                newPage.qaObjects = qaObjectPage.qaObjects.map(q => {
+                  return q.id === editQaObject.id ? editQaObject : q
+                });
+                setQaObjectPage(newPage);
+              }}/>
+          }
           &nbsp;&nbsp;&nbsp;
-          <ObjectNewTest
-            typeId={record.typeId}
-            qaObject={record}
-            children={[]}
-            cloneObject={true}
-            parentId={null}
-            beforeSave={()=>{}}
-            afterSave={ ( cloneQaObject ) => {
-              const newPage = { ...qaObjectPage };
-              newPage.qaObjects = [];
-              newPage.qaObjects.push( cloneQaObject );
-              qaObjectPage.qaObjects.map( q => newPage.qaObjects.push( q ) );
-              setQaObjectPage( newPage );
-            }}/>
+          { !record.executed &&
+            <ObjectNewTest
+              typeId={record.typeId}
+              qaObject={record}
+              children={[]}
+              cloneObject={true}
+              parentId={null}
+              beforeSave={() => {
+              }}
+              afterSave={(cloneQaObject) => {
+                const newPage = {...qaObjectPage};
+                newPage.qaObjects = [];
+                newPage.qaObjects.push(cloneQaObject);
+                qaObjectPage.qaObjects.map(q => newPage.qaObjects.push(q));
+                setQaObjectPage(newPage);
+              }}/>
+          }
           &nbsp;&nbsp;&nbsp;
           <ObjectDeepClone
             qaObject={record}
@@ -199,19 +207,23 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
               setQaObjectPage( newPage );
             }}/>
           &nbsp;&nbsp;&nbsp;
-          <ObjectDelete key={`delete${record.id}`}
-                        id={record.id}
-                        typeId={record.typeId}
-                        beforeSave={()=>{}}
-                        afterSave={(id)=> {
-                          const newPage = { ...qaObjectPage };
-                          newPage.qaObjects = qaObjectPage.qaObjects.filter( q => q.id !== id );
-                          newPage.count = qaObjectPage.count-1;
-                          setQaObjectPage( newPage );
-                          // document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
-                        }
-                      }/>&nbsp;&nbsp;&nbsp;
-          {
+          {!record.executed &&
+            <ObjectDelete key={`delete${record.id}`}
+                          id={record.id}
+                          typeId={record.typeId}
+                          beforeSave={() => {
+                          }}
+                          afterSave={(id) => {
+                            const newPage = {...qaObjectPage};
+                            newPage.qaObjects = qaObjectPage.qaObjects.filter(q => q.id !== id);
+                            newPage.count = qaObjectPage.count - 1;
+                            setQaObjectPage(newPage);
+                            // document.getElementById(`edibBlock${record.id}${record.typeId}`).style.display = 'none';
+                          }
+                          }/>
+          }
+          &nbsp;&nbsp;&nbsp;
+          { !record.executed &&
             getChildrenTypeIdByParentTypeId(record.typeId).map( (typeId, i) =>
             {
               {
