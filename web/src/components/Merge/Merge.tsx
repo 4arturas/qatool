@@ -42,12 +42,12 @@ const Merge = ( {qaObject} ) => {
       query: gql`
         query FindMergeObjects($testId: Int!) {
           merge: findMergeObjects(testId: $testId) {
-            caseParent { id, typeId, name, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
-            body { id, typeId, name, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
-            test { id, typeId, name, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
-            replace { id, typeId, name, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
-            remove { id, typeId, name, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
-            result { id, typeId, name, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
+            caseParent { id, typeId, name, executed, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
+            body { id, typeId, name, executed, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
+            test { id, typeId, name, executed, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
+            replace { id, typeId, name, executed, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
+            remove { id, typeId, name, executed, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
+            result { id, typeId, name, executed, json, parent { id, parentId, childrenId, childrenObjectTypeId}, organization { id, name } }
           }
         }
       `,
@@ -77,7 +77,7 @@ const Merge = ( {qaObject} ) => {
       className='qaObjectTypeClass'
       style={{backgroundColor: `${typeIdToColor(qaObjectEdit.typeId)}`, padding: '8px'}}>
       <span style={{textDecoration: 'underline'}}>{typeIdToName(qaObjectEdit.typeId)}</span> - <span id={`objEditName${qaObjectEdit.id}`}>"{qaObjectEdit.name}"</span>
-      { hasRole([ROLE_ADMIN]) && <span style={{backgroundColor:'gray', borderRadius:'10px', padding: '5px', paddingBottom: '6px', paddingLeft: '6px', marginLeft:'3px'}}>
+      { (hasRole([ROLE_ADMIN]) && !qaObjectEdit.executed) && <span style={{backgroundColor:'gray', borderRadius:'10px', padding: '5px', paddingBottom: '6px', paddingLeft: '6px', marginLeft:'3px'}}>
           <ObjectNewTest
             typeId={qaObjectEdit.typeId}
             qaObject={qaObjectEdit}
