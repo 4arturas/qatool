@@ -217,8 +217,9 @@ const TreeNew = ( { id }) => {
                     okText="Yes"
                     cancelText="No"
                   >
-                    <ExperimentOutlined className={experimentIsRunning?'loading-spinner':''}
-                                        style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
+                    <ExperimentOutlined
+                      className={experimentIsRunning?'loading-spinner':''}
+                      style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
                     />
                   </Popconfirm>
 
