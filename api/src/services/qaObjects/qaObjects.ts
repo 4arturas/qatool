@@ -6,7 +6,6 @@ import type {
 } from 'types/graphql'
 import {QaObjectRelationship} from "src/models";
 import {EXPERIMENT, ROLE_ADMIN} from "src/functions/global";
-import ObjectNewTest from "web/src/components/ObjectNewTest/ObjectNewTest";
 import {createQaObjectRelationship} from "src/services/qaObjectRelationships/qaObjectRelationships";
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
