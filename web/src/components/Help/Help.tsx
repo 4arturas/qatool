@@ -1,18 +1,25 @@
 import {QuestionCircleOutlined} from "@ant-design/icons";
 import {Modal} from "antd";
 import React, {useState} from "react";
+import {EXPERIMENT, typeIdToTag} from "src/global";
+import {faPen} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 const Help = ( { anchor } ) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const moveTo = ( a ) =>
+  {
+    const anchorToScroll = document.getElementById(a);
+    // anchorObjectsToScroll.scrollIntoView({block:"nearest", behavior:"smooth"});
+    anchorToScroll.scrollIntoView({behavior:"smooth"});
+  }
   return <>
     <QuestionCircleOutlined
     style={{fontSize: '15px', cursor: "pointer", marginLeft: '5px', marginRight:'-2px', color: 'black' }}
     onClick={ ()=> {
       setIsModalVisible(true);
       setTimeout( () => {
-        const anchorToScroll = document.getElementById(anchor);
-        // anchorToScroll.scrollIntoView({block:"nearest", behavior:"smooth"});
-        anchorToScroll.scrollIntoView({behavior:"smooth"});
+        moveTo( anchor );
       }, 500 );
     } }/>
 
@@ -26,89 +33,129 @@ const Help = ( { anchor } ) => {
         destroyOnClose={true}
       >
           <div style={{overflowY:'auto', height: '500px'}}>
-          <h2 id='anchor1'>
-            Experiment
+            <ul>
+
+              <li onClick={ () => { moveTo('anchorObjects0' ); return false; } }>
+                <h1>QA Objects</h1>
+                <ul>
+                  <li onClick={ () => { moveTo('anchorObjects1' ); return false; } }>{typeIdToTag(EXPERIMENT)}</li>
+                </ul>
+              </li>
+
+              <li onClick={ () => { moveTo('anchorFunctions0' ); return false; } }>
+                <h1>Functions on QA Objects</h1>
+                <ul>
+                  <li onClick={ () => { moveTo('anchorFunctions1' ); return false; } }>
+                    Edit&nbsp;
+                    <FontAwesomeIcon
+                      icon={faPen}
+                    />
+                  </li>
+                </ul>
+              </li>
+
+            </ul>
+
+          <h1 id='anchorObjects0'>QA Objects</h1>
+
+          <h2 id='anchorObjects1'>
+            {typeIdToTag(EXPERIMENT)}
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor2'>
+          <h2 id='anchorObjects2'>
             Server
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor3'>
+          <h2 id='anchorObjects3'>
             Collection
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor4'>
+          <h2 id='anchorObjects4'>
             Suite
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor5'>
+          <h2 id='anchorObjects5'>
             Case
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor6'>
+          <h2 id='anchorObjects6'>
             Body
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor7'>
+          <h2 id='anchorObjects7'>
             Test
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor8'>
+          <h2 id='anchorObjects8'>
             Replace
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor9'>
+          <h2 id='anchorObjects9'>
             Remove
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor10'>
+          <h2 id='anchorObjects10'>
             Result
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor11'>
+          <h2 id='anchorObjects11'>
             Response
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
 
-          <h2 id='anchor12'>
+          <h2 id='anchorObjects12'>
             Twelwth
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
+
+          {/*Functions on QA Objects<*/}
+
+          <h1 id='anchorFunctions0'>Functions on QA Objects</h1>
+
+          <h2 id='anchorFunctions1'>
+            Edit&nbsp;
+            <FontAwesomeIcon
+              icon={faPen}
+            />
+          </h2>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+
           </div>
       </Modal>
     </>

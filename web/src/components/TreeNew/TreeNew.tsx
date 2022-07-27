@@ -160,7 +160,7 @@ const TreeNew = ( { id }) => {
             <a href={routes.qaObjects( {page:1, pageSize: DEFAULT_TABLE_PAGE_SIZE, count: 0, typeId:`${qaObject.typeId}`} )} style={{color:'black'}}>
               {typeIdToName(qaObject.typeId)}
             </a>
-            <Help anchor={`anchor${qaObject.typeId}`}/>
+            <Help anchor={`anchorObjects${qaObject.typeId}`}/>
           </Tag>
 
           - {qaObject.name}
