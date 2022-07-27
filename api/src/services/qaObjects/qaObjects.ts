@@ -7,32 +7,51 @@ import type {
 import {QaObjectRelationship} from "src/models";
 import {EXPERIMENT, ROLE_ADMIN} from "src/functions/global";
 import {createQaObjectRelationship} from "src/services/qaObjectRelationships/qaObjectRelationships";
+import {context} from "@redwoodjs/graphql-server";
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
+  const query = {
+    where: { AND: [] },
+  };
+
+  addFilterDependentOnRoles( query.where.AND );
+
   return db.qaObject.findMany()
 }
 
 export const qaObject: QueryResolvers['qaObject'] = ({ id }) => {
-  return db.qaObject.findUnique({
-    where: { id },
+  const query = {
+    where: { id, AND: [], },
     include: {
       organization: { select: { id: true, name: true } },
       parent: {  },
       children:  {  }
     }
-  })
+  };
+
+  addFilterDependentOnRoles( query.where.AND );
+
+  return db.qaObject.findUnique( query );
 }
 
 export const getQaObjectsByType: QueryResolvers['getQaObjectsByType'] = ({ typeId }) => {
-  return db.qaObject.findMany({
-    where: { typeId },
-  })
+  const query = {
+    where: { typeId, AND: [] },
+  };
+
+  addFilterDependentOnRoles( query.where.AND );
+
+  return db.qaObject.findMany( query );
 }
 
 export const qaObjectsByTypeId: QueryResolvers['qaObjectsByTypeId'] = ({ typeId }) => {
-  return db.qaObject.findMany({
-    where: { typeId },
-  })
+  const query = {
+    where: { typeId, AND: [] },
+  };
+
+  addFilterDependentOnRoles( query.where.AND );
+
+  return db.qaObject.findMany( query );
 }
 
 export const createQaObject: MutationResolvers['createQaObject'] = ({ input}) => {
@@ -68,12 +87,17 @@ export const qaObjectsPage = ({ page, pageSize }) => {
 
   const offset = (page - 1) * pageSize
 
+  const query = {
+    take: pageSize,
+    skip: offset,
+    where: { AND: [] },
+    // orderBy: { id: 'desc' },
+  };
+
+  addFilterDependentOnRoles( query.where.AND );
+
   return {
-    qaObjects: db.qaObject.findMany({
-      take: pageSize,
-      skip: offset,
-      // orderBy: { id: 'desc' },
-    }),
+    qaObjects: db.qaObject.findMany(query),
     count: db.qaObject.count(),
     page: page,
     pageSize: pageSize
@@ -162,6 +186,8 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
     whereClause.AND.push( { typeId: { equals: EXPERIMENT } } );
   }
 
+  addFilterDependentOnRoles( whereClause.AND );
+
   const findClauseForCount = { where: whereClause };
   findClause.where = whereClause;
 
@@ -196,10 +222,8 @@ const getRelations = async ( id, arr ) =>
 
 export const deepClone = async ( { id, name } ) =>
 {
-
   const relations = [];
   await getRelations( id, relations );
-  console.log( relations );
 
   let hashTable = {};
   for ( let i = 0; i < relations.length; i++ )
@@ -239,6 +263,15 @@ export const deepClone = async ( { id, name } ) =>
 
 
   return hashTable[id].clone;
+}
+
+const addFilterDependentOnRoles = ( AND:Array<any> ): Array<any> =>
+{
+  if ( context.currentUser.roles.includes(ROLE_ADMIN) )
+    return;
+
+  const orgId = context.currentUser.orgId;
+  AND.push( { orgId: { equals: orgId } } );
 }
 
 
