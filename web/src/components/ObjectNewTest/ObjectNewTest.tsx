@@ -264,8 +264,8 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
 
   const PrettifyButton = ( { textAreaId } ) =>
   {
-    return <Button
-      style={{float:'right',marginTop:'-20px'}}
+    return <div style={{width:'100%', textAlign:'right', marginBottom:'10px', marginTop:'-20px'}}>
+      <Button
       onClick={ () => {
         const textArea = document.getElementById(textAreaId);
         const prettifiedJSon = prettifyJSon( textArea.value );
@@ -273,6 +273,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
       }}>
       Prettify
     </Button>
+    </div>
   }
 
   return <>
