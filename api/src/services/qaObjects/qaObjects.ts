@@ -260,9 +260,16 @@ export const deepClone = async ( { id, name } ) =>
     await createQaObjectRelationship( {input:relations[i]} );
   }
 
-
-
-  return hashTable[id].clone;
+  const query = {
+    where: { id: { equals:hashTable[id].clone.id } },
+    include: {
+      organization: { },
+      parent: {  },
+      // children:  {  }
+    }
+  };
+  const root = await db.qaObject.findFirst( query );
+  return root;
 }
 
 const addFilterDependentOnRoles = ( AND:Array<any> ): Array<any> =>

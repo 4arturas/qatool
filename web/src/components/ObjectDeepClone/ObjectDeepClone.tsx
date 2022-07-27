@@ -53,6 +53,20 @@ const ObjectDeepClone = ( { qaObject, beforeSave, afterSave } ) => {
                       id
                       typeId
                       name
+                      description
+                      batchId
+                      threads
+                      loops
+                      json
+                      jsonata
+                      address
+                      method
+                      header
+                      createdAt
+                      updatedAt
+                      orgId
+                      organization { id name }
+                      parent { id parentId childrenId childrenObjectTypeId }
                     }
                   }`;
             client.mutate({

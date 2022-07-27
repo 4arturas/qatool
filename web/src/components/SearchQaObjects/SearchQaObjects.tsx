@@ -19,6 +19,7 @@ import Merge from "src/components/Merge/Merge";
 import JSONModal from "src/components/JSONModal/JSONModal";
 import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 import {useAuth} from "@redwoodjs/auth";
+import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int, $count: Int) {
@@ -156,7 +157,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       key: 'action',
       display: hasRole([ROLE_ADMIN]),
       render: (_, record) => hasRole([ROLE_ADMIN] ) && <>
-        <span id={`edibBlock${record.id}${record.typeId}`}>
+        <span id={`edibBlock${record.id}${record.typeId}`} style={{whiteSpace:'nowrap'}}>
           <ObjectNewTest
             typeId={record.typeId}
             qaObject={record}
@@ -178,6 +179,17 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             children={[]}
             cloneObject={true}
             parentId={null}
+            beforeSave={()=>{}}
+            afterSave={ ( cloneQaObject ) => {
+              const newPage = { ...qaObjectPage };
+              newPage.qaObjects = [];
+              newPage.qaObjects.push( cloneQaObject );
+              qaObjectPage.qaObjects.map( q => newPage.qaObjects.push( q ) );
+              setQaObjectPage( newPage );
+            }}/>
+          &nbsp;&nbsp;&nbsp;
+          <ObjectDeepClone
+            qaObject={record}
             beforeSave={()=>{}}
             afterSave={ ( cloneQaObject ) => {
               const newPage = { ...qaObjectPage };
