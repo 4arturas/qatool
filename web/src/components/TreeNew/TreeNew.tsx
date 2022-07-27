@@ -168,63 +168,58 @@ const TreeNew = ( { id }) => {
           {
             (hasRole([ROLE_ADMIN]) && qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
             <span key={`runExperiment${qaObject.id}`} style={stylingObject.runExperiment}>
-              {
-                (!qaObject.executed) &&
+              <Tooltip title={'Run Experiment'}>
+                <Popconfirm
+                  title="Are you sure you want to run this experiment?"
+                  onConfirm={ () => {
+                    if ( experimentIsRunning ) return;
+                    setExperimentIsRunning( true );
+                    setLoading( true );
 
-                <Tooltip title={'Run Experiment'}>
-                  <Popconfirm
-                    title="Are you sure you want to run this experiment?"
-                    onConfirm={ () => {
-                      if ( experimentIsRunning ) return;
-                      setExperimentIsRunning( true );
-                      setLoading( true );
-
-                      new Promise( async (resolve, reject) => {
-                        const runExperiment = async ( id:number ) =>
-                        {
-                          const RUN_EXPERIMENT = gql`
-                            query RunExperiment($experimentId: Int!) {
-                              runExperiment(experimentId: $experimentId) {
-                                experimentId
-                                error
-                              }
+                    new Promise( async (resolve, reject) => {
+                      const runExperiment = async ( id:number ) =>
+                      {
+                        const RUN_EXPERIMENT = gql`
+                          query RunExperiment($experimentId: Int!) {
+                            runExperiment(experimentId: $experimentId) {
+                              experimentId
+                              error
                             }
-                          `
-                          const ret = await client.query({
-                            query: RUN_EXPERIMENT,
-                            variables: { experimentId: id }
-                          });
+                          }
+                        `
+                        const ret = await client.query({
+                          query: RUN_EXPERIMENT,
+                          variables: { experimentId: id }
+                        });
 
-                          const { experimentId, error } = ret.data.runExperiment;
-                          return { experimentId, error };
-                        };
+                        const { experimentId, error } = ret.data.runExperiment;
+                        return { experimentId, error };
+                      };
 
-                        const { experimentId, error } = await runExperiment( qaObject.id );
-                        if ( error )
-                        {
-                          setExperimentIsRunning( false );
-                          setLoading( false );
-                          toast.error( error );
-                          return;
-                        }
-                        toast.success( 'Experiment was executed successfully' );
+                      const { experimentId, error } = await runExperiment( qaObject.id );
+                      if ( error )
+                      {
                         setExperimentIsRunning( false );
-                        fetchTree();
-                      })
+                        setLoading( false );
+                        toast.error( error );
+                        return;
+                      }
+                      toast.success( 'Experiment was executed successfully' );
+                      setExperimentIsRunning( false );
+                      fetchTree();
+                    })
 
-                    }}
-                    // onCancel={cancel}
-                    okText="Yes"
-                    cancelText="No"
-                  >
-                    <ExperimentOutlined
-                      className={experimentIsRunning?'loading-spinner':''}
-                      style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
-                    />
-                  </Popconfirm>
-
-                </Tooltip>
-              }
+                  }}
+                  // onCancel={cancel}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <ExperimentOutlined
+                    className={experimentIsRunning?'loading-spinner':''}
+                    style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
+                  />
+                </Popconfirm>
+              </Tooltip>
             </span>
           }
 
