@@ -86,10 +86,10 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
           <>
             <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
 
-            {record.typeId === EXPERIMENT &&
+            {record.typeId === EXPERIMENT && record.executed &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
               <Link to={routes.experiment( {id: record.id})} style={{float:'right', color: 'black'}}>
-                { record.executed ? <BarChartOutlined  style={{fontSize:'20px'}}/> : <ExperimentOutlined style={{fontSize:'20px'}}/> }
+                <BarChartOutlined  style={{fontSize:'20px'}}/>
               </Link>
             </Tooltip>
             }
