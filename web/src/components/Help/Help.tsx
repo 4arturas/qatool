@@ -5,7 +5,7 @@ import {EXPERIMENT, typeIdToTag} from "src/global";
 import {faPen} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
-const Help = ( { anchor } ) => {
+const Help = ( { anchor, size= 15 } ) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const moveTo = ( a ) =>
   {
@@ -15,7 +15,7 @@ const Help = ( { anchor } ) => {
   }
   return <>
     <QuestionCircleOutlined
-    style={{fontSize: '15px', cursor: "pointer", marginLeft: '5px', marginRight:'-2px', color: 'black' }}
+    style={{fontSize: `${size}px`, cursor: "pointer", marginLeft: '5px', marginRight:'-2px', color: 'black' }}
     onClick={ ()=> {
       setIsModalVisible(true);
       setTimeout( () => {
@@ -33,7 +33,7 @@ const Help = ( { anchor } ) => {
         destroyOnClose={true}
       >
           <div style={{overflowY:'auto', height: '500px'}}>
-            <ul>
+            <ul id='anchorContent'>
 
               <li onClick={ () => { moveTo('anchorObjects0' ); return false; } }>
                 <h1>QA Objects</h1>
