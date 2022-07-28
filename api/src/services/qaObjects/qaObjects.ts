@@ -230,10 +230,17 @@ export const deepClone = async ( { id, name } ) =>
   {
     const r = relations[i];
     if ( !hashTable[r.parentId] )
-      hashTable[r.parentId] = { original: await db.qaObject.findUnique({ where: { id: r.parentId } }), clone: null };
+      hashTable[r.parentId] = { original: null, clone: null };
     if ( !hashTable[r.childrenId] )
-      hashTable[r.childrenId] = { original: await db.qaObject.findUnique({ where: { id: r.childrenId } }), clone: null }
+      hashTable[r.childrenId] = { original: null, clone: null }
   }
+
+  const idUniqueArray:Array<number> = Array.from(new Set(Object.keys( hashTable ))).map( id => parseInt( id ) );
+  const objects = await db.qaObject.findMany( {
+    where: { id: { in: idUniqueArray } }
+  } );
+  idUniqueArray.map( id => hashTable[id].original = objects.find( o => o.id === id ) );
+
 
   // Assign new name
   hashTable[id].original.name = name;
@@ -252,9 +259,15 @@ export const deepClone = async ( { id, name } ) =>
     hashTable[key].clone = await db.qaObject.create( { data: original } );
   }
 
-
+  const relationsGroup = {};
   for ( let i = 0; i < relations.length; i++ )
   {
+    // Don't allow duplicates
+    const group = `${relations[i].parentId}-${relations[i].childrenId}`;
+    if ( relationsGroup[group] )
+      continue;
+    relationsGroup[group] = group;
+
     relations[i].parentId = hashTable[relations[i].parentId].clone.id;
     relations[i].childrenId = hashTable[relations[i].childrenId].clone.id;
     await createQaObjectRelationship( {input:relations[i]} );
