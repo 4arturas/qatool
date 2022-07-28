@@ -13,6 +13,7 @@ import QaLayout from "src/layouts/QaLayout/QaLayout";
 
 import HomePage from "src/pages/HomePage/HomePage";
 import ForbiddenPage from './pages/ForbiddenPage/ForbiddenPage';
+import BlocklyTreePage from "src/pages/BlocklyTreePage/BlocklyTreePage";
 
 const Routes = () => {
   return (
@@ -39,6 +40,8 @@ const Routes = () => {
 
           <Private unauthenticated="forbidden" roles={['admin']}>
             <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
+            <Route path="/blockly-tree/{id:Int}" page={BlocklyTreePage} name="blocklyTree" />
+
             <Route path="/users" page={UsersPage} name="users" />
             <Route path="/organizations" page={OrganizationsPage} name="organizations" />
           </Private>

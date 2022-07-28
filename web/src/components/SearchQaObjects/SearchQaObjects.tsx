@@ -20,6 +20,8 @@ import JSONModal from "src/components/JSONModal/JSONModal";
 import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 import {useAuth} from "@redwoodjs/auth";
 import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
+import {faCubesStacked, faPen} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int, $count: Int) {
@@ -85,6 +87,8 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
           </Link>
           <>
             <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
+
+            {record.typeId === EXPERIMENT && !record.executed && <>&nbsp;&nbsp;<FontAwesomeIcon icon={faCubesStacked} onClick={()=> navigate(routes.blocklyTree({id:record.id}))} style={{cursor:'pointer'}}/></>}
 
             {record.typeId === EXPERIMENT && record.executed &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
