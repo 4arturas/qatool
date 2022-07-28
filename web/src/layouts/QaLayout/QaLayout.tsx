@@ -6,6 +6,7 @@ import {Tooltip} from "antd";
 import {useAuth} from "@redwoodjs/auth";
 import {Toaster} from "@redwoodjs/web/toast";
 import React from "react";
+import Help from "src/components/Help/Help";
 
 type QaLayoutProps = {
   children?: React.ReactNode
@@ -106,6 +107,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                 <LoginOutlined style={{fontSize: '20px'}} onClick={()=>navigate(routes.login())}/>
               </Tooltip>
           }
+          <span style={{marginLeft:'10px'}}><Help anchor='anchorContent' size={20}/></span>
         </span>
 
     </header>
