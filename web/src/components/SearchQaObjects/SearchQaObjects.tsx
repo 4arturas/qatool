@@ -22,6 +22,7 @@ import {useAuth} from "@redwoodjs/auth";
 import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
 import {faCubesStacked, faPen} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import ObjectView from "src/components/ObjectView/ObjectView";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int, $count: Int) {
@@ -87,8 +88,6 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
           </Link>
           <>
             <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
-
-            {record.typeId === EXPERIMENT && !record.executed && <>&nbsp;&nbsp;<FontAwesomeIcon icon={faCubesStacked} onClick={()=> navigate(routes.blocklyTree({id:record.id}))} style={{cursor:'pointer'}}/></>}
 
             {record.typeId === EXPERIMENT && record.executed &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
@@ -162,6 +161,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       display: hasRole([ROLE_ADMIN]),
       render: (_, record) => hasRole([ROLE_ADMIN] ) && <>
         <span id={`edibBlock${record.id}${record.typeId}`} style={{whiteSpace:'nowrap'}}>
+          <ObjectView qaObject={record} />&nbsp;&nbsp;&nbsp;
           { !record.executed &&
             <ObjectNewTest
               typeId={record.typeId}

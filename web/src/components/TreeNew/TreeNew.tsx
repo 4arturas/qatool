@@ -21,6 +21,7 @@ import Merge from "src/components/Merge/Merge";
 import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 import {toast} from "@redwoodjs/web/toast";
 import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
+import ObjectView from "src/components/ObjectView/ObjectView";
 
 export const QUERY = gql`
   query FindTreeQueryNew($id: Int!) {
@@ -163,7 +164,7 @@ const TreeNew = ( { id }) => {
             <Help anchor={`anchorObjects${qaObject.typeId}`}/>
           </Tag>
 
-          - {qaObject.name}
+          - {qaObject.name}&nbsp;&nbsp;&nbsp;<ObjectView qaObject={qaObject} />
 
           {
             (hasRole([ROLE_ADMIN]) && qaObject.typeId === EXPERIMENT && !qaObject.executed) &&

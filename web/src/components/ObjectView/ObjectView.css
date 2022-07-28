@@ -1,0 +1,11 @@
+.ObjectView {
+}
+
+.ObjectView td:nth-child(1) {
+  font-weight: bold;
+  vertical-align: top;
+}
+
+.ObjectView td:nth-child(2) {
+
+}
