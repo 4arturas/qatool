@@ -10,7 +10,7 @@ import {
   TYPES
 } from "src/global";
 import React, {useState} from "react";
-import {Button, Form, Input, InputNumber, Modal, Select, Tag, Tooltip} from "antd";
+import {Alert, Button, Form, Input, InputNumber, Modal, Select, Tag, Tooltip} from "antd";
 import {useApolloClient} from "@apollo/client";
 import {Spin} from "antd/es";
 import {toast} from "@redwoodjs/web/toast";
@@ -110,16 +110,19 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [objectColor, setObjectColor] = useState( typeId ? typeIdToColor(typeId) : '' );
 
-  const [server, setServer] = useState(null );
-  const [collection, setCollection] = useState(null );
-  const [suite, setSuite] = useState(null );
-  const [cAse, setCase] = useState(null );
-  const [body, setBody] = useState(null );
-  const [test, setTest] = useState(null );
-  const [replace, setReplace] = useState(null );
-  const [remove, setRemove] = useState(null );
-  const [result, setResult] = useState(null );
-  const [response, setResponse] = useState(null );
+  const STATE_CHILDREN_DO_NOTHING         = 'Do nothing';
+  const STATE_CHILDREN_LOADING            = 'Loading';
+  const STATE_CHILDREN_CAN_NOT_FIND_ANY   = 'Can not find any'
+  const [server, setServer] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [collection, setCollection] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [suite, setSuite] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [cAse, setCase] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [body, setBody] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [test, setTest] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [replace, setReplace] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [remove, setRemove] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [result, setResult] = useState(STATE_CHILDREN_DO_NOTHING );
+  const [response, setResponse] = useState(STATE_CHILDREN_DO_NOTHING );
 
   const [organizations, setOrganizations] = useState( [] );
 
@@ -166,20 +169,22 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
       query: FIND_QA_OBJECTS_BY_TYPE,
       variables: {typeId:typeId}
     });
-    callback( data.data.getQaObjectsByType );
+
+    const children = data.data.getQaObjectsByType;
+    callback( children.length === 0 ? STATE_CHILDREN_CAN_NOT_FIND_ANY : children );
   }
   const fetchChildren = ( typeId:number) =>
   {
-    setServer( null );
-    setCollection( null );
-    setSuite( null );
-    setCase( null );
-    setBody(null );
-    setTest(null );
-    setReplace(null );
-    setRemove(null );
-    setResult(null );
-    setResponse(null );
+    setServer(STATE_CHILDREN_DO_NOTHING );
+    setCollection(STATE_CHILDREN_DO_NOTHING );
+    setSuite(STATE_CHILDREN_DO_NOTHING );
+    setCase(STATE_CHILDREN_DO_NOTHING );
+    setBody(STATE_CHILDREN_DO_NOTHING );
+    setTest(STATE_CHILDREN_DO_NOTHING );
+    setReplace(STATE_CHILDREN_DO_NOTHING );
+    setRemove(STATE_CHILDREN_DO_NOTHING );
+    setResult(STATE_CHILDREN_DO_NOTHING );
+    setResponse(STATE_CHILDREN_DO_NOTHING );
 
     const children = getChildrenTypeIdByParentTypeId( typeId );
     children.map( childrenTypeId => {
@@ -200,7 +205,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
 
       if ( callbackFunction )
       {
-        callbackFunction( [] );
+        callbackFunction( STATE_CHILDREN_LOADING );
         getObjectByTypeId( childrenTypeId, callbackFunction );
       }
     } );
@@ -233,9 +238,9 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
 
     const convertToOptions = ( qaObject ) => qaObject.map( qa => convertQaObjectToOption( qa ) );
 
-    if ( !options ) return <></>
-
-    if ( options.length === 0 ) return <div style={{textAlign:'right', padding:'10px'}}>Loading {typeIdToName(typeId)} <Spin/></div>
+    if ( options === STATE_CHILDREN_DO_NOTHING ) return <></>;
+    if ( options === STATE_CHILDREN_LOADING ) return <div style={{textAlign:'right', padding:'10px'}}>Loading {typeIdToName(typeId)} <Spin/>ba</div>;
+    if ( options === STATE_CHILDREN_CAN_NOT_FIND_ANY ) return <div style={{textAlign:'left', paddingBottom:'10px'}}><Alert showIcon type={'warning'} message={<Tag color={typeIdToColor(typeId)} style={{color:'black'}}>{typeIdToName(typeId)}</Tag>} description={'is missing, please create one'}/></div>;
 
     const label = typeIdToName(typeId);
 

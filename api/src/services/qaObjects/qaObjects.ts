@@ -8,6 +8,7 @@ import {QaObjectRelationship} from "src/models";
 import {EXPERIMENT, ROLE_ADMIN} from "src/functions/global";
 import {createQaObjectRelationship} from "src/services/qaObjectRelationships/qaObjectRelationships";
 import {context} from "@redwoodjs/graphql-server";
+import {Prisma} from "@prisma/client";
 
 export const qaObjects: QueryResolvers['qaObjects'] = () => {
   const query = {
@@ -34,14 +35,13 @@ export const qaObject = ({ id }) => {
   return db.qaObject.findFirst( query );
 }
 
-export const getQaObjectsByType: QueryResolvers['getQaObjectsByType'] = ({ typeId }) => {
-  const query = {
-    where: { typeId, AND: [] },
-  };
+export const getQaObjectsByType: QueryResolvers['getQaObjectsByType'] = async ({ typeId }) => {
 
-  addFilterDependentOnRoles( query.where.AND );
+  const query = Prisma.sql`SELECT * FROM QaObject qo where qo.typeId = ${typeId} AND qo.executed IS NULL  AND qo.id not in (
+    SELECT r.childrenId as id from QaObjectRelationship r WHERE r.childrenId in ( SELECT id from QaObject o where o.typeId  = ${typeId} )
+  )`;
 
-  return db.qaObject.findMany( query );
+  return db.$queryRaw( query );
 }
 
 export const qaObjectsByTypeId: QueryResolvers['qaObjectsByTypeId'] = ({ typeId }) => {
