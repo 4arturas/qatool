@@ -29,9 +29,6 @@ export const experimentResultsByTestId: QueryResolvers['experimentResultsByTestI
     where: { caseId: { equals: caseId }, testId: { equals: testId } },
   });
 
-  console.log( experimentOwner );
-  console.log( experimentResults );
-
   return {
     experimentOwner: experimentOwner,
     experimentResults: experimentResults
