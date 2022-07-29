@@ -40,6 +40,7 @@ export const schema = gql`
     experimentResult(id: Int!): ExperimentResult @requireAuth
     timeline(id: Int!): [ExperimentResult] @requireAuth
     experimentResultsPage(page: Int, pageSize: Int, count: Int): ExperimentResultPage @requireAuth
+    getExperimentResults(experimentId: Int): [ExperimentResult] @requireAuth
   }
 
   input CreateExperimentResultInput {

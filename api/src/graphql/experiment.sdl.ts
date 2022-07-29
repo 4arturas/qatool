@@ -15,7 +15,7 @@ export const schema = gql`
   }
 
   type Query {
-    runExperiment(experimentId: Int): ExperimentResult @requireAuth
+    runExperiment(experimentId: Int, delay: Int): ExperimentResult @requireAuth
     findExperiment(id: Int): Experiment @requireAuth
   }
 `

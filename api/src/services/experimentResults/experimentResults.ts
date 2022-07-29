@@ -104,3 +104,10 @@ export const experimentResultsPage = ({ page, pageSize, count }) => {
     pageSize: pageSize
   };
 }
+
+
+
+export const getExperimentResults = ({ experimentId }) =>
+{
+  return db.experimentResult.findMany({where: { experimentId: experimentId}});
+}

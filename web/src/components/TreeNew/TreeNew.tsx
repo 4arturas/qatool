@@ -1,14 +1,14 @@
 import {useApolloClient} from "@apollo/client";
 import {useAuth} from "@redwoodjs/auth";
 import React, {useEffect, useState} from "react";
-import {Popconfirm, Tag, Tooltip} from "antd";
+import {Input, Popconfirm, Tag, Tooltip} from "antd";
 import {
   BODY,
   CASE,
   COLLECTION,
   DEFAULT_TABLE_PAGE_SIZE,
   EXPERIMENT, getChildrenTypeIdByParentTypeId, REMOVE, REPLACE, RESPONSE, RESULT, ROLE_ADMIN,
-  SERVER, TEST,
+  SERVER, SUITE, TEST,
   typeIdToColor,
   typeIdToName
 } from "src/global";
@@ -96,10 +96,14 @@ const TreeNew = ( { id }) => {
   const STATE_LOADING = 'Loading...';
   const STATE_EXPERIMENT_IS_RUNNING = 'Experiment is running...';
   const [state, setState] = useState(STATE_INIT);
+  const [delay, setDelay] = useState(10000);
+  const [totalTestsNumber, setTotalTestsNumber] = useState( 0 );
+  let fetchExperimentsInterval = null;
 
   const [hierarchy, setHierarchy] = useState([]);
   const [objects, setObjects] = useState([]);
   const [qaObject, setQaObject] = useState( null );
+  const [experiments, setExperiments] = useState( null );
 
   const fetchTree = () => {
     setState( STATE_LOADING );
@@ -111,6 +115,18 @@ const TreeNew = ( { id }) => {
         setHierarchy( tree.hierarchy );
         setObjects( tree.objects );
         setQaObject( tree.objects.find( o => o.id === parentId ) );
+
+        const caseIds = tree.hierarchy.filter( t => t.childrenObjectTypeId === CASE ).map( m => m.childrenId );
+        const cases = tree.objects.filter( o => caseIds.includes( o.id ));
+        let threadsLoops = 0;
+        cases.forEach( m => threadsLoops += (m.threads*m.loops) );
+        const totalTestsCount =
+          tree.hierarchy.filter( c => c.childrenObjectTypeId === COLLECTION ).length *
+          tree.hierarchy.filter( s => s.childrenObjectTypeId === SUITE ).length *
+          tree.hierarchy.filter( t => t.childrenObjectTypeId === TEST ).length *
+          threadsLoops;
+        setTotalTestsNumber( totalTestsCount );
+
         setState( STATE_INIT );
       });
   }
@@ -155,6 +171,116 @@ const TreeNew = ( { id }) => {
 
     const possibleToAddChildren: Array<number> = returnNonExisting( qaObject );
 
+    const getExperimentResults = ( experimentId ) =>
+    {
+      const GET_EXPERIMENT_RESULTS = gql`
+                          query GetExperimentResults($experimentId: Int!) {
+                            getExperimentResults(experimentId: $experimentId) {
+                              id type experimentId collectionId suiteId caseId testId thread loop paymentId request response requestDate responseDate status statusText txnId jsonata
+                            }
+                          }`
+      client.query({
+        query: GET_EXPERIMENT_RESULTS,
+        variables: { experimentId: experimentId }
+      })
+        .then( ret => {
+          const experimentResults = ret.data.getExperimentResults;
+          setExperiments( experimentResults );
+          if ( experimentResults.length === totalTestsNumber )
+          {
+            toast.success( 'Experiment was executed successfully' );
+            setState( STATE_INIT );
+            fetchTree();
+            clearInterval( fetchExperimentsInterval );
+          }
+        })
+        .catch( e => console.log( e ) );
+    }
+
+    const ShowExperiments = ( { qaObject } ) => {
+
+      if ( qaObject.typeId !== TEST ) return <></>
+
+      if ( state === STATE_EXPERIMENT_IS_RUNNING )
+        return <div>Waiting for Experiments</div>
+
+      return <></>
+    }
+
+    const ShowExperimentResults = ( { qaObject } ) => {
+
+      if ( qaObject.typeId !== TEST ) return <></>
+
+      return <div>
+        {experiments.filter( f => f.testId === qaObject.id ).map( e => {
+          return (
+            <div style={{marginRight:'5px'}}>User {e.thread+1} Request {e.loop+1}</div>
+          )
+        })}
+      </div>
+    }
+
+    const RunExperiment = ( { qaObject }) =>
+    {
+       return (
+         <Tooltip title={'Run Experiment'}>
+           <Popconfirm
+             title="Are you sure you want to run this experiment?"
+             onConfirm={ () => {
+               if ( state === STATE_EXPERIMENT_IS_RUNNING ) return;
+               setState( STATE_EXPERIMENT_IS_RUNNING );
+
+               new Promise( async (resolve, reject) => {
+                 const runExperiment = async ( id:number, delay:number ) =>
+                 {
+                   const RUN_EXPERIMENT = gql`
+                          query RunExperiment($experimentId: Int!, $delay: Int!) {
+                            runExperiment(experimentId: $experimentId, delay: $delay) {
+                              experimentId
+                              error
+                            }
+                          }
+                        `
+                   const ret = await client.query({
+                     query: RUN_EXPERIMENT,
+                     variables: { experimentId: id, delay:delay }
+                   });
+
+                   const { experimentId, error } = ret.data.runExperiment;
+
+                   // clearInterval( fetchExperimentsInterval );
+                   // getExperimentResults( id );
+
+                   return { experimentId, error };
+                 };
+
+                 const { experimentId, error } = await runExperiment( qaObject.id, delay );
+                 if ( error )
+                 {
+                   setState( STATE_INIT );
+                   toast.error( error );
+                   return;
+                 }
+               });
+
+               fetchExperimentsInterval = setInterval( () => {
+                 getExperimentResults( qaObject.id );
+               }, delay === 0 ? 0 : delay/3 );
+
+             }}
+             // onCancel={cancel}
+             okText="Yes"
+             cancelText="No"
+           >
+             <ExperimentOutlined
+               className={state===STATE_EXPERIMENT_IS_RUNNING?'loading-spinner':''}
+               style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
+             />
+           </Popconfirm>
+         </Tooltip>
+       );
+    }
+
     return (
       <>
         <div key={`parent${qaObject.id}`}>
@@ -170,56 +296,7 @@ const TreeNew = ( { id }) => {
           {
             (hasRole([ROLE_ADMIN]) && qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
             <span key={`runExperiment${qaObject.id}`} style={stylingObject.runExperiment}>
-              <Tooltip title={'Run Experiment'}>
-                <Popconfirm
-                  title="Are you sure you want to run this experiment?"
-                  onConfirm={ () => {
-                    if ( state === STATE_EXPERIMENT_IS_RUNNING ) return;
-                    setState( STATE_EXPERIMENT_IS_RUNNING );
-
-                    new Promise( async (resolve, reject) => {
-                      const runExperiment = async ( id:number ) =>
-                      {
-                        const RUN_EXPERIMENT = gql`
-                          query RunExperiment($experimentId: Int!) {
-                            runExperiment(experimentId: $experimentId) {
-                              experimentId
-                              error
-                            }
-                          }
-                        `
-                        const ret = await client.query({
-                          query: RUN_EXPERIMENT,
-                          variables: { experimentId: id }
-                        });
-
-                        const { experimentId, error } = ret.data.runExperiment;
-                        return { experimentId, error };
-                      };
-
-                      const { experimentId, error } = await runExperiment( qaObject.id );
-                      if ( error )
-                      {
-                        setState( STATE_INIT );
-                        toast.error( error );
-                        return;
-                      }
-                      toast.success( 'Experiment was executed successfully' );
-                      setState( STATE_INIT );
-                      fetchTree();
-                    })
-
-                  }}
-                  // onCancel={cancel}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <ExperimentOutlined
-                    className={state===STATE_EXPERIMENT_IS_RUNNING?'loading-spinner':''}
-                    style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
-                  />
-                </Popconfirm>
-              </Tooltip>
+              <RunExperiment qaObject={qaObject} />
             </span>
           }
 
@@ -347,6 +424,12 @@ const TreeNew = ( { id }) => {
 
             </>
           /*has role*/}
+
+          { (qaObject.typeId === EXPERIMENT && !qaObject.executed ) && <span style={{marginLeft:'20px'}}>Delay between each user {delay}ms</span>}
+
+          <ShowExperiments qaObject={qaObject} />
+          { experiments && <ShowExperimentResults qaObject={qaObject} /> }
+
         </div>
 
         {

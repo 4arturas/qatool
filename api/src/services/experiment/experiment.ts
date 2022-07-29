@@ -17,7 +17,7 @@ import {createExperimentResult} from "src/services/experimentResults/experimentR
 import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
 import * as https from "https";
 
-export const runExperiment = async ({experimentId}) =>
+export const runExperiment = async ({experimentId, delay}) =>
 {
   const generateResponse = ( error ): any => {
     return { experimentId: experimentId, error: error };
@@ -108,7 +108,6 @@ export const runExperiment = async ({experimentId}) =>
 
             let counter = 0;
 
-            const DELAY = 0;
             for (let thread = 0; thread < cAse.threads; thread++)
             {
               // DELAY
@@ -163,7 +162,7 @@ export const runExperiment = async ({experimentId}) =>
                   } // end for loop
 
                 }); // end Promise
-              }, (c/*collection*/+s/*suite*/ + ca/*case*/+thread) * DELAY );
+              }, (c/*collection*/+s/*suite*/ + ca/*case*/+thread) * delay );
               // DELAY
             } // end for thread
           } // end for test

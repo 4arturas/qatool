@@ -291,11 +291,11 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
                     setExperimentIsRunning( true );
 
                     new Promise( async (resolve, reject) => {
-                      const runExperiment = async ( id:number ) =>
+                      const runExperiment = async ( id:number, delay:number ) =>
                       {
                         const RUN_EXPERIMENT = gql`
-                        query RunExperiment($experimentId: Int!) {
-                          runExperiment(experimentId: $experimentId) {
+                        query RunExperiment($experimentId: Int!, $delay: Int!) {
+                          runExperiment(experimentId: $experimentId, delay: $delay) {
                             experimentId
                             error
                           }
@@ -303,14 +303,14 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
                       `
                         const ret = await client.query({
                           query: RUN_EXPERIMENT,
-                          variables: { experimentId: id }
+                          variables: { experimentId: id, delay: delay }
                         });
 
                         const { experimentId, error } = ret.data.runExperiment;
                         return { experimentId, error };
                       };
 
-                      const { experimentId, error } = await runExperiment( qaObject.id );
+                      const { experimentId, error } = await runExperiment( qaObject.id, 0 );
                       if ( error )
                       {
                         setExperimentIsRunning( false );
