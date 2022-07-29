@@ -2,9 +2,12 @@
 
 ##
 ```terminal
-python3 /usr/local/bin/pagekite.py http://localhost:8911 4arturas.pagekite.me
+python3 /usr/local/bin/pagekite.py --signup
 ```
-https://4arturas.pagekite.me/IncomingPayment
+```terminal
+python3 /usr/local/bin/pagekite.py http://localhost:8911 qa1.pagekite.me
+```
+https://qa1.pagekite.me/IncomingPayment
 
 
 ## Secret
