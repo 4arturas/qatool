@@ -92,16 +92,17 @@ const TreeNew = ( { id }) => {
   const client = useApolloClient();
   const { hasRole } = useAuth();
 
-  const [experimentIsRunning, setExperimentIsRunning] = useState( false );
-
-  const [loading, setLoading] = useState( false );
+  const STATE_INIT = 'Init';
+  const STATE_LOADING = 'Loading...';
+  const STATE_EXPERIMENT_IS_RUNNING = 'Experiment is running...';
+  const [state, setState] = useState(STATE_INIT);
 
   const [hierarchy, setHierarchy] = useState([]);
   const [objects, setObjects] = useState([]);
   const [qaObject, setQaObject] = useState( null );
 
   const fetchTree = () => {
-    setLoading( true );
+    setState( STATE_LOADING );
     client
       .query( { query: QUERY, variables: { id: id } } )
       .then( ret => {
@@ -110,7 +111,7 @@ const TreeNew = ( { id }) => {
         setHierarchy( tree.hierarchy );
         setObjects( tree.objects );
         setQaObject( tree.objects.find( o => o.id === parentId ) );
-        setLoading( false );
+        setState( STATE_INIT );
       });
   }
 
@@ -173,9 +174,8 @@ const TreeNew = ( { id }) => {
                 <Popconfirm
                   title="Are you sure you want to run this experiment?"
                   onConfirm={ () => {
-                    if ( experimentIsRunning ) return;
-                    setExperimentIsRunning( true );
-                    setLoading( true );
+                    if ( state === STATE_EXPERIMENT_IS_RUNNING ) return;
+                    setState( STATE_EXPERIMENT_IS_RUNNING );
 
                     new Promise( async (resolve, reject) => {
                       const runExperiment = async ( id:number ) =>
@@ -200,13 +200,12 @@ const TreeNew = ( { id }) => {
                       const { experimentId, error } = await runExperiment( qaObject.id );
                       if ( error )
                       {
-                        setExperimentIsRunning( false );
-                        setLoading( false );
+                        setState( STATE_INIT );
                         toast.error( error );
                         return;
                       }
                       toast.success( 'Experiment was executed successfully' );
-                      setExperimentIsRunning( false );
+                      setState( STATE_INIT );
                       fetchTree();
                     })
 
@@ -216,7 +215,7 @@ const TreeNew = ( { id }) => {
                   cancelText="No"
                 >
                   <ExperimentOutlined
-                    className={experimentIsRunning?'loading-spinner':''}
+                    className={state===STATE_EXPERIMENT_IS_RUNNING?'loading-spinner':''}
                     style={{fontSize:'19px', color: `${typeIdToColor(qaObject.typeId)}` }}
                   />
                 </Popconfirm>
@@ -241,7 +240,7 @@ const TreeNew = ( { id }) => {
 
           {hasRole([ROLE_ADMIN]) && <>
             {
-              loading ? <span style={{marginLeft: '10px', padding: '5px'}}>Loading...</span> :
+              (state === STATE_LOADING || state === STATE_EXPERIMENT_IS_RUNNING) ? <span style={{marginLeft: '10px', padding: '5px'}}>{state}</span> :
                 <>
                   {
                     (!qaObject.executed) &&
