@@ -38,7 +38,8 @@ const Help = ( { anchor, size= 15 } ) => {
               <li onClick={ () => { moveTo('anchorObjects0' ); return false; } }>
                 <h1>QA Objects</h1>
                 <ul>
-                  <li onClick={ () => { moveTo('anchorObjects1' ); return false; } }>{typeIdToTag(EXPERIMENT)}</li>
+                  <li onClick={ () => { moveTo('anchorObjects1' ); return false; } }>Experiment</li>
+                  <li onClick={ () => { moveTo('anchorObjects2' ); return false; } }>Server</li>
                 </ul>
               </li>
 
@@ -46,10 +47,7 @@ const Help = ( { anchor, size= 15 } ) => {
                 <h1>Functions on QA Objects</h1>
                 <ul>
                   <li onClick={ () => { moveTo('anchorFunctions1' ); return false; } }>
-                    Edit&nbsp;
-                    <FontAwesomeIcon
-                      icon={faPen}
-                    />
+                    Edit
                   </li>
                 </ul>
               </li>
@@ -59,7 +57,7 @@ const Help = ( { anchor, size= 15 } ) => {
           <h1 id='anchorObjects0'>QA Objects</h1>
 
           <h2 id='anchorObjects1'>
-            {typeIdToTag(EXPERIMENT)}
+            Experiment
           </h2>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
