@@ -36,10 +36,8 @@ export const runExperiment = async ({experimentId}) =>
     return generateResponse( experimentWasExecutedMessage );
   }
   const errors = [];
-  const promises = [];
-  const executedObjectId = new Array<number>();
-  executedObjectId.push( experimentId );
   try {
+    await setExecuted( experimentId );
     const serverANDsuitesRelations = await QaObjectRelationship.where({parentId: experimentId});
     let childrenIdArray = serverANDsuitesRelations.flatMap(f => f.childrenId);
     const serverANDcollection = await db.qaObject.findMany({
@@ -49,13 +47,13 @@ export const runExperiment = async ({experimentId}) =>
       }
     });
     const server = serverANDcollection.find(s => s.typeId === SERVER);
-    executedObjectId.push(server.id);
+    await setExecuted( server.id );
     const collections = serverANDcollection.filter(c => c.typeId === COLLECTION);
 
     for ( let c = 0; c < collections.length; c++ )
     {
       const collection = collections[c];
-      executedObjectId.push(collection.id);
+      await setExecuted( collection.id );
       const suitesBelongingToCollection = await QaObjectRelationship.where({parentId: collection.id});
       const suitesBelongingToCollectionChildrenId = suitesBelongingToCollection.flatMap(c => c.childrenId);
       const suites = await db.qaObject.findMany({
@@ -64,15 +62,17 @@ export const runExperiment = async ({experimentId}) =>
           typeId: {equals: SUITE}
         }
       });
-      for (let s = 0; s < suites.length; s++) {
+      for (let s = 0; s < suites.length; s++)
+      {
         const suite = suites[s];
-        executedObjectId.push(suite.id);
+        await setExecuted( suite.id );
         const suiteChildren = await QaObjectRelationship.where({parentId: suite.id});
         const suiteChildrenId = suiteChildren.flatMap(c => c.childrenId);
         const cases = await db.qaObject.findMany({where: {id: {in: suiteChildrenId}, typeId: {equals: CASE}}});
-        for (let c = 0; c < cases.length; c++) {
-          const cAse = cases[c];
-          executedObjectId.push(cAse.id);
+        for (let ca = 0; ca < cases.length; ca++)
+        {
+          const cAse = cases[ca];
+          await setExecuted( cAse.id );
           const caseChildrenRelations = await QaObjectRelationship.where({parentId: cAse.id});
           const caseChildrenId = caseChildrenRelations.flatMap(c => c.childrenId);
           const bodyANDtest = await db.qaObject.findMany({
@@ -83,11 +83,12 @@ export const runExperiment = async ({experimentId}) =>
           });
 
           const body = bodyANDtest.find(b => b.typeId === BODY);
-          executedObjectId.push(body.id);
+          await setExecuted( body.id );
           const testArr = bodyANDtest.filter(t => t.typeId === TEST);
-          for (let tIdx = 0; tIdx < testArr.length; tIdx++) {
+          for (let tIdx = 0; tIdx < testArr.length; tIdx++)
+          {
             const test = testArr[tIdx];
-            executedObjectId.push(test.id);
+            await setExecuted( test.id );
             const testChildren = await QaObjectRelationship.where({parentId: test.id});
             const testChildrenId = testChildren.flatMap(t => t.childrenId);
             const replaceRemoveResultResponse = await db.qaObject.findMany({
@@ -97,102 +98,86 @@ export const runExperiment = async ({experimentId}) =>
               }
             });
             const replace = replaceRemoveResultResponse.find(r => r.typeId === REPLACE);
-            executedObjectId.push(replace.id);
+            await setExecuted( replace.id );
             const remove = replaceRemoveResultResponse.find(r => r.typeId === REMOVE);
-            executedObjectId.push(remove.id);
+            await setExecuted( remove.id );
             const result = replaceRemoveResultResponse.find(r => r.typeId === RESULT);
-            executedObjectId.push(result.id);
+            await setExecuted( result.id );
             const response = replaceRemoveResultResponse.find(r => r.typeId === RESPONSE);
-            executedObjectId.push(response.id);
+            await setExecuted( response.id );
 
             let counter = 0;
 
-            for (let thread = 0; thread < cAse.threads; thread++) {
-              const promise = new Promise(async (resolve, reject) => {
-                const loopArray = [];
-                for (let loop = 0; loop < cAse.loops; loop++) {
-                  try {
-                    const paymentId: string = generatePaymentId(collection, suite, cAse, counter++);
-                    const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
-
-
-                    const requestDate: Date = new Date();
-                    // const response = await postData(server.address, JSON.parse(server.header), changedBody);
-                    const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
-                    const responseDate: Date = new Date();
-
-                    let responseJSon: any;
+            const DELAY = 0;
+            for (let thread = 0; thread < cAse.threads; thread++)
+            {
+              // DELAY
+              setTimeout ( () => {
+                console.log( 'WORKING...' );
+                const promise = new Promise(async (resolve, reject) => {
+                  for (let loop = 0; loop < cAse.loops; loop++) {
                     try {
-                      responseJSon = await res.json();
+                      const paymentId: string = generatePaymentId(collection, suite, cAse, counter++);
+                      const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
+
+
+                      const requestDate: Date = new Date();
+                      // const response = await postData(server.address, JSON.parse(server.header), changedBody);
+                      const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
+                      const responseDate: Date = new Date();
+
+                      let responseJSon: any;
+                      try {
+                        responseJSon = await res.json();
+                      } catch (e) {
+                        responseJSon = null;
+                      }
+
+                      const messageOutgoing = {
+                        type: MSG_OUTGOING,
+                        experimentId: experimentId,
+                        collectionId: collection.id,
+                        suiteId: suite.id,
+                        caseId: cAse.id,
+                        testId: test.id,
+                        thread: thread,
+                        loop: loop,
+                        paymentId: paymentId,
+                        request: JSON.stringify(changedBody),
+                        response: JSON.stringify(responseJSon),
+                        requestDate: requestDate.toISOString(),
+                        responseDate: responseDate.toISOString(),
+                        status: res.status,
+                        statusText: res.statusText,
+                        txnId: responseJSon?.txnId,
+                        jsonata: result.jsonata
+                      };
+                      const dbResult = await createExperimentResult({
+                        input: messageOutgoing
+                      });
+
+                      // const messageIncoming = messageOutgoing.txnId && await Message.first({txnId: messageOutgoing.txnId});
                     } catch (e) {
-                      responseJSon = null;
+                      // errors.push(e);
                     }
+                  } // end for loop
 
-                    const messageOutgoing = {
-                      type: MSG_OUTGOING,
-                      experimentId: experimentId,
-                      collectionId: collection.id,
-                      suiteId: suite.id,
-                      caseId: cAse.id,
-                      testId: test.id,
-                      thread: thread,
-                      loop: loop,
-                      paymentId: paymentId,
-                      request: JSON.stringify(changedBody),
-                      response: JSON.stringify(responseJSon),
-                      requestDate: requestDate.toISOString(),
-                      responseDate: responseDate.toISOString(),
-                      status: res.status,
-                      statusText: res.statusText,
-                      txnId: responseJSon?.txnId,
-                      jsonata: result.jsonata
-                    };
-                    loopArray.push(messageOutgoing);
-
-                    // const messageIncoming = messageOutgoing.txnId && await Message.first({txnId: messageOutgoing.txnId});
-                  } catch (e) {
-                    errors.push(e);
-                  }
-                } // end for loop
-                resolve(loopArray);
-
-              }); // end Promise
-              promises.push(promise);
+                }); // end Promise
+              }, (c/*collection*/+s/*suite*/ + ca/*case*/+thread) * DELAY );
+              // DELAY
             } // end for thread
           } // end for test
         } // end for case
       } // end for suite
     } // end for collection
 
-    await Promise.all( promises ).then( async results => {
-      for ( let e = 0; e < executedObjectId.length; e++ )
-      {
-        const id = executedObjectId[e];
-        await db.qaObject.update({
-          data: { executed: new Date().toISOString() },
-          where: { id }
-        });
-      }
 
-      for ( let i = 0; i < results.length; i++ )
-      {
-        const loopArray = results[i];
-        for ( let j = 0; j < loopArray.length; j++ )
-        {
-          const messageOutgoing = loopArray[j];
-          const dbResult = await createExperimentResult({
-            input: messageOutgoing
-          });
-        }
-      }
-    });
-
-    if ( errors.length > 0 )
+/*    if ( errors.length > 0 )
     {
       let err = '';
       errors.map( e => { err += `${e.message}\n` } );
       return generateResponse( err );
-    }
+    }*/
 
     return generateResponse(null);
   }
@@ -200,6 +185,14 @@ export const runExperiment = async ({experimentId}) =>
   {
     return generateResponse( e.message );
   }
+}
+
+const setExecuted = async ( id:number ) =>
+{
+  await db.qaObject.update({
+    data: { executed: new Date().toISOString() },
+    where: { id }
+  });
 }
 
 const httpsAgent = new https.Agent({
