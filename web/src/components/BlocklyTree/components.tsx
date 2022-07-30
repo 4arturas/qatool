@@ -1,4 +1,16 @@
-import {BODY, CASE, COLLECTION, EXPERIMENT, REMOVE, REPLACE, SERVER, SUITE, TEST, typeIdToColor} from "src/global";
+import {
+  BODY,
+  CASE,
+  COLLECTION,
+  EXPERIMENT,
+  REMOVE,
+  REPLACE, RESPONSE,
+  RESULT,
+  SERVER,
+  SUITE,
+  TEST,
+  typeIdToColor
+} from "src/global";
 
 export const comp = [
   {
@@ -64,7 +76,7 @@ export const comp = [
         "type": "input_dummy"
       },
       {
-        "type": "field_multilinetext",
+        "type": "field_input",
         "name": "HEADERS",
         "text": "{}",
         spellcheck: false
@@ -213,7 +225,7 @@ export const comp = [
         "type": "input_dummy"
       },
       {
-        "type": "field_multilinetext",
+        "type": "field_input",
         "name": "JSON",
         "text": "{}",
         spellcheck: false
@@ -226,8 +238,16 @@ export const comp = [
   },
   {
     "type": "test",
-    "message0": "TEST %1 Replace %2 Remove %3",
+    "message0": "TEST %1 name %2 %3 Replace %4 Remove %5 Result %6 Response %7",
     "args0": [
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": ""
+      },
       {
         "type": "input_dummy"
       },
@@ -238,6 +258,14 @@ export const comp = [
       {
         "type": "input_value",
         "name": "REMOVE"
+      },
+      {
+        "type": "input_value",
+        "name": "RESULT"
+      },
+      {
+        "type": "input_value",
+        "name": "RESPONSE"
       }
     ],
     "previousStatement": null,
@@ -262,7 +290,7 @@ export const comp = [
         "type": "input_dummy"
       },
       {
-        "type": "field_multilinetext",
+        "type": "field_input",
         "name": "JSON",
         "text": "{}",
         spellcheck: false
@@ -289,7 +317,7 @@ export const comp = [
         "type": "input_dummy"
       },
       {
-        "type": "field_multilinetext",
+        "type": "field_input",
         "name": "JSON",
         "text": "[]",
         spellcheck: false
@@ -299,8 +327,70 @@ export const comp = [
     "colour": `${typeIdToColor(REMOVE)}`,
     "tooltip": "",
     "helpUrl": ""
+  },
+  {
+    "type": "result",
+    "message0": "RESULT %1 name: %2 %3 json %4 %5 jsonata %6",
+    "args0": [
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": ""
+      },
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "field_input",
+        "name": "JSON",
+        "text": "{}",
+        spellcheck: false
+      },
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "field_input",
+        "name": "JSONATA",
+        "text": "",
+        spellcheck: false
+      }
+    ],
+    "output": null,
+    "colour": `${typeIdToColor(RESULT)}`,
+    "tooltip": "",
+    "helpUrl": ""
+  },
+  {
+    "type": "response",
+    "message0": "RESPONSE %1 name %2 %3 json %4",
+    "args0": [
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": "replace"
+      },
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "field_input",
+        "name": "JSON",
+        "text": "{}",
+        spellcheck: false
+      }
+    ],
+    "output": null,
+    "colour": `${typeIdToColor(RESPONSE)}`,
+    "tooltip": "",
+    "helpUrl": ""
   }
-
 ];
 
 export const toolbox = {
@@ -317,6 +407,8 @@ export const toolbox = {
     { kind: 'block', type: 'test' },
     { kind: 'block', type: 'replace' },
     { kind: 'block', type: 'remove' },
+    { kind: 'block', type: 'result' },
+    { kind: 'block', type: 'response' },
   ]
 };
 
@@ -391,6 +483,58 @@ export const restore_Body = (name:string, json:string) => {
   return {
     "block": {
       "type": "body",
+      "fields": {"NAME": `${name}`, "JSON": `${json}`},
+    }
+  };
+}
+
+export const restore_Test = (name:string) => {
+  return {
+    "block": {
+      "type": "test",
+      "fields": {"NAME": `${name}`},
+      "next": null,
+      "inputs": {
+        // "REPLACE": null,
+        // "REMOVE": null,
+        // "RESULT": null,
+        // "RESPONSE": null,
+      }
+    }
+  };
+}
+
+export const restore_Replace = (name:string, json:string) => {
+  return {
+    "block": {
+      "type": "replace",
+      "fields": {"NAME": `${name}`, "JSON": `${json}`},
+    }
+  };
+}
+
+export const restore_Remove = (name:string, json:string) => {
+  return {
+    "block": {
+      "type": "remove",
+      "fields": {"NAME": `${name}`, "JSON": `${json}`},
+    }
+  };
+}
+
+export const restore_Result = (name:string, json:string, jsonata:string) => {
+  return {
+    "block": {
+      "type": "result",
+      "fields": {"NAME": `${name}`, "JSON": `${json}`, "JSONATA": `${jsonata}`},
+    }
+  };
+}
+
+export const restore_Response = (name:string, json:string) => {
+  return {
+    "block": {
+      "type": "response",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
     }
   };

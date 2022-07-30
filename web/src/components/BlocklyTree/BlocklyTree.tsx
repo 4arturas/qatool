@@ -6,8 +6,8 @@ import {
   restore_Blocks, restore_Body,
   restore_Case,
   restore_Collection,
-  restore_Experiment,
-  restore_Server,
+  restore_Experiment, restore_Remove, restore_Replace, restore_Response, restore_Result,
+  restore_Server, restore_Test,
   toolbox
 } from "./components";
 import Blockly from 'blockly';
@@ -226,6 +226,46 @@ const BlocklyTree = ( { id }) => {
                       caseBlock.block.inputs['BODY'] = restore_Body( body.name, body.json );
                       ///////////////////////////////////////////////////
                       /// TESTS
+                      const testIds = cAse.parent.filter( c => c.childrenObjectTypeId === TEST );
+                      if ( testIds.length > 0 )
+                      {
+                        testIds.map( tId => {
+                          const test = tree.objects.find( t => t.id === tId.childrenId );
+                          const replaceId = test.parent.find( r => r.childrenObjectTypeId === REPLACE ).childrenId;
+                          const removeId = test.parent.find( r => r.childrenObjectTypeId === REMOVE ).childrenId;
+                          const resultId = test.parent.find( r => r.childrenObjectTypeId === RESULT ).childrenId;
+                          const replace = tree.objects.find( r => r.id === replaceId );
+                          const remove = tree.objects.find( r => r.id === removeId );
+                          const result = tree.objects.find( r => r.id === resultId );
+
+                          if ( !caseBlock.block.inputs['TESTS'] )
+                          {
+                            caseBlock.block.inputs['TESTS'] = restore_Test( test.name );
+                            caseBlock.block.inputs['TESTS'].block.inputs['REPLACE'] = restore_Replace( replace.name, replace.json );
+                            caseBlock.block.inputs['TESTS'].block.inputs['REMOVE'] = restore_Remove( remove.name, remove.json );
+                            caseBlock.block.inputs['TESTS'].block.inputs['RESULT'] = restore_Result( result.name, result.json, result.jsonata );
+                            caseBlock.block.inputs['TESTS'].block.inputs['RESPONSE'] = restore_Response( result.name, result.json );
+                          }
+                          else
+                          {
+                            let block = caseBlock.block.inputs['TESTS'].block;
+                            while ( 1 )
+                            {
+                              if ( !block.next )
+                              {
+                                caseBlock = restore_Test( test.name );
+                                caseBlock.block.inputs['REPLACE'] = restore_Replace( replace.name, replace.json );
+                                caseBlock.block.inputs['REMOVE'] = restore_Remove( remove.name, remove.json );
+                                caseBlock.block.inputs['RESULT'] = restore_Result( result.name, result.json, result.jsonata );
+                                caseBlock.block.inputs['RESPONSE'] = restore_Response( result.name, result.json );
+                                block.next = caseBlock;
+                                break;
+                              }
+                              block = block.next.block;
+                            }
+                          }
+                        }); // end map tests
+                      }
                     });
 
                   } // end if case
