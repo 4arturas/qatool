@@ -23,7 +23,7 @@ export const comp = [
       {
         "type": "input_value",
         "name": "SERVER",
-        "check": "server"
+        "check": "serverCheck"
       },
       {
         "type": "input_statement",
@@ -82,7 +82,7 @@ export const comp = [
         spellcheck: false
       }
     ],
-    "output": null,
+    "output": ["serverCheck"],
     "colour": `${typeIdToColor(SERVER)}`,
     "tooltip": "",
     "helpUrl": ""
@@ -196,7 +196,8 @@ export const comp = [
       },
       {
         "type": "input_value",
-        "name": "BODY"
+        "name": "BODY",
+        "check": "bodyCheck"
       },
       {
         "type": "input_statement",
@@ -231,7 +232,7 @@ export const comp = [
         spellcheck: false
       }
     ],
-    "output": null,
+    "output": ["bodyCheck"],
     "colour": `${typeIdToColor(BODY)}`,
     "tooltip": "",
     "helpUrl": ""
@@ -253,19 +254,23 @@ export const comp = [
       },
       {
         "type": "input_value",
-        "name": "REPLACE"
+        "name": "REPLACE",
+        "check": "replaceCheck"
       },
       {
         "type": "input_value",
-        "name": "REMOVE"
+        "name": "REMOVE",
+        "check": "removeCheck"
       },
       {
         "type": "input_value",
-        "name": "RESULT"
+        "name": "RESULT",
+        "check": "resultCheck"
       },
       {
         "type": "input_value",
-        "name": "RESPONSE"
+        "name": "RESPONSE",
+        "check": "responseCheck"
       }
     ],
     "previousStatement": null,
@@ -296,7 +301,7 @@ export const comp = [
         spellcheck: false
       }
     ],
-    "output": null,
+    "output": ["replaceCheck"],
     "colour": `${typeIdToColor(REPLACE)}`,
     "tooltip": "",
     "helpUrl": ""
@@ -323,7 +328,7 @@ export const comp = [
         spellcheck: false
       }
     ],
-    "output": null,
+    "output": ["removeCheck"],
     "colour": `${typeIdToColor(REMOVE)}`,
     "tooltip": "",
     "helpUrl": ""
@@ -359,7 +364,7 @@ export const comp = [
         spellcheck: false
       }
     ],
-    "output": null,
+    "output": ["resultCheck"],
     "colour": `${typeIdToColor(RESULT)}`,
     "tooltip": "",
     "helpUrl": ""
@@ -386,7 +391,7 @@ export const comp = [
         spellcheck: false
       }
     ],
-    "output": null,
+    "output": ["responseCheck"],
     "colour": `${typeIdToColor(RESPONSE)}`,
     "tooltip": "",
     "helpUrl": ""
