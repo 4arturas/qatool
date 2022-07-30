@@ -28,7 +28,7 @@ export const comp = [
       {
         "type": "input_statement",
         "name": "COLLECTIONS",
-        "check": ["collection"]
+        "check": "collection"
       }
     ],
     "colour": `${typeIdToColor(EXPERIMENT)}`,
@@ -112,11 +112,12 @@ export const comp = [
       },
       {
         "type": "input_statement",
-        "name": "SUITES"
+        "name": "SUITES",
+        "check": "suite"
       }
     ],
-    "previousStatement": null,
-    "nextStatement": null,
+    "previousStatement": "collection",
+    "nextStatement": "collection",
     "colour": `${typeIdToColor(COLLECTION)}`,
     "tooltip": "",
     "helpUrl": ""
@@ -146,11 +147,12 @@ export const comp = [
       },
       {
         "type": "input_statement",
-        "name": "CASES"
+        "name": "CASES",
+        "check": "case"
       }
     ],
-    "previousStatement": null,
-    "nextStatement": null,
+    "previousStatement": "suite",
+    "nextStatement": "suite",
     "colour": `${typeIdToColor(SUITE)}`,
     "tooltip": "",
     "helpUrl": ""
@@ -201,11 +203,12 @@ export const comp = [
       },
       {
         "type": "input_statement",
-        "name": "TESTS"
+        "name": "TESTS",
+        "check": "test"
       }
     ],
-    "previousStatement": null,
-    "nextStatement": null,
+    "previousStatement": "case",
+    "nextStatement": "case",
     "colour": `${typeIdToColor(CASE)}`,
     "tooltip": "",
     "helpUrl": ""
@@ -273,8 +276,8 @@ export const comp = [
         "check": "responseCheck"
       }
     ],
-    "previousStatement": null,
-    "nextStatement": null,
+    "previousStatement": "test",
+    "nextStatement": "test",
     "colour": `${typeIdToColor(TEST)}`,
     "tooltip": "",
     "helpUrl": ""
