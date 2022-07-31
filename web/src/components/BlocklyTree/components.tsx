@@ -430,6 +430,23 @@ export const restore_Blocks = () =>
   };
 }
 
+export const restore_Object = ( o ) => {
+  switch ( o.typeId )
+  {
+    case EXPERIMENT: return restore_Experiment();
+    case SERVER: return restore_Server( o.name, o.address, o.method, o.header );
+    case COLLECTION: return restore_Collection( o.name, o.batchId );
+    case SUITE: return restore_Suite( o.name, o.batchId );
+    case CASE: return restore_Case( o.name, o.batchId, o.threads, o.loops );
+    case BODY: return restore_Body( o.name, o.json );
+    case TEST: return restore_Test( o.name );
+    case REPLACE: return restore_Replace( o.name, o.json );
+    case REMOVE: return restore_Remove( o.name, o.json );
+    case RESULT: return restore_Result( o.name, o.json, o.jsonata );
+    case RESPONSE: return restore_Response( o.name, o.json );
+  }
+}
+
 export const restore_Experiment = () => {
   return {
     "type": "experiment",

@@ -1,15 +1,7 @@
 import {useApolloClient} from "@apollo/client";
 import {useAuth} from "@redwoodjs/auth";
 import React, {useEffect, useState} from "react";
-import {
-  comp,
-  restore_Blocks, restore_Body,
-  restore_Case,
-  restore_Collection,
-  restore_Experiment, restore_Remove, restore_Replace, restore_Response, restore_Result,
-  restore_Server, restore_Test,
-  toolbox
-} from "./components";
+import {comp, restore_Blocks, restore_Object, toolbox} from "./components";
 import Blockly from 'blockly';
 import {
   BODY,
@@ -24,7 +16,6 @@ import {
   SERVER, SUITE,
   TEST
 } from "src/global";
-import {restore_Suite} from "src/components/BlocklyTree/components";
 
 const QUERY = gql`
   query FindBlocklyTreeQuery($id: Int!) {
@@ -103,11 +94,6 @@ const BlocklyTree = ( { id }) => {
   const [objects, setObjects] = useState([]);
   const [qaObject, setQaObject] = useState( null );
 
-  const traverse = ( blocks, hierarchy, objects, qaObject ) =>
-  {
-
-  }
-
   const fetchTree = () => {
     setLoading( true );
     client
@@ -121,10 +107,12 @@ const BlocklyTree = ( { id }) => {
         setQaObject( tmpQaObject );
 
         const blocks = restore_Blocks();
+        const blockChildren = blocks.blocks.blocks;
         if ( tmpQaObject.typeId === EXPERIMENT )
         {
-          const experiment = restore_Experiment();
-          blocks.blocks.blocks.push( experiment );
+          const e = tree.objects.find( o => o.id === tmpQaObject.id );
+          const experiment = restore_Object( e );
+          blockChildren.push( experiment );
 
           ///////////////////////////////////////////////////
           /// SERVER
@@ -132,7 +120,7 @@ const BlocklyTree = ( { id }) => {
           if ( serverChildrenId )
           {
             const server = tree.objects.find( s => s.id === serverChildrenId.childrenId );
-            experiment.inputs['SERVER'] = restore_Server( server.name, server.address, server.method, server.header );
+            experiment.inputs['SERVER'] = restore_Object( server );
           }
 
           ///////////////////////////////////////////////////
@@ -146,7 +134,7 @@ const BlocklyTree = ( { id }) => {
               let collectionBlock = null;
               if ( !experiment.inputs['COLLECTIONS'] )
               {
-                collectionBlock = restore_Collection( collection.name, collection.batchId );
+                collectionBlock = restore_Object( collection );
                 experiment.inputs['COLLECTIONS'] = collectionBlock;
               }
               else
@@ -156,7 +144,7 @@ const BlocklyTree = ( { id }) => {
                 {
                   if ( !block.next )
                   {
-                    collectionBlock = restore_Collection( collection.name, collection.batchId );
+                    collectionBlock = restore_Object( collection );
                     block.next = collectionBlock;
                     break;
                   }
@@ -174,7 +162,7 @@ const BlocklyTree = ( { id }) => {
                   let suiteBlock = null;
                   if ( !collectionBlock.block.inputs['SUITES'] )
                   {
-                    suiteBlock = restore_Suite( suite.name, suite.batchId );
+                    suiteBlock = restore_Object( suite );
                     collectionBlock.block.inputs['SUITES'] = suiteBlock;
                   }
                   else
@@ -184,7 +172,7 @@ const BlocklyTree = ( { id }) => {
                     {
                       if ( !block.next )
                       {
-                        suiteBlock = restore_Suite( suite.name, suite.batchId );
+                        suiteBlock = restore_Object( suite );
                         block.next = suiteBlock;
                         break;
                       }
@@ -201,7 +189,7 @@ const BlocklyTree = ( { id }) => {
                       let caseBlock = null;
                       if ( !suiteBlock.block.inputs['CASES'] )
                       {
-                        caseBlock = restore_Case( cAse.name, cAse.batchId, cAse.threads, cAse.loops );
+                        caseBlock = restore_Object( cAse );
                         suiteBlock.block.inputs['CASES'] = caseBlock;
                       }
                       else
@@ -211,7 +199,7 @@ const BlocklyTree = ( { id }) => {
                         {
                           if ( !block.next )
                           {
-                            caseBlock = restore_Case( cAse.name, cAse.batchId, cAse.threads, cAse.loops );
+                            caseBlock = restore_Object( cAse );
                             block.next = caseBlock;
                             break;
                           }
@@ -223,7 +211,7 @@ const BlocklyTree = ( { id }) => {
                       /// BODY
                       const bodyChildren = cAse.parent.find( c => c.childrenObjectTypeId === BODY );
                       const body = tree.objects.find( b => b.id === bodyChildren.childrenId );
-                      caseBlock.block.inputs['BODY'] = restore_Body( body.name, body.json );
+                      caseBlock.block.inputs['BODY'] = restore_Object( body );
                       ///////////////////////////////////////////////////
                       /// TESTS
                       const testIds = cAse.parent.filter( c => c.childrenObjectTypeId === TEST );
@@ -234,17 +222,19 @@ const BlocklyTree = ( { id }) => {
                           const replaceId = test.parent.find( r => r.childrenObjectTypeId === REPLACE ).childrenId;
                           const removeId = test.parent.find( r => r.childrenObjectTypeId === REMOVE ).childrenId;
                           const resultId = test.parent.find( r => r.childrenObjectTypeId === RESULT ).childrenId;
+                          const responseId = test.parent.find( r => r.childrenObjectTypeId === RESPONSE ).childrenId;
                           const replace = tree.objects.find( r => r.id === replaceId );
                           const remove = tree.objects.find( r => r.id === removeId );
                           const result = tree.objects.find( r => r.id === resultId );
+                          const response = tree.objects.find( r => r.id === responseId );
 
                           if ( !caseBlock.block.inputs['TESTS'] )
                           {
-                            caseBlock.block.inputs['TESTS'] = restore_Test( test.name );
-                            caseBlock.block.inputs['TESTS'].block.inputs['REPLACE'] = restore_Replace( replace.name, replace.json );
-                            caseBlock.block.inputs['TESTS'].block.inputs['REMOVE'] = restore_Remove( remove.name, remove.json );
-                            caseBlock.block.inputs['TESTS'].block.inputs['RESULT'] = restore_Result( result.name, result.json, result.jsonata );
-                            caseBlock.block.inputs['TESTS'].block.inputs['RESPONSE'] = restore_Response( result.name, result.json );
+                            caseBlock.block.inputs['TESTS'] = restore_Object( test );
+                            caseBlock.block.inputs['TESTS'].block.inputs['REPLACE'] = restore_Object( replace );
+                            caseBlock.block.inputs['TESTS'].block.inputs['REMOVE'] = restore_Object( remove );
+                            caseBlock.block.inputs['TESTS'].block.inputs['RESULT'] = restore_Object( result );
+                            caseBlock.block.inputs['TESTS'].block.inputs['RESPONSE'] = restore_Object( response );
                           }
                           else
                           {
@@ -253,11 +243,11 @@ const BlocklyTree = ( { id }) => {
                             {
                               if ( !block.next )
                               {
-                                caseBlock = restore_Test( test.name );
-                                caseBlock.block.inputs['REPLACE'] = restore_Replace( replace.name, replace.json );
-                                caseBlock.block.inputs['REMOVE'] = restore_Remove( remove.name, remove.json );
-                                caseBlock.block.inputs['RESULT'] = restore_Result( result.name, result.json, result.jsonata );
-                                caseBlock.block.inputs['RESPONSE'] = restore_Response( result.name, result.json );
+                                caseBlock = restore_Object( test );
+                                caseBlock.block.inputs['REPLACE'] = restore_Object( replace );
+                                caseBlock.block.inputs['REMOVE'] = restore_Object( remove );
+                                caseBlock.block.inputs['RESULT'] = restore_Object( result );
+                                caseBlock.block.inputs['RESPONSE'] = restore_Object( response );
                                 block.next = caseBlock;
                                 break;
                               }
@@ -274,10 +264,6 @@ const BlocklyTree = ( { id }) => {
 
             } ); // end map collections
           }   // end if collections
-
-          // console.log( JSON.stringify( blocks ) );
-
-
         }
 
 
@@ -308,7 +294,7 @@ const BlocklyTree = ( { id }) => {
 
     return (
       <>
-        <div key={`parent${qaObject.id}`}>
+       {/* <div key={`parent${qaObject.id}`}>
           {
             qaObject.name
           }
@@ -327,20 +313,20 @@ const BlocklyTree = ( { id }) => {
             const childObject = objects.find( o => o.id === h.childrenId );
             return (
               childObject &&
-              <div key={`children${h.id}`} style={{marginLeft:'20px', marginTop: '10px'}}>
+              <div key={`children${h.id}`} style={{marginLeft:'20px', marginTop: '10px'}}>ba
                 <BlocklyElement qaObject={childObject} objects={objects} hierarchy={hierarchy} relationId={h.id}/>
               </div>
             )
           } )
-        }
+        }*/}
       </>
     )
   }
 
-  return qaObject &&
-    <div style={{marginLeft:'40px'}}>
+  return <></>/*qaObject &&
+    <div style={{marginLeft:'40px'}}>bababa
       <BlocklyElement qaObject={ qaObject } hierarchy={ hierarchy } objects={ objects } relationId={null} />
-    </div>
+    </div>*/
 }
 
 export default BlocklyTree
