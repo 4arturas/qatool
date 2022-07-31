@@ -51,48 +51,39 @@ const QUERY = gql`
   }
 `
 
-const returnNonExisting = ( qaObject ): Array<number> => {
-  const findAndAdd = ( arr:Array<number>, typeId:number, qaObject:any ) =>
-  {
-    if ( !qaObject.parent.find( p => p.childrenObjectTypeId === typeId ) )
-      arr.push( typeId );
-  }
-  const arrRet: Array<number> = [];
-  if ( qaObject.typeId === EXPERIMENT )
-  {
-    findAndAdd( arrRet, SERVER, qaObject );
-    arrRet.push( COLLECTION );
-  }
-  else if ( qaObject.typeId === CASE )
-  {
-    findAndAdd( arrRet, BODY, qaObject );
-    arrRet.push( TEST );
-  }
-  else if ( qaObject.typeId === TEST )
-  {
-    findAndAdd( arrRet, REPLACE, qaObject );
-    findAndAdd( arrRet, RESPONSE, qaObject );
-    findAndAdd( arrRet, REMOVE, qaObject );
-    findAndAdd( arrRet, RESULT, qaObject );
-  }
-  else
-  {
-    arrRet.push( ...getChildrenTypeIdByParentTypeId( qaObject.typeId ) );
-  }
-  return arrRet;
-}
-
 const BlocklyTree = ( { id }) => {
 
   const client = useApolloClient();
   const { hasRole } = useAuth();
 
-  let workspace;
   const [loading, setLoading] = useState( false );
 
   const [hierarchy, setHierarchy] = useState([]);
   const [objects, setObjects] = useState([]);
   const [qaObject, setQaObject] = useState( null );
+
+  const append_ChildBlock = ( collectionBlock, inputName:string, appendBlock ) =>
+  {
+    if ( !collectionBlock.block.inputs[inputName] )
+    {
+      collectionBlock.block.inputs[inputName] = appendBlock;
+      return appendBlock;
+    }
+    else
+    {
+      let block = collectionBlock.block.inputs[inputName].block;
+      while ( 1 )
+      {
+        if ( !block.next )
+        {
+          block.next = appendBlock;
+          break;
+        }
+        block = block.next.block;
+        return block;
+      }
+    }
+  }
 
   const fetchTree = () => {
     setLoading( true );
@@ -111,7 +102,7 @@ const BlocklyTree = ( { id }) => {
         if ( tmpQaObject.typeId === EXPERIMENT )
         {
           const e = tree.objects.find( o => o.id === tmpQaObject.id );
-          const experiment = restore_Object( e );
+          const experiment = restore_Object( null, e );
           blockChildren.push( experiment );
 
           ///////////////////////////////////////////////////
@@ -120,7 +111,7 @@ const BlocklyTree = ( { id }) => {
           if ( serverChildrenId )
           {
             const server = tree.objects.find( s => s.id === serverChildrenId.childrenId );
-            experiment.inputs['SERVER'] = restore_Object( server );
+            experiment.inputs['SERVER'] = restore_Object( e, server );
           }
 
           ///////////////////////////////////////////////////
@@ -134,7 +125,7 @@ const BlocklyTree = ( { id }) => {
               let collectionBlock = null;
               if ( !experiment.inputs['COLLECTIONS'] )
               {
-                collectionBlock = restore_Object( collection );
+                collectionBlock = restore_Object( e, collection );
                 experiment.inputs['COLLECTIONS'] = collectionBlock;
               }
               else
@@ -144,7 +135,7 @@ const BlocklyTree = ( { id }) => {
                 {
                   if ( !block.next )
                   {
-                    collectionBlock = restore_Object( collection );
+                    collectionBlock = restore_Object( e, collection );
                     block.next = collectionBlock;
                     break;
                   }
@@ -158,26 +149,8 @@ const BlocklyTree = ( { id }) => {
               {
                 suiteChildrenIds.map( s => {
                   const suite = tree.objects.find( o => o.id === s.childrenId );
-                  let suiteBlock = null;
-                  if ( !collectionBlock.block.inputs['SUITES'] )
-                  {
-                    suiteBlock = restore_Object( suite );
-                    collectionBlock.block.inputs['SUITES'] = suiteBlock;
-                  }
-                  else
-                  {
-                    let block = collectionBlock.block.inputs['SUITES'].block;
-                    while ( 1 )
-                    {
-                      if ( !block.next )
-                      {
-                        suiteBlock = restore_Object( suite );
-                        block.next = suiteBlock;
-                        break;
-                      }
-                      block = block.next.block;
-                    }
-                  } //
+                  let suiteBlock = restore_Object( collection, suite );
+                  append_ChildBlock( collectionBlock, 'SUITES', suiteBlock );
                   ///////////////////////////////////////////////////
                   /// CASE
                   const caseChildrenIds = suite.parent.filter( h => h.parentId === suite.id && h.childrenObjectTypeId === CASE );
@@ -185,32 +158,13 @@ const BlocklyTree = ( { id }) => {
                   {
                     caseChildrenIds.map( c => {
                       const cAse = tree.objects.find( o => o.id === c.childrenId );
-                      let caseBlock = null;
-                      if ( !suiteBlock.block.inputs['CASES'] )
-                      {
-                        caseBlock = restore_Object( cAse );
-                        suiteBlock.block.inputs['CASES'] = caseBlock;
-                      }
-                      else
-                      {
-                        let block = suiteBlock.block.inputs['CASES'].block;
-                        while ( 1 )
-                        {
-                          if ( !block.next )
-                          {
-                            caseBlock = restore_Object( cAse );
-                            block.next = caseBlock;
-                            break;
-                          }
-                          block = block.next.block;
-                        }
-                      }
-
+                      let caseBlock = restore_Object( suite, cAse );
+                      append_ChildBlock( suiteBlock, 'CASES', caseBlock );
                       ///////////////////////////////////////////////////
                       /// BODY
                       const bodyChildren = cAse.parent.find( c => c.childrenObjectTypeId === BODY );
                       const body = tree.objects.find( b => b.id === bodyChildren.childrenId );
-                      caseBlock.block.inputs['BODY'] = restore_Object( body );
+                      caseBlock.block.inputs['BODY'] = restore_Object( cAse, body );
                       ///////////////////////////////////////////////////
                       /// TESTS
                       const testIds = cAse.parent.filter( c => c.childrenObjectTypeId === TEST );
@@ -227,32 +181,16 @@ const BlocklyTree = ( { id }) => {
                           const result = tree.objects.find( r => r.id === resultId );
                           const response = tree.objects.find( r => r.id === responseId );
 
-                          if ( !caseBlock.block.inputs['TESTS'] )
-                          {
-                            caseBlock.block.inputs['TESTS'] = restore_Object( test );
-                            caseBlock.block.inputs['TESTS'].block.inputs['REPLACE'] = restore_Object( replace );
-                            caseBlock.block.inputs['TESTS'].block.inputs['REMOVE'] = restore_Object( remove );
-                            caseBlock.block.inputs['TESTS'].block.inputs['RESULT'] = restore_Object( result );
-                            caseBlock.block.inputs['TESTS'].block.inputs['RESPONSE'] = restore_Object( response );
-                          }
-                          else
-                          {
-                            let block = caseBlock.block.inputs['TESTS'].block;
-                            while ( 1 )
-                            {
-                              if ( !block.next )
-                              {
-                                caseBlock = restore_Object( test );
-                                caseBlock.block.inputs['REPLACE'] = restore_Object( replace );
-                                caseBlock.block.inputs['REMOVE'] = restore_Object( remove );
-                                caseBlock.block.inputs['RESULT'] = restore_Object( result );
-                                caseBlock.block.inputs['RESPONSE'] = restore_Object( response );
-                                block.next = caseBlock;
-                                break;
-                              }
-                              block = block.next.block;
-                            }
-                          }
+                          const testBlock = restore_Object( cAse, test );
+                          append_ChildBlock( caseBlock, 'TESTS', testBlock );
+                          const replaceBlock = restore_Object( test, replace );
+                          const removeBlock = restore_Object( test, remove );
+                          const resultBlock = restore_Object( test, result );
+                          const responseBlock = restore_Object( test, response );
+                          append_ChildBlock( testBlock, 'REPLACE', replaceBlock);
+                          append_ChildBlock( testBlock, 'REMOVE', removeBlock);
+                          append_ChildBlock( testBlock, 'RESULT', resultBlock);
+                          append_ChildBlock( testBlock, 'RESPONSE', responseBlock);
                         }); // end map tests
                       }
                     });
@@ -272,6 +210,9 @@ const BlocklyTree = ( { id }) => {
       });
   }
 
+  const [firstBlock, setFirstBlock] = useState( null );
+  const [block, setBlock] = useState( null );
+  let workspace;
   useEffect( () => {
     Blockly.common.defineBlocksWithJsonArray(comp);
     workspace = ( Blockly.inject('ide', { toolbox: toolbox,   move: {
@@ -281,29 +222,62 @@ const BlocklyTree = ( { id }) => {
         },
         drag: true,
         wheel: true} } ) );
+    // setWorkspace( tmpWorkspace );
+
+    // const tmpFirstBlock = restore_Blocks();
+    // setFirstBlock( tmpFirstBlock );
+    // const tmpBlock = tmpFirstBlock.blocks.blocks;
+    // setBlock( tmpBlock );
+
+    // const firstBlock = restore_Blocks();
+    // block = firstBlock.blocks.blocks;
+    // Blockly.serialization.workspaces.load(firstBlock, workspace);
     fetchTree();
+
+
+    setLoading( true );
+    client
+      .query( { query: QUERY, variables: { id: id } } )
+      .then( ret => {
+        const tree = ret.data.tree;
+        const parentId = tree.parentId;
+        setHierarchy( tree.hierarchy );
+        setObjects( tree.objects );
+        const tmpQaObject = tree.objects.find( o => o.id === parentId );
+        setQaObject( tmpQaObject );
+        setLoading(false);
+      });
   }, [] );
 
-  const BlocklyElement = ( { qaObject, hierarchy, objects, relationId } ) =>
+  const BlocklyElement = ( { qaObject, hierarchy, objects } ) =>
   {
 
     const children = qaObject.parent.map( m => m ).sort( (a, b) => a.childrenObjectTypeId - b.childrenObjectTypeId );
-
-    const possibleToAddChildren: Array<number> = returnNonExisting( qaObject );
-
     return (
       <>
-       {/* <div key={`parent${qaObject.id}`}>
+        <div key={`parent${qaObject.id}`}>
           {
             qaObject.name
           }
-          {workspace && (() => {
+          {block && (() => {
             switch(qaObject.typeId) {
-              case SERVER:
-                const workspaceJSon = restore_Server( qaObject.name, qaObject.address, qaObject.method, qaObject.header );
-                Blockly.serialization.workspaces.load(workspaceJSon, workspace);
+              case EXPERIMENT:
+                // const o = restore_Object( null, qaObject );
+                // block.push( o );
+                // setExperiment( o );
                 break;
+              case SERVER:
+                // const server = restore_Object( 1, qaObject );
+
+                // firstBlock.blocks.blocks.push( server );
+                // console.log( JSON.stringify( firstBlock ) );
+                // experiment.inputs['SERVER'] = restore_Object( qaObject );
+                // const workspaceJSon = restore_Server( qaObject.name, qaObject.address, qaObject.method, qaObject.header );
+
+                break;
+
             }
+            // Blockly.serialization.workspaces.load(firstBlock, workspace);
           })()}
         </div>
 
@@ -312,20 +286,20 @@ const BlocklyTree = ( { id }) => {
             const childObject = objects.find( o => o.id === h.childrenId );
             return (
               childObject &&
-              <div key={`children${h.id}`} style={{marginLeft:'20px', marginTop: '10px'}}>ba
-                <BlocklyElement qaObject={childObject} objects={objects} hierarchy={hierarchy} relationId={h.id}/>
+              <div key={`children${h.id}`} style={{marginLeft:'20px', marginTop: '10px'}}>
+                <BlocklyElement qaObject={childObject} objects={objects} hierarchy={hierarchy} />
               </div>
             )
           } )
-        }*/}
+        }
       </>
     )
   }
 
-  return <></>/*qaObject &&
-    <div style={{marginLeft:'40px'}}>bababa
-      <BlocklyElement qaObject={ qaObject } hierarchy={ hierarchy } objects={ objects } relationId={null} />
-    </div>*/
+  return qaObject &&
+    <div style={{marginLeft:'40px'}}>
+      <BlocklyElement qaObject={ qaObject } hierarchy={ hierarchy } objects={ objects } />
+    </div>
 }
 
 export default BlocklyTree
