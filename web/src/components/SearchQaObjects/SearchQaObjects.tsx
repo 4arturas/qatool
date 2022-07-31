@@ -89,6 +89,8 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
           <>
             <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
 
+            <Link to={routes.blocklyTree({id:record.id})} style={{float:'right'}}>[Blockly]</Link>
+
             {record.typeId === EXPERIMENT && record.executed &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
               <Link to={routes.experiment( {id: record.id})} style={{float:'right', color: 'black'}}>

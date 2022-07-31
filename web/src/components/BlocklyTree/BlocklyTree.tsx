@@ -8,7 +8,6 @@ import {
   CASE,
   COLLECTION,
   EXPERIMENT,
-  getChildrenTypeIdByParentTypeId,
   REMOVE,
   REPLACE,
   RESPONSE,
@@ -65,6 +64,8 @@ const BlocklyTree = ( { id }) => {
 
   const append_ChildBlock = ( parentBlock, inputName:string, appendBlock ) =>
   {
+    if ( !parentBlock )
+      return;
     if ( !parentBlock.block )
     {
       if (!parentBlock.inputs[inputName]) {
@@ -101,14 +102,45 @@ const BlocklyTree = ( { id }) => {
   }
 
   const [firstBlock] = useState( restore_Blocks() );
-  const [block] = useState( firstBlock.blocks.blocks );
+  const [blockBlock] = useState( firstBlock.blocks.blocks );
+
+  const fetchTree2 = ( parentQaObject, qaObject, parentBlock, tree ) =>
+  {
+    const block = restore_Object( parentQaObject, qaObject );
+
+    if ( blockBlock.length === 0 )
+      blockBlock.push( block );
+
+    let input = null;
+    switch ( qaObject.typeId )
+    {
+      case SERVER:      input = 'SERVER';       break;
+      case COLLECTION:  input = 'COLLECTIONS';  break;
+      case SUITE:       input = 'SUITES';       break;
+      case CASE:        input = 'CASES';        break;
+      case BODY:        input = 'BODY';         break;
+      case TEST:        input = 'TESTS';        break;
+      case REPLACE:     input = 'REPLACE';      break;
+      case REMOVE:      input = 'REMOVE';       break;
+      case RESULT:      input = 'RESULT';       break;
+      case RESPONSE:    input = 'RESPONSE';     break;
+    }
+
+    if ( input )
+      append_ChildBlock( parentBlock, input, block );
+
+    qaObject.parent.map( m => {
+      const childrenQaObject = tree.objects.find( o => o.id === m.childrenId );
+      fetchTree2( qaObject, childrenQaObject, block, tree );
+    } );
+  }
   const fetchTree = ( tmpQaObject, tree ) => {
 
     if ( tmpQaObject.typeId === EXPERIMENT )
     {
       const experiment = tree.objects.find( o => o.id === tmpQaObject.id );
       const experimentBlock = restore_Object( null, experiment );
-      block.push( experimentBlock );
+      blockBlock.push( experimentBlock );
       ///////////////////////////////////////////////////
       /// SERVER
       const serverChildrenId = experiment.parent.find( h => h.parentId === experiment.id && h.childrenObjectTypeId === SERVER );
@@ -190,7 +222,7 @@ const BlocklyTree = ( { id }) => {
       }   // end if collections
     }
 
-    Blockly.serialization.workspaces.load(firstBlock, workspace);
+
   }
 
 
@@ -218,61 +250,15 @@ const BlocklyTree = ( { id }) => {
         setQaObject( tmpQaObject );
         setLoading(false);
 
-        fetchTree(tmpQaObject, tmpTree);
+        fetchTree2( null, tmpQaObject, null, tmpTree );
+        // fetchTree(tmpQaObject, tmpTree);
+        Blockly.serialization.workspaces.load(firstBlock, workspace);
       });
   }, [] );
 
-  const BlocklyElement = ( { qaObject, hierarchy, objects } ) =>
-  {
 
-    const children = qaObject.parent.map( m => m ).sort( (a, b) => a.childrenObjectTypeId - b.childrenObjectTypeId );
-    return (
-      <>
-        <div key={`parent${qaObject.id}`}>
-          {
-            qaObject.name
-          }
-          {block && (() => {
-            switch(qaObject.typeId) {
-              case EXPERIMENT:
-                // const o = restore_Object( null, qaObject );
-                // block.push( o );
-                // setExperiment( o );
-                break;
-              case SERVER:
-                // const server = restore_Object( 1, qaObject );
 
-                // firstBlock.blocks.blocks.push( server );
-                // console.log( JSON.stringify( firstBlock ) );
-                // experiment.inputs['SERVER'] = restore_Object( qaObject );
-                // const workspaceJSon = restore_Server( qaObject.name, qaObject.address, qaObject.method, qaObject.header );
-
-                break;
-
-            }
-            // Blockly.serialization.workspaces.load(firstBlock, workspace);
-          })()}
-        </div>
-
-        {
-          children.map( h => {
-            const childObject = objects.find( o => o.id === h.childrenId );
-            return (
-              childObject &&
-              <div key={`children${h.id}`} style={{marginLeft:'20px', marginTop: '10px'}}>
-                <BlocklyElement qaObject={childObject} objects={objects} hierarchy={hierarchy} />
-              </div>
-            )
-          } )
-        }
-      </>
-    )
-  }
-
-  return qaObject &&
-    <div style={{marginLeft:'40px'}}>
-      <BlocklyElement qaObject={ qaObject } hierarchy={ hierarchy } objects={ objects } />
-    </div>
+  return <></>
 }
 
 export default BlocklyTree
