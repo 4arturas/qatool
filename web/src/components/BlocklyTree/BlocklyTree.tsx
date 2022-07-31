@@ -148,11 +148,11 @@ const BlocklyTree = ( { id }) => {
 
         const tmpTree = ret.data.tree;
         const parentId = tmpTree.parentId;
-        const tmpQaObject = tmpTree.objects.find( o => o.id === parentId );
+        const qaObject = tmpTree.objects.find( o => o.id === parentId );
 
         setLoading(false);
 
-        fetchTree2( null, tmpQaObject, null, tmpTree );
+        fetchTree2( null, qaObject, null, tmpTree );
 
         Blockly.serialization.workspaces.load(firstBlock, workspace);
       });
