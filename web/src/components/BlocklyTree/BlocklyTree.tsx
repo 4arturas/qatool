@@ -156,7 +156,6 @@ const BlocklyTree = ( { id }) => {
               const suiteChildrenIds = collection.parent.filter(h => h.parentId === collection.id && h.childrenObjectTypeId === SUITE );
               if ( suiteChildrenIds.length > 0 )
               {
-                // collectionBlock.block.inputs['SUITES'] = null;
                 suiteChildrenIds.map( s => {
                   const suite = tree.objects.find( o => o.id === s.childrenId );
                   let suiteBlock = null;
