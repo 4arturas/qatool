@@ -58,160 +58,142 @@ const BlocklyTree = ( { id }) => {
 
   const [loading, setLoading] = useState( false );
 
+  const [tree, setTree] = useState(null);
   const [hierarchy, setHierarchy] = useState([]);
   const [objects, setObjects] = useState([]);
   const [qaObject, setQaObject] = useState( null );
 
-  const append_ChildBlock = ( collectionBlock, inputName:string, appendBlock ) =>
+  const append_ChildBlock = ( parentBlock, inputName:string, appendBlock ) =>
   {
-    if ( !collectionBlock.block.inputs[inputName] )
+    if ( !parentBlock.block )
     {
-      collectionBlock.block.inputs[inputName] = appendBlock;
-      return appendBlock;
-    }
-    else
-    {
-      let block = collectionBlock.block.inputs[inputName].block;
-      while ( 1 )
-      {
-        if ( !block.next )
-        {
-          block.next = appendBlock;
-          break;
+      if (!parentBlock.inputs[inputName]) {
+        parentBlock.inputs[inputName] = appendBlock;
+        return appendBlock;
+      } else {
+        let block = parentBlock.inputs[inputName].block;
+        while (1) {
+          if (!block.next) {
+            block.next = appendBlock;
+            break;
+          }
+          block = block.next.block;
+          return block;
         }
-        block = block.next.block;
-        return block;
+      }
+    }
+    else {
+      if (!parentBlock.block.inputs[inputName]) {
+        parentBlock.block.inputs[inputName] = appendBlock;
+        return appendBlock;
+      } else {
+        let block = parentBlock.block.inputs[inputName].block;
+        while (1) {
+          if (!block.next) {
+            block.next = appendBlock;
+            break;
+          }
+          block = block.next.block;
+          return block;
+        }
       }
     }
   }
 
-  const fetchTree = () => {
-    setLoading( true );
-    client
-      .query( { query: QUERY, variables: { id: id } } )
-      .then( ret => {
-        const tree = ret.data.tree;
-        const parentId = tree.parentId;
-        setHierarchy( tree.hierarchy );
-        setObjects( tree.objects );
-        const tmpQaObject = tree.objects.find( o => o.id === parentId );
-        setQaObject( tmpQaObject );
+  const [firstBlock] = useState( restore_Blocks() );
+  const [block] = useState( firstBlock.blocks.blocks );
+  const fetchTree = ( tmpQaObject, tree ) => {
 
-        const blocks = restore_Blocks();
-        const blockChildren = blocks.blocks.blocks;
-        if ( tmpQaObject.typeId === EXPERIMENT )
-        {
-          const e = tree.objects.find( o => o.id === tmpQaObject.id );
-          const experiment = restore_Object( null, e );
-          blockChildren.push( experiment );
+    if ( tmpQaObject.typeId === EXPERIMENT )
+    {
+      const experiment = tree.objects.find( o => o.id === tmpQaObject.id );
+      const experimentBlock = restore_Object( null, experiment );
+      block.push( experimentBlock );
+      ///////////////////////////////////////////////////
+      /// SERVER
+      const serverChildrenId = experiment.parent.find( h => h.parentId === experiment.id && h.childrenObjectTypeId === SERVER );
+      if ( serverChildrenId )
+      {
+        const server = tree.objects.find( s => s.id === serverChildrenId.childrenId );
+        const serverBlock = restore_Object( experiment, server );
+        append_ChildBlock( experimentBlock, 'SERVER', serverBlock );
+      }
 
+      ///////////////////////////////////////////////////
+      /// COLLECTION
+      const collectionChildrenIds = experiment.parent.filter( p => p.childrenId && p.childrenObjectTypeId === COLLECTION );
+      if ( collectionChildrenIds.length > 0 )
+      {
+        collectionChildrenIds.map( c => {
+          const collection = tree.objects.find( o => o.id === c.childrenId );
+          let collectionBlock = restore_Object( experiment, collection );
+          append_ChildBlock( experimentBlock, 'COLLECTIONS', collectionBlock );
           ///////////////////////////////////////////////////
-          /// SERVER
-          const serverChildrenId = tmpQaObject.parent.find( h => h.parentId === tmpQaObject.id && h.childrenObjectTypeId === SERVER );
-          if ( serverChildrenId )
+          /// SUITE
+          const suiteChildrenIds = collection.parent.filter(h => h.parentId === collection.id && h.childrenObjectTypeId === SUITE );
+          if ( suiteChildrenIds.length > 0 )
           {
-            const server = tree.objects.find( s => s.id === serverChildrenId.childrenId );
-            experiment.inputs['SERVER'] = restore_Object( e, server );
-          }
-
-          ///////////////////////////////////////////////////
-          /// COLLECTION
-          const collectionChildrenIds = tmpQaObject.parent.filter( p => p.childrenId && p.childrenObjectTypeId === COLLECTION );
-          if ( collectionChildrenIds.length > 0 )
-          {
-            experiment.inputs['COLLECTIONS'] = null;
-            collectionChildrenIds.map( c => {
-              const collection = tree.objects.find( o => o.id === c.childrenId );
-              let collectionBlock = null;
-              if ( !experiment.inputs['COLLECTIONS'] )
-              {
-                collectionBlock = restore_Object( e, collection );
-                experiment.inputs['COLLECTIONS'] = collectionBlock;
-              }
-              else
-              {
-                let block = experiment.inputs['COLLECTIONS'].block;
-                while ( 1 )
-                {
-                  if ( !block.next )
-                  {
-                    collectionBlock = restore_Object( e, collection );
-                    block.next = collectionBlock;
-                    break;
-                  }
-                  block = block.next.block;
-                }
-              }
+            suiteChildrenIds.map( s => {
+              const suite = tree.objects.find( o => o.id === s.childrenId );
+              let suiteBlock = restore_Object( collection, suite );
+              append_ChildBlock( collectionBlock, 'SUITES', suiteBlock );
               ///////////////////////////////////////////////////
-              /// SUITE
-              const suiteChildrenIds = collection.parent.filter(h => h.parentId === collection.id && h.childrenObjectTypeId === SUITE );
-              if ( suiteChildrenIds.length > 0 )
+              /// CASE
+              const caseChildrenIds = suite.parent.filter( h => h.parentId === suite.id && h.childrenObjectTypeId === CASE );
+              if ( caseChildrenIds.length > 0 )
               {
-                suiteChildrenIds.map( s => {
-                  const suite = tree.objects.find( o => o.id === s.childrenId );
-                  let suiteBlock = restore_Object( collection, suite );
-                  append_ChildBlock( collectionBlock, 'SUITES', suiteBlock );
+                caseChildrenIds.map( c => {
+                  const cAse = tree.objects.find( o => o.id === c.childrenId );
+                  let caseBlock = restore_Object( suite, cAse );
+                  append_ChildBlock( suiteBlock, 'CASES', caseBlock );
                   ///////////////////////////////////////////////////
-                  /// CASE
-                  const caseChildrenIds = suite.parent.filter( h => h.parentId === suite.id && h.childrenObjectTypeId === CASE );
-                  if ( caseChildrenIds.length > 0 )
+                  /// BODY
+                  const bodyChildren = cAse.parent.find( c => c.childrenObjectTypeId === BODY );
+                  const body = tree.objects.find( b => b.id === bodyChildren.childrenId );
+                  const bodyBlock = restore_Object( cAse, body );
+                  append_ChildBlock( caseBlock, 'BODY', bodyBlock );
+                  ///////////////////////////////////////////////////
+                  /// TESTS
+                  const testIds = cAse.parent.filter( c => c.childrenObjectTypeId === TEST );
+                  if ( testIds.length > 0 )
                   {
-                    caseChildrenIds.map( c => {
-                      const cAse = tree.objects.find( o => o.id === c.childrenId );
-                      let caseBlock = restore_Object( suite, cAse );
-                      append_ChildBlock( suiteBlock, 'CASES', caseBlock );
-                      ///////////////////////////////////////////////////
-                      /// BODY
-                      const bodyChildren = cAse.parent.find( c => c.childrenObjectTypeId === BODY );
-                      const body = tree.objects.find( b => b.id === bodyChildren.childrenId );
-                      caseBlock.block.inputs['BODY'] = restore_Object( cAse, body );
-                      ///////////////////////////////////////////////////
-                      /// TESTS
-                      const testIds = cAse.parent.filter( c => c.childrenObjectTypeId === TEST );
-                      if ( testIds.length > 0 )
-                      {
-                        testIds.map( tId => {
-                          const test = tree.objects.find( t => t.id === tId.childrenId );
-                          const replaceId = test.parent.find( r => r.childrenObjectTypeId === REPLACE ).childrenId;
-                          const removeId = test.parent.find( r => r.childrenObjectTypeId === REMOVE ).childrenId;
-                          const resultId = test.parent.find( r => r.childrenObjectTypeId === RESULT ).childrenId;
-                          const responseId = test.parent.find( r => r.childrenObjectTypeId === RESPONSE ).childrenId;
-                          const replace = tree.objects.find( r => r.id === replaceId );
-                          const remove = tree.objects.find( r => r.id === removeId );
-                          const result = tree.objects.find( r => r.id === resultId );
-                          const response = tree.objects.find( r => r.id === responseId );
+                    testIds.map( tId => {
+                      const test = tree.objects.find( t => t.id === tId.childrenId );
+                      const replaceId = test.parent.find( r => r.childrenObjectTypeId === REPLACE ).childrenId;
+                      const removeId = test.parent.find( r => r.childrenObjectTypeId === REMOVE ).childrenId;
+                      const resultId = test.parent.find( r => r.childrenObjectTypeId === RESULT ).childrenId;
+                      const responseId = test.parent.find( r => r.childrenObjectTypeId === RESPONSE ).childrenId;
+                      const replace = tree.objects.find( r => r.id === replaceId );
+                      const remove = tree.objects.find( r => r.id === removeId );
+                      const result = tree.objects.find( r => r.id === resultId );
+                      const response = tree.objects.find( r => r.id === responseId );
 
-                          const testBlock = restore_Object( cAse, test );
-                          append_ChildBlock( caseBlock, 'TESTS', testBlock );
-                          const replaceBlock = restore_Object( test, replace );
-                          const removeBlock = restore_Object( test, remove );
-                          const resultBlock = restore_Object( test, result );
-                          const responseBlock = restore_Object( test, response );
-                          append_ChildBlock( testBlock, 'REPLACE', replaceBlock);
-                          append_ChildBlock( testBlock, 'REMOVE', removeBlock);
-                          append_ChildBlock( testBlock, 'RESULT', resultBlock);
-                          append_ChildBlock( testBlock, 'RESPONSE', responseBlock);
-                        }); // end map tests
-                      }
-                    });
+                      const testBlock = restore_Object( cAse, test );
+                      append_ChildBlock( caseBlock, 'TESTS', testBlock );
+                      const replaceBlock = restore_Object( test, replace );
+                      const removeBlock = restore_Object( test, remove );
+                      const resultBlock = restore_Object( test, result );
+                      const responseBlock = restore_Object( test, response );
+                      append_ChildBlock( testBlock, 'REPLACE', replaceBlock);
+                      append_ChildBlock( testBlock, 'REMOVE', removeBlock);
+                      append_ChildBlock( testBlock, 'RESULT', resultBlock);
+                      append_ChildBlock( testBlock, 'RESPONSE', responseBlock);
+                    }); // end map tests
+                  }
+                });
 
-                  } // end if case
-                }); // end map suites;
-              } // end if suites
+              } // end if case
+            }); // end map suites;
+          } // end if suites
 
-            } ); // end map collections
-          }   // end if collections
-        }
+        } ); // end map collections
+      }   // end if collections
+    }
 
-
-        Blockly.serialization.workspaces.load(blocks, workspace);
-
-        setLoading( false );
-      });
+    Blockly.serialization.workspaces.load(firstBlock, workspace);
   }
 
-  const [firstBlock, setFirstBlock] = useState( null );
-  const [block, setBlock] = useState( null );
+
   let workspace;
   useEffect( () => {
     Blockly.common.defineBlocksWithJsonArray(comp);
@@ -222,30 +204,21 @@ const BlocklyTree = ( { id }) => {
         },
         drag: true,
         wheel: true} } ) );
-    // setWorkspace( tmpWorkspace );
-
-    // const tmpFirstBlock = restore_Blocks();
-    // setFirstBlock( tmpFirstBlock );
-    // const tmpBlock = tmpFirstBlock.blocks.blocks;
-    // setBlock( tmpBlock );
-
-    // const firstBlock = restore_Blocks();
-    // block = firstBlock.blocks.blocks;
-    // Blockly.serialization.workspaces.load(firstBlock, workspace);
-    fetchTree();
-
 
     setLoading( true );
     client
       .query( { query: QUERY, variables: { id: id } } )
       .then( ret => {
-        const tree = ret.data.tree;
-        const parentId = tree.parentId;
-        setHierarchy( tree.hierarchy );
-        setObjects( tree.objects );
-        const tmpQaObject = tree.objects.find( o => o.id === parentId );
+        const tmpTree = ret.data.tree;
+        setTree( tmpTree );
+        const parentId = tmpTree.parentId;
+        setHierarchy( tmpTree.hierarchy );
+        setObjects( tmpTree.objects );
+        const tmpQaObject = tmpTree.objects.find( o => o.id === parentId );
         setQaObject( tmpQaObject );
         setLoading(false);
+
+        fetchTree(tmpQaObject, tmpTree);
       });
   }, [] );
 
