@@ -87,9 +87,9 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             {record.name}
           </Link>
           <>
-            <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
+            <FontAwesomeIcon icon={faCubesStacked} onClick={()=> navigate(routes.blocklyTree({id:record.id}))} style={{cursor:'pointer', float:'right', marginLeft: '10px'}}/>
 
-            <Link to={routes.blocklyTree({id:record.id})} style={{float:'right'}}>[Blockly]</Link>
+            <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
 
             {record.typeId === EXPERIMENT && record.executed &&
             <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
@@ -98,6 +98,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
               </Link>
             </Tooltip>
             }
+
           </>
         </div>
     },
