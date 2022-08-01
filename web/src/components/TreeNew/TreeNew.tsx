@@ -116,16 +116,24 @@ const TreeNew = ( { id }) => {
         setObjects( tree.objects );
         setQaObject( tree.objects.find( o => o.id === parentId ) );
 
-        const caseIds = tree.hierarchy.filter( t => t.childrenObjectTypeId === CASE ).map( m => m.childrenId );
-        const cases = tree.objects.filter( o => caseIds.includes( o.id ));
-        let threadsLoops = 0;
-        cases.forEach( m => threadsLoops += (m.threads*m.loops) );
-        const totalTestsCount =
-          tree.hierarchy.filter( c => c.childrenObjectTypeId === COLLECTION ).length *
-          tree.hierarchy.filter( s => s.childrenObjectTypeId === SUITE ).length *
-          tree.hierarchy.filter( t => t.childrenObjectTypeId === TEST ).length *
-          threadsLoops;
-        setTotalTestsNumber( totalTestsCount );
+        let num = 0;
+        const collectionIds = tree.hierarchy.filter( c => c.childrenObjectTypeId === COLLECTION ).map( m => m.childrenId );
+        collectionIds.forEach( collectionId => {
+          const collection = tree.objects.find( o => o.id === collectionId );
+          const suiteIds = tree.hierarchy.filter( c => c.parentId === collection.id && c.childrenObjectTypeId === SUITE ).map( m => m.childrenId );
+          suiteIds.forEach( suiteId => {
+            const suite =  tree.objects.find( o => o.id === suiteId );
+            const caseIds = tree.hierarchy.filter( c => c.parentId === suite.id && c.childrenObjectTypeId === CASE ).map( m => m.childrenId );
+            caseIds.forEach( caseId => {
+              const cAse = tree.objects.find( o => o.id === caseId );
+              const testIds = tree.hierarchy.filter( c => c.parentId === cAse.id && c.childrenObjectTypeId === TEST );
+              testIds.forEach( testId => {
+                num += ( cAse.threads * cAse.loops);
+              });
+            });
+          });
+        });
+        setTotalTestsNumber( num );
 
         setState( STATE_INIT );
       });
@@ -186,6 +194,7 @@ const TreeNew = ( { id }) => {
         .then( ret => {
           const experimentResults = ret.data.getExperimentResults;
           setExperiments( experimentResults );
+          console.log( 'experimentResults', experimentResults.length, 'totalTestsNumber', totalTestsNumber );
           if ( experimentResults.length === totalTestsNumber )
           {
             toast.success( 'Experiment was executed successfully' );
