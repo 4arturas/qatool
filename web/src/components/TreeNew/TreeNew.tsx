@@ -202,13 +202,16 @@ const TreeNew = ( { id }) => {
         .then( ret => {
           const experimentResults = ret.data.getExperimentResults;
           setExperiments( experimentResults );
-          console.log( 'experimentResults', experimentResults.length, 'totalTestsNumber', totalTestsNumber );
-          if ( experimentResults.length === totalTestsNumber )
+          if ( fetchExperimentsInterval && experimentResults.length === totalTestsNumber )
           {
+            clearInterval( fetchExperimentsInterval );
+            fetchExperimentsInterval = null;
+
             toast.success( 'Experiment was executed successfully' );
+
             setState( STATE_INIT );
             fetchTree();
-            clearInterval( fetchExperimentsInterval );
+
           }
         })
         .catch( e => console.log( e ) );
@@ -284,11 +287,12 @@ const TreeNew = ( { id }) => {
                    toast.error( error );
                    return;
                  }
+
+                 fetchExperimentsInterval = setInterval( () => {
+                   getExperimentResults( qaObject.id );
+                 }, delay === 0 ? 0 : delay/3 );
                });
 
-               fetchExperimentsInterval = setInterval( () => {
-                 getExperimentResults( qaObject.id );
-               }, delay === 0 ? 0 : delay/3 );
 
              }}
              // onCancel={cancel}
@@ -448,7 +452,12 @@ const TreeNew = ( { id }) => {
             </>
           /*has role*/}
 
-          { (qaObject.typeId === EXPERIMENT && !qaObject.executed ) && <span style={{marginLeft:'20px'}}>Delay between each user {delay}ms</span>}
+          {
+            (hasRole([ROLE_ADMIN]) && qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
+            <span style={{marginLeft:'20px'}}>
+              Delay between each user <input type='number' value={delay} style={{width:'100px', border: '1px solid gray'}} onChange={(e)=>setDelay(parseInt(e.target.value))}/>ms
+            </span>
+          }
 
 
 
