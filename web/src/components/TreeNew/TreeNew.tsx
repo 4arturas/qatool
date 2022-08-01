@@ -22,6 +22,8 @@ import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 import {toast} from "@redwoodjs/web/toast";
 import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
 import ObjectView from "src/components/ObjectView/ObjectView";
+import ExperimentThreadsLoops from "src/components/ExperimentThreadsLoops/ExperimentThreadsLoops";
+import ThreadsLoops from "src/components/ThreadsLoops/ThreadsLoops";
 
 export const QUERY = gql`
   query FindTreeQueryNew($id: Int!) {
@@ -172,6 +174,12 @@ const TreeNew = ( { id }) => {
       },
       runExperiment: {
         marginLeft: '8px'
+      },
+      shadowContainer: {
+        // -webkit-box-shadow: '2px 4px 10px 1px rgba(0,0,0,0.47)',
+        boxShadow: '2px 4px 10px 1px rgba(201, 201, 201, 0.47)',
+        webkitBoxShadow: '2px 4px 10px 1px rgba(0,0,0,0.47)',
+        borderRadius: '10px',
       }
     }
 
@@ -220,13 +228,19 @@ const TreeNew = ( { id }) => {
 
       if ( qaObject.typeId !== TEST ) return <></>
 
-      return <div>
-        {experiments.filter( f => f.testId === qaObject.id ).map( e => {
-          return (
-            <div style={{marginRight:'5px'}}>User {e.thread+1} Request {e.loop+1}</div>
-          )
-        })}
-      </div>
+      return (
+        <div  style={{marginTop:'10px', marginRight:'10px', maxHeight: '150px', overflowY: 'scroll', ...stylingObject.shadowContainer}}>
+          <ThreadsLoops
+                experiments={experiments.filter( f => f.testId === qaObject.id )}
+                generateChartElement={
+                  (experiment) => {
+                    const {thread, loop, requestDate, responseDate, collectionId, suiteId, caseId, testId} = experiment;
+                    return [`User - ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
+                  }
+                }
+              />
+        </div>
+      )
     }
 
     const RunExperiment = ( { qaObject }) =>
@@ -436,8 +450,7 @@ const TreeNew = ( { id }) => {
 
           { (qaObject.typeId === EXPERIMENT && !qaObject.executed ) && <span style={{marginLeft:'20px'}}>Delay between each user {delay}ms</span>}
 
-          <ShowExperiments qaObject={qaObject} />
-          { experiments && <ShowExperimentResults qaObject={qaObject} /> }
+
 
         </div>
 
@@ -452,6 +465,9 @@ const TreeNew = ( { id }) => {
             )
           } )
         }
+        <ShowExperiments qaObject={qaObject} />
+        { experiments && <ShowExperimentResults qaObject={qaObject} /> }
+
       </>
     );
   }
