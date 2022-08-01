@@ -19,8 +19,8 @@ import {useAuth} from "@redwoodjs/auth";
 const { TextArea } = Input;
 
 const FIND_QA_OBJECTS_BY_TYPE = gql`
-  query FindQaObjectByTypeIdQuery($typeId: Int!) {
-    getQaObjectsByType: getQaObjectsByType(typeId: $typeId) {
+  query FindQaObjectByTypeIdQuery($id: Int, $typeId: Int!) {
+    getQaObjectsByType: getQaObjectsByType(id: $id, typeId: $typeId) {
       id typeId name description batchId threads loops
       json
       jsonata
@@ -163,17 +163,17 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
     },
   })
 
-  const getObjectByTypeId = async ( typeId:number, callback ) =>
+  const getObjectByTypeId = async ( id:number, typeId:number, callback ) =>
   {
     const data = await client.query({
       query: FIND_QA_OBJECTS_BY_TYPE,
-      variables: {typeId:typeId}
+      variables: {id: id, typeId:typeId}
     });
 
     const children = data.data.getQaObjectsByType;
     callback( children.length === 0 ? STATE_CHILDREN_CAN_NOT_FIND_ANY : children );
   }
-  const fetchChildren = ( typeId:number) =>
+  const fetchChildren = ( id:number, typeId:number) =>
   {
     setServer(STATE_CHILDREN_DO_NOTHING );
     setCollection(STATE_CHILDREN_DO_NOTHING );
@@ -206,7 +206,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
       if ( callbackFunction )
       {
         callbackFunction( STATE_CHILDREN_LOADING );
-        getObjectByTypeId( childrenTypeId, callbackFunction );
+        getObjectByTypeId( id, childrenTypeId, callbackFunction );
       }
     } );
   }
@@ -288,7 +288,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
       icon={icon}
       style={stylingObject.icon}
       onClick={ () => {
-        fetchChildren( typeId );
+        fetchChildren( qaObject?.id, typeId );
 
         const GET_ORGANIZATIONS = gql`
           query GetOrganizations {
@@ -441,7 +441,7 @@ const ObjectNewTest = ({typeId, qaObject, children, cloneObject, parentId, befor
                 {
                   setObjectTypeId(typeId);
                   setObjectColor( typeIdToColor(typeId));
-                  fetchChildren( typeId );
+                  fetchChildren( qaObject?.id, typeId );
                 } }
               />
             </Form.Item>

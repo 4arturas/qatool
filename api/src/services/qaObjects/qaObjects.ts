@@ -35,11 +35,26 @@ export const qaObject = ({ id }) => {
   return db.qaObject.findFirst( query );
 }
 
-export const getQaObjectsByType: QueryResolvers['getQaObjectsByType'] = async ({ typeId }) => {
+export const getQaObjectsByType: QueryResolvers['getQaObjectsByType'] = async ({ id, typeId }) => {
 
-  const query = Prisma.sql`SELECT * FROM QaObject qo where qo.typeId = ${typeId} AND qo.executed IS NULL  AND qo.id not in (
-    SELECT r.childrenId as id from QaObjectRelationship r WHERE r.childrenId in ( SELECT id from QaObject o where o.typeId  = ${typeId} )
-  )`;
+  let query: any;
+
+  if ( !id )
+    query = Prisma.sql`SELECT * FROM QaObject qo where qo.typeId = ${typeId} AND qo.executed IS NULL  AND qo.id not in (
+      SELECT r.childrenId as id from QaObjectRelationship r WHERE r.childrenId in ( SELECT id from QaObject o where o.typeId  = ${typeId} )
+    )`;
+  else
+    query = Prisma.sql`select *
+                       from QaObject qo
+                       where qo.id in (
+                         SELECT childrenId
+                         FROM QaObjectRelationship qor
+                         where qor.parentId = ${id} and qor.childrenObjectTypeId = ${typeId}
+                       )
+      UNION
+        SELECT * FROM QaObject qo where qo.typeId = ${typeId} AND qo.executed IS NULL  AND qo.id not in (
+      SELECT r.childrenId as id from QaObjectRelationship r WHERE r.childrenId in ( SELECT id from QaObject o where o.typeId  = ${typeId} )
+    )`;
 
   return db.$queryRaw( query );
 }
