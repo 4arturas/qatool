@@ -48,16 +48,16 @@ model QaObjectType {
 model QaObjectRelationship {
   id Int @id @default(autoincrement())
 
-  parent   QaObject @relation("Parent", fields: [parentId], references: [id])
-  parentId Int
+  parent                  QaObject      @relation("Parent", fields: [parentId], references: [id])
+  parentId                Int
 
-  children   QaObject @relation("Children", fields: [childrenId], references: [id])
-  childrenId Int
+  children                QaObject      @relation("Children", fields: [childrenId], references: [id])
+  childrenId              Int           @unique
 
-  childrenObjectType   QaObjectType @relation("ChildrenObjectType", fields: [childrenObjectTypeId], references: [id])
-  childrenObjectTypeId Int
+  childrenObjectType      QaObjectType  @relation("ChildrenObjectType", fields: [childrenObjectTypeId], references: [id])
+  childrenObjectTypeId    Int
 
-  @@unique([parentId, childrenId])
+  // @@unique([parentId, childrenId])
 }
 
 model ExperimentResult {
