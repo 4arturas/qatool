@@ -11,7 +11,7 @@ const BlocklyTreePage = ( {id} ) => {
   return (
     <>
       <MetaTags title="BlocklyTree" description="BlocklyTree page" />
-      <div id="ide" style={{width:'100%', height: `${window.innerHeight-100}px`}}></div>
+
       <BlocklyTree id={id} />
     </>
   )

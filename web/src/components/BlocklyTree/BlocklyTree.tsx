@@ -210,7 +210,7 @@ const BlocklyTree = ( { id }) => {
 
 
 
-  return <></>
+  return <div id="ide" style={{width:'100%', height: `${window.innerHeight-100}px`}}></div>
 }
 
 export default BlocklyTree
