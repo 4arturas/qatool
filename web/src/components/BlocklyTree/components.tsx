@@ -11,6 +11,7 @@ import {
   TEST,
   typeIdToColor
 } from "src/global";
+import {qaObject} from "src/services/qaObjects/qaObjects";
 
 export const comp = [
   {
@@ -436,6 +437,11 @@ const wrap_Block = ( type ) => {
   return { "block":  type  }
 }
 
+const add_Data = ( qaObject ) =>
+{
+  return JSON.stringify({id:qaObject.id});
+}
+
 export const restore_Experiment = ( o, name ) => {
   return {
     "type": "experiment",
@@ -445,13 +451,15 @@ export const restore_Experiment = ( o, name ) => {
     "inputs": {
       // "SERVER": null,
       // "COLLECTIONS": null
-    }
+    },
+    "data": add_Data(o),
   }
 }
 export const restore_Server = ( o, name, address, method, headers ) => {
   return {
       "type": "server",
-      "fields": {"NAME": `${name}`, "ADDRESS": `${address}`, "METHOD": `${method}`, "HEADERS": `${headers}`}
+      "fields": {"NAME": `${name}`, "ADDRESS": `${address}`, "METHOD": `${method}`, "HEADERS": `${headers}`},
+      "data": add_Data(o)
   };
 }
 export const restore_Collection = ( o, name:string, batchId:number ) => {
@@ -461,7 +469,8 @@ export const restore_Collection = ( o, name:string, batchId:number ) => {
       "next": null,
       "inputs": {
         // "SUITES": null,
-      }
+      },
+      "data": add_Data(o)
   };
 }
 export const restore_Suite = ( o, name:string, batchId:number ) => {
@@ -471,7 +480,8 @@ export const restore_Suite = ( o, name:string, batchId:number ) => {
       "next": null,
       "inputs": {
         // "CASES": null,
-      }
+      },
+      "data": add_Data(o)
   };
 }
 export const restore_Case = ( o, name:string, batchId:number, threads:number, loops:number ) => {
@@ -482,7 +492,8 @@ export const restore_Case = ( o, name:string, batchId:number, threads:number, lo
       "inputs": {
         // "BODY": null,
         // "TESTS": null,
-      }
+      },
+      "data": add_Data(o)
   };
 }
 
@@ -490,6 +501,7 @@ export const restore_Body = ( o, name:string, json:string ) => {
   return {
       "type": "body",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
+      "data": add_Data(o)
   };
 }
 
@@ -503,7 +515,8 @@ export const restore_Test = ( o, name:string ) => {
         // "REMOVE": null,
         // "RESULT": null,
         // "RESPONSE": null,
-      }
+      },
+      "data": add_Data(o)
   };
 }
 
@@ -511,6 +524,7 @@ export const restore_Replace = ( o, name:string, json:string ) => {
   return {
       "type": "replace",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
+      "data": add_Data(o)
     }
 }
 
@@ -518,6 +532,7 @@ export const restore_Remove = ( o, name:string, json:string ) => {
   return {
       "type": "remove",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
+      "data": add_Data(o)
   };
 }
 
@@ -525,6 +540,7 @@ export const restore_Result = ( o, name:string, json:string, jsonata:string ) =>
   return {
       "type": "result",
       "fields": {"NAME": `${name}`, "JSON": `${json}`, "JSONATA": `${jsonata}`},
+      "data": add_Data(o)
   };
 }
 
@@ -532,5 +548,6 @@ export const restore_Response = ( o, name:string, json:string ) => {
   return {
       "type": "response",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
+      "data": add_Data(o)
   };
 }
