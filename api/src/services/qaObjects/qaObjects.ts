@@ -196,10 +196,10 @@ export const searchQaObjects = async ( { searchCriteria, page, pageSize, count }
     }
   });
 
-  if ( !context.currentUser.roles.includes( ROLE_ADMIN ) )
+/*  if ( !context.currentUser.roles.includes( ROLE_ADMIN ) )
   {
     whereClause.AND.push( { typeId: { equals: EXPERIMENT } } );
-  }
+  }*/
 
   addFilterDependentOnRoles( whereClause.AND );
 

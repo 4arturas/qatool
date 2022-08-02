@@ -71,7 +71,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
       dataIndex: 'typeId',
       key: 'typeId',
       width: 100,
-      display: hasRole([ROLE_ADMIN]),
+      display: true,
       render: (_, record) =>
         typeIdToTag(record.typeId)
     },
@@ -87,7 +87,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             {record.name}
           </Link>
           <>
-            <FontAwesomeIcon icon={faCubesStacked} onClick={()=> navigate(routes.blocklyTree({id:record.id}))} style={{cursor:'pointer', float:'right', marginLeft: '10px'}}/>
+            { hasRole(ROLE_ADMIN) && <FontAwesomeIcon icon={faCubesStacked} onClick={()=> navigate(routes.blocklyTree({id:record.id}))} style={{cursor:'pointer', float:'right', marginLeft: '10px'}}/>}
 
             <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
 
@@ -161,10 +161,11 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
     {
       title: 'Action',
       key: 'action',
-      display: hasRole([ROLE_ADMIN]),
-      render: (_, record) => hasRole([ROLE_ADMIN] ) && <>
+      display: true,
+      render: (_, record) =>
         <span id={`edibBlock${record.id}${record.typeId}`} style={{whiteSpace:'nowrap'}}>
           <ObjectView qaObject={record} />&nbsp;&nbsp;&nbsp;
+          { hasRole([ROLE_ADMIN] ) && <>
           { !record.executed &&
             <ObjectNewTest
               typeId={record.typeId}
@@ -288,8 +289,9 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
               }
             })
           }
+          </> }
         </span>
-      </>,
+
     },
   ];
 

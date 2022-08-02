@@ -325,7 +325,7 @@ const TreeNew = ( { id }) => {
           - {qaObject.name}&nbsp;&nbsp;&nbsp;<ObjectView qaObject={qaObject} />
 
           {
-            (hasRole([ROLE_ADMIN]) && qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
+            (qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
             <span key={`runExperiment${qaObject.id}`} style={stylingObject.runExperiment}>
               <RunExperiment qaObject={qaObject} />
             </span>

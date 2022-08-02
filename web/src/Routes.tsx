@@ -34,14 +34,14 @@ const Routes = () => {
 
           <Route path="/qa-objects/{page:Int}/{pageSize:Int}/{count:Int}" page={QaObjectsPage} name="qaObjects" />
 
+          <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
+
           <Route path="/experiment/{id:Int}" page={ExperimentPage} name="experiment" />
           <Route path="/experiment-test/{caseId:Int}/{testId:Int}" page={ExperimentTestPage} name="experimentTest" />
           <Route path="/experiments/{page:Int}/{pageSize:Int}/{count:Int}" page={ExperimentResultsPage} name="experimentResults" />
 
           <Private unauthenticated="forbidden" roles={['admin']}>
-            <Route path="/tree/{id:Int}" page={TreePage} name="tree" />
             <Route path="/blockly-tree/{id:Int}" page={BlocklyTreePage} name="blocklyTree" />
-
             <Route path="/users" page={UsersPage} name="users" />
             <Route path="/organizations" page={OrganizationsPage} name="organizations" />
           </Private>
