@@ -412,17 +412,17 @@ export const restore_Object = ( qaObjectParent, qaObject ) => {
   let type;
   switch ( qaObject.typeId )
   {
-    case EXPERIMENT: return restore_Experiment(qaObject.name);
-    case SERVER: type = restore_Server( qaObject.name, qaObject.address, qaObject.method, qaObject.header ); break;
-    case COLLECTION: type = restore_Collection( qaObject.name, qaObject.batchId ); break;
-    case SUITE: type = restore_Suite( qaObject.name, qaObject.batchId ); break;
-    case CASE: type =  restore_Case( qaObject.name, qaObject.batchId, qaObject.threads, qaObject.loops ); break;
-    case BODY: type = restore_Body( qaObject.name, qaObject.json ); break;
-    case TEST: type = restore_Test( qaObject.name ); break;
-    case REPLACE: type = restore_Replace( qaObject.name, qaObject.json ); break;
-    case REMOVE: type = restore_Remove( qaObject.name, qaObject.json ); break;
-    case RESULT: type = restore_Result( qaObject.name, qaObject.json, qaObject.jsonata ); break;
-    case RESPONSE: type = restore_Response( qaObject.name, qaObject.json ); break;
+    case EXPERIMENT: return restore_Experiment( qaObject, qaObject.name);
+    case SERVER: type = restore_Server( qaObject, qaObject.name, qaObject.address, qaObject.method, qaObject.header ); break;
+    case COLLECTION: type = restore_Collection( qaObject, qaObject.name, qaObject.batchId ); break;
+    case SUITE: type = restore_Suite( qaObject, qaObject.name, qaObject.batchId ); break;
+    case CASE: type =  restore_Case( qaObject, qaObject.name, qaObject.batchId, qaObject.threads, qaObject.loops ); break;
+    case BODY: type = restore_Body( qaObject, qaObject.name, qaObject.json ); break;
+    case TEST: type = restore_Test( qaObject, qaObject.name ); break;
+    case REPLACE: type = restore_Replace( qaObject, qaObject.name, qaObject.json ); break;
+    case REMOVE: type = restore_Remove( qaObject, qaObject.name, qaObject.json ); break;
+    case RESULT: type = restore_Result( qaObject, qaObject.name, qaObject.json, qaObject.jsonata ); break;
+    case RESPONSE: type = restore_Response( qaObject, qaObject.name, qaObject.json ); break;
     default: throw 'UNDEFINED CASE';
   }
 
@@ -436,7 +436,7 @@ const wrap_Block = ( type ) => {
   return { "block":  type  }
 }
 
-export const restore_Experiment = ( name ) => {
+export const restore_Experiment = ( o, name ) => {
   return {
     "type": "experiment",
     "fields": {"NAME": `${name}`},
@@ -448,13 +448,13 @@ export const restore_Experiment = ( name ) => {
     }
   }
 }
-export const restore_Server = (name, address, method, headers) => {
+export const restore_Server = ( o, name, address, method, headers ) => {
   return {
       "type": "server",
       "fields": {"NAME": `${name}`, "ADDRESS": `${address}`, "METHOD": `${method}`, "HEADERS": `${headers}`}
   };
 }
-export const restore_Collection = (name:string, batchId:number) => {
+export const restore_Collection = ( o, name:string, batchId:number ) => {
   return {
       "type": "collection",
       "fields": {"NAME": `${name}`, "BATCH": `${batchId}`},
@@ -464,7 +464,7 @@ export const restore_Collection = (name:string, batchId:number) => {
       }
   };
 }
-export const restore_Suite = (name:string, batchId:number) => {
+export const restore_Suite = ( o, name:string, batchId:number ) => {
   return {
       "type": "suite",
       "fields": {"NAME": `${name}`, "BATCH": `${batchId}`},
@@ -474,7 +474,7 @@ export const restore_Suite = (name:string, batchId:number) => {
       }
   };
 }
-export const restore_Case = (name:string, batchId:number, threads:number, loops:number) => {
+export const restore_Case = ( o, name:string, batchId:number, threads:number, loops:number ) => {
   return {
       "type": "case",
       "fields": {"NAME": `${name}`, "BATCH": `${batchId}`, "THREADS": `${threads}`, "LOOPS": `${loops}`},
@@ -486,14 +486,14 @@ export const restore_Case = (name:string, batchId:number, threads:number, loops:
   };
 }
 
-export const restore_Body = (name:string, json:string) => {
+export const restore_Body = ( o, name:string, json:string ) => {
   return {
       "type": "body",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
   };
 }
 
-export const restore_Test = (name:string) => {
+export const restore_Test = ( o, name:string ) => {
   return {
       "type": "test",
       "fields": {"NAME": `${name}`},
@@ -507,28 +507,28 @@ export const restore_Test = (name:string) => {
   };
 }
 
-export const restore_Replace = (name:string, json:string) => {
+export const restore_Replace = ( o, name:string, json:string ) => {
   return {
       "type": "replace",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
     }
 }
 
-export const restore_Remove = (name:string, json:string) => {
+export const restore_Remove = ( o, name:string, json:string ) => {
   return {
       "type": "remove",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
   };
 }
 
-export const restore_Result = (name:string, json:string, jsonata:string) => {
+export const restore_Result = ( o, name:string, json:string, jsonata:string ) => {
   return {
       "type": "result",
       "fields": {"NAME": `${name}`, "JSON": `${json}`, "JSONATA": `${jsonata}`},
   };
 }
 
-export const restore_Response = (name:string, json:string) => {
+export const restore_Response = ( o, name:string, json:string ) => {
   return {
       "type": "response",
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
