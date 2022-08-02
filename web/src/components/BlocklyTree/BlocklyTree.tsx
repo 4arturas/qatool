@@ -58,7 +58,7 @@ const BlocklyTree = ( { id }) => {
 
   const [loading, setLoading] = useState( false );
 
-  const initBlocklyObjects = () =>
+  const initBlocklyObjects = ( gen ) =>
   {
     const experimentJSON = {
       "message0": "EXPERIMENT %1 name: %2 %3 Server %4 Collection(s): %5",
@@ -103,6 +103,46 @@ const BlocklyTree = ( { id }) => {
       {
       }
     };
+    // Blockly.JavaScript['experiment'] = function (block) {
+    gen['experiment'] = function (block) {
+      var dropdownLightcolor = block.getFieldValue('NAME');
+      // console.log( dropdownLightcolor );
+      return 'bubu';
+
+      var dropdownSwitch = block.getFieldValue('switch');
+
+      let code;
+      if (dropdownSwitch === 'on')
+        code = "document.getElementById('circle').style.backgroundColor = '"+dropdownLightcolor+"'";
+      if (dropdownSwitch === 'off')
+        code = "document.getElementById('circle').style.backgroundColor = 'black'";
+
+      // return code;
+      return 'baba';
+    };
+  }
+
+  const RunBlocklyCode = () =>
+  {
+    // localStorage.setItem("workspace", JSON.stringify(jsonWorkspace));
+    const jsonWorkspace = Blockly.serialization.workspaces.save(workspace);
+    console.log( jsonWorkspace );
+    // console.log( generator.workspaceToCode(workspace ) );
+    return;
+
+    // Generate JavaScript code and run it.
+    window.LoopTrap = 1000;
+    Blockly.JavaScript.INFINITE_LOOP_TRAP =
+      'if (--window.LoopTrap === 0) throw "Infinite loop.";\n';
+    var code = Blockly.JavaScript.workspaceToCode(workspace);
+    console.log( code );
+    Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+    try {
+      eval(code);
+    } catch (e) {
+      alert(e);
+    }
+
   }
 
   const append_ChildBlock = ( parentBlock, inputName:string, appendBlock ) =>
@@ -178,6 +218,8 @@ const BlocklyTree = ( { id }) => {
     } );
   }
 
+  const [workspace, setWorkspace] = useState( null );
+
   useEffect( () => {
 
     setLoading( true );
@@ -186,15 +228,30 @@ const BlocklyTree = ( { id }) => {
       .then( ret => {
 
         Blockly.common.defineBlocksWithJsonArray(comp);
-        initBlocklyObjects();
 
-        const workspace = ( Blockly.inject('ide', { toolbox: toolbox,   move: {
+        const generator = new Blockly.Generator('GENERATOR');
+        initBlocklyObjects( generator );
+
+        const ws = (Blockly.inject('ide', {
+          toolbox: toolbox, move: {
             scrollbars: {
               horizontal: true,
               vertical: true
             },
             drag: true,
-            wheel: true} } ) );
+            wheel: true
+          }
+        }));
+        setWorkspace( ws );
+
+
+/*        workspace.addChangeListener( () => {
+          const code = generator.workspaceToCode( workspace );
+          console.log( code );
+          // document.getElementById('out').innerHTML = code;
+        });*/
+
+
 
         const tmpTree = ret.data.tree;
         const parentId = tmpTree.parentId;
@@ -204,13 +261,17 @@ const BlocklyTree = ( { id }) => {
 
         fetchTree2( null, qaObject, null, tmpTree );
 
-        Blockly.serialization.workspaces.load(firstBlock, workspace);
+        Blockly.serialization.workspaces.load(firstBlock, ws);
       });
   }, [] );
 
 
 
-  return <div id="ide" style={{width:'100%', height: `${window.innerHeight-100}px`}}></div>
+  return (
+    <>
+      <div id="ide" style={{width:'100%', height: `${window.innerHeight-100}px`}}><button onClick={RunBlocklyCode}>Run Code</button></div>
+    </>
+  )
 }
 
 export default BlocklyTree
