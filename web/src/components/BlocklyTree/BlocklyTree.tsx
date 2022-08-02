@@ -61,10 +61,18 @@ const BlocklyTree = ( { id }) => {
   const initBlocklyObjects = () =>
   {
     const experimentJSON = {
-      "message0": "EXPERIMENT %1 Server %2 Collection(s): %3",
+      "message0": "EXPERIMENT %1 name: %2 %3 Server %4 Collection(s): %5",
       "args0": [
         {
           "type": "input_dummy",
+        },
+        {
+          "type": "field_input",
+          "name": "NAME",
+          "text": ""
+        },
+        {
+          "type": "input_dummy"
         },
         {
           "type": "input_value",
@@ -92,6 +100,7 @@ const BlocklyTree = ( { id }) => {
         // });
       }
     };
+
   }
 
   const append_ChildBlock = ( parentBlock, inputName:string, appendBlock ) =>

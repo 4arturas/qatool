@@ -439,6 +439,7 @@ const wrap_Block = ( type ) => {
 export const restore_Experiment = ( name ) => {
   return {
     "type": "experiment",
+    "fields": {"NAME": `${name}`},
     "x": 10,
     "y": 10,
     "inputs": {
