@@ -98,9 +98,11 @@ const BlocklyTree = ( { id }) => {
         //   return 'Add a number to variable "%1".'.replace('%1',
         //     thisBlock.getFieldValue('VAR'));
         // });
+      },
+      onchange: function ( e )
+      {
       }
     };
-
   }
 
   const append_ChildBlock = ( parentBlock, inputName:string, appendBlock ) =>
