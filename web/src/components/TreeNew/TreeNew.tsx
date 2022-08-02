@@ -22,7 +22,6 @@ import {BarChartOutlined, ExperimentOutlined} from "@ant-design/icons";
 import {toast} from "@redwoodjs/web/toast";
 import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
 import ObjectView from "src/components/ObjectView/ObjectView";
-import ExperimentThreadsLoops from "src/components/ExperimentThreadsLoops/ExperimentThreadsLoops";
 import ThreadsLoops from "src/components/ThreadsLoops/ThreadsLoops";
 
 export const QUERY = gql`
@@ -222,7 +221,7 @@ const TreeNew = ( { id }) => {
       if ( qaObject.typeId !== TEST ) return <></>
 
       if ( state === STATE_EXPERIMENT_IS_RUNNING )
-        return <div>Waiting for Experiments</div>
+        return <div>Waiting for Experiment Results...</div>
 
       return <></>
     }
@@ -232,17 +231,22 @@ const TreeNew = ( { id }) => {
       if ( qaObject.typeId !== TEST ) return <></>
 
       return (
-        <div  style={{marginTop:'10px', marginRight:'10px', maxHeight: '150px', overflowY: 'scroll', ...stylingObject.shadowContainer}}>
-          <ThreadsLoops
-                experiments={experiments.filter( f => f.testId === qaObject.id )}
-                generateChartElement={
-                  (experiment) => {
-                    const {thread, loop, requestDate, responseDate, collectionId, suiteId, caseId, testId} = experiment;
-                    return [`User - ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
+        <>
+        {
+          experiments.length > 0 &&
+          <div style={{marginTop:'10px', marginRight:'10px', maxHeight: '150px', overflowY: 'scroll', ...stylingObject.shadowContainer}}>
+            <ThreadsLoops
+                  experiments={experiments.filter( f => f.testId === qaObject.id ).sort( (a,b) => { return a.thread - b.thread; })}
+                  generateChartElement={
+                    (experiment) => {
+                      const {thread, loop, requestDate, responseDate, collectionId, suiteId, caseId, testId} = experiment;
+                      return [`User - ${String(thread + 1)}`, String(`Request: ${loop + 1}`), new Date(requestDate), new Date(responseDate)]
+                    }
                   }
-                }
-              />
-        </div>
+                />
+          </div>
+        }
+        </>
       )
     }
 
