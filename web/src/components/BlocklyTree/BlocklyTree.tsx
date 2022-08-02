@@ -1,8 +1,8 @@
 import {useApolloClient} from "@apollo/client";
 import {useAuth} from "@redwoodjs/auth";
 import React, {useEffect, useState} from "react";
-import {comp, restore_Blocks, restore_Object, toolbox} from "./components";
 import Blockly from 'blockly';
+import {comp, initBlocklyObjects, restore_Blocks, restore_Object, toolbox} from "./components";
 import {
   BODY,
   CASE,
@@ -13,7 +13,7 @@ import {
   RESPONSE,
   RESULT,
   SERVER, SUITE,
-  TEST
+  TEST, typeIdToColor
 } from "src/global";
 
 const QUERY = gql`
@@ -50,12 +50,49 @@ const QUERY = gql`
   }
 `
 
+
 const BlocklyTree = ( { id }) => {
 
   const client = useApolloClient();
   const { hasRole } = useAuth();
 
   const [loading, setLoading] = useState( false );
+
+  const initBlocklyObjects = () =>
+  {
+    const experimentJSON = {
+      "message0": "EXPERIMENT %1 Server %2 Collection(s): %3",
+      "args0": [
+        {
+          "type": "input_dummy",
+        },
+        {
+          "type": "input_value",
+          "name": "SERVER",
+          "check": "serverCheck"
+        },
+        {
+          "type": "input_statement",
+          "name": "COLLECTIONS",
+          "check": "collection"
+        }
+      ],
+      "colour": `${typeIdToColor(EXPERIMENT)}`,
+      "tooltip": "",
+      "helpUrl": ""
+    };
+    Blockly.Blocks['experiment'] = {
+      init: function() {
+        this.jsonInit(experimentJSON);
+        // Assign 'this' to a variable for use in the tooltip closure below.
+        // var thisBlock = this;
+        // this.setTooltip(function() {
+        //   return 'Add a number to variable "%1".'.replace('%1',
+        //     thisBlock.getFieldValue('VAR'));
+        // });
+      }
+    };
+  }
 
   const append_ChildBlock = ( parentBlock, inputName:string, appendBlock ) =>
   {
@@ -136,7 +173,9 @@ const BlocklyTree = ( { id }) => {
     client
       .query( { query: QUERY, variables: { id: id } } )
       .then( ret => {
+
         Blockly.common.defineBlocksWithJsonArray(comp);
+        initBlocklyObjects();
 
         const workspace = ( Blockly.inject('ide', { toolbox: toolbox,   move: {
             scrollbars: {

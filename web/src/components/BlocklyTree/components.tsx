@@ -14,28 +14,6 @@ import {
 
 export const comp = [
   {
-    "type": "experiment",
-    "message0": "EXPERIMENT %1 Server %2 Collection(s): %3",
-    "args0": [
-      {
-        "type": "input_dummy",
-      },
-      {
-        "type": "input_value",
-        "name": "SERVER",
-        "check": "serverCheck"
-      },
-      {
-        "type": "input_statement",
-        "name": "COLLECTIONS",
-        "check": "collection"
-      }
-    ],
-    "colour": `${typeIdToColor(EXPERIMENT)}`,
-    "tooltip": "",
-    "helpUrl": ""
-  },
-  {
     "type": "server",
     "message0": "SERVER %1 name: %2 %3 address: %4 %5 method: %6 %7 headers: %8",
     "args0": [
