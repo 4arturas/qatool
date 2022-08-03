@@ -36,7 +36,7 @@ export const schema = gql`
   type Query {
     experimentResults: [ExperimentResult!]! @requireAuth
     experimentResultsByExperimentId(id: Int!): ExperimentResultAndExperimentOwner! @requireAuth
-    experimentResultsByTestId(caseId: Int!, testId: Int!): ExperimentResultAndExperimentOwner! @requireAuth
+    experimentResultsByTestId(testId: Int!): ExperimentResultAndExperimentOwner! @requireAuth
     experimentResult(id: Int!): ExperimentResult @requireAuth
     timeline(id: Int!): [ExperimentResult] @requireAuth
     experimentResultsPage(page: Int, pageSize: Int, count: Int): ExperimentResultPage @requireAuth

@@ -340,7 +340,7 @@ const TreeNew = ( { id }) => {
                   if ( qaObject.typeId === EXPERIMENT )
                     navigate( routes.experiment({id:qaObject.id}))
                   else
-                    navigate( routes.experimentTest({caseId:parentId, testId: qaObject.id}))
+                    navigate( routes.experimentTest({testId: qaObject.id}))
                 }}
               />
             </Tooltip>

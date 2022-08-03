@@ -4,8 +4,8 @@ import ExperimentResult from "src/components/ExperimentResult/ExperimentResult";
 import React from "react";
 
 export const QUERY = gql`
-  query FetchExperimentTestResults($caseId: Int!, $testId: Int!) {
-    experiment: experimentResultsByTestId(caseId: $caseId, testId: $testId) {
+  query FetchExperimentTestResults($testId: Int!) {
+    experiment: experimentResultsByTestId(testId: $testId) {
       experimentOwner { id typeId name }
       experimentResults {
         id

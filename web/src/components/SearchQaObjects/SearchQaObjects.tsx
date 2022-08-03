@@ -89,15 +89,23 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
           <>
             { hasRole(ROLE_ADMIN) && <FontAwesomeIcon icon={faCubesStacked} onClick={()=> navigate(routes.blocklyTree({id:record.id}))} style={{cursor:'pointer', float:'right', marginLeft: '10px'}}/>}
 
-            <span style={{float:'right', color: 'black'}}><Merge qaObject={record} /></span>
-
             {record.typeId === EXPERIMENT && record.executed &&
-            <Tooltip placement="topLeft" title="Run Experiment" color={typeIdToColor(record.typeId)}>
+            <Tooltip placement="topLeft" title="Show Experiment Results">
               <Link to={routes.experiment( {id: record.id})} style={{float:'right', color: 'black'}}>
                 <BarChartOutlined  style={{fontSize:'20px'}}/>
               </Link>
             </Tooltip>
             }
+
+            {record.typeId === TEST && record.executed &&
+            <Tooltip placement="topLeft" title="Show Test Experiment Results">
+              <Link to={routes.experimentTest( {testId: record.id})} style={{float:'right', color: 'black'}}>
+                <BarChartOutlined  style={{fontSize:'20px'}}/>
+              </Link>
+            </Tooltip>
+            }
+
+            <span style={{float:'right', color: 'black', marginRight:'10px'}}><Merge qaObject={record} /></span>
 
           </>
         </div>

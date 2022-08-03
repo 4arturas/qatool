@@ -21,12 +21,12 @@ export const experimentResultsByExperimentId: QueryResolvers['experimentResultsB
   }
 }
 
-export const experimentResultsByTestId: QueryResolvers['experimentResultsByTestId'] = async ({ caseId, testId}) => {
+export const experimentResultsByTestId: QueryResolvers['experimentResultsByTestId'] = async ({ testId}) => {
   const experimentOwner = await qaObject( {id:testId} );
   let experimentResults: any;
 
   experimentResults = await db.experimentResult.findMany({
-    where: { caseId: { equals: caseId }, testId: { equals: testId } },
+    where: { testId: { equals: testId } },
   });
 
   return {
