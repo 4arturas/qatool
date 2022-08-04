@@ -271,3 +271,17 @@ export const findExperiment = async ( { id: id } ) =>
     objects: objects
   };
 }
+
+export const runBrowserExperiment = async ({bodyId, testId}) =>
+{
+  console.log( bodyId );
+
+  function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+  }
+
+  await delay(500);
+
+  return {bodyId: bodyId, testId: testId}
+
+}

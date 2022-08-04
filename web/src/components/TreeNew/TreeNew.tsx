@@ -23,6 +23,7 @@ import {toast} from "@redwoodjs/web/toast";
 import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
 import ObjectView from "src/components/ObjectView/ObjectView";
 import ThreadsLoops from "src/components/ThreadsLoops/ThreadsLoops";
+import ExperimentBrowser from "src/components/ExperimentBrowser/ExperimentBrowser";
 
 export const QUERY = gql`
   query FindTreeQueryNew($id: Int!) {
@@ -447,6 +448,13 @@ const TreeNew = ( { id }) => {
                           </span>)
                       })
                     }
+                    </span>
+                  }
+
+                  {
+                    (qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
+                    <span key={`runExperimentInBrowser${qaObject.id}`} style={stylingObject.runExperiment}>
+                      <ExperimentBrowser qaObject={qaObject} objects={objects} hierarchy={hierarchy}/>
                     </span>
                   }
 
