@@ -8,7 +8,7 @@ import {
   typeIdToColor,
   typeIdToName
 } from "src/global";
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Button, Modal, Segmented, Tag, Tooltip} from "antd";
 import {useApolloClient} from "@apollo/client";
 import {BorderOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-design/icons";
@@ -22,22 +22,15 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   // const [intervalObject, setIntervalObject] = useState(null);
-  let intervalObject = null;
-  function setIntervalObject(i) { intervalObject = i; }
+  // let intervalObject = null;
+  // function setIntervalObject(i) { intervalObject = i; }
 
   const EXPERIMENT_EXECUTION_MODE_PLAY = 'Play';
   const EXPERIMENT_EXECUTION_MODE_PAUSE = 'Pause';
   const EXPERIMENT_EXECUTION_MODE_STOP = 'Stop';
   const EXPERIMENT_EXECUTION_MODE_DONE = 'Done';
 
-  let experimentExecutionModeAsync = EXPERIMENT_EXECUTION_MODE_STOP;
-  const [experimentExecutionMode, setExperimentExecutionMode] = useState( experimentExecutionModeAsync );
-  function setExperimentExecutionModeAsync( mode )
-  {
-    experimentExecutionModeAsync = mode;
-    setExperimentExecutionMode( mode );
-  }
-
+  const [experimentExecutionMode, setExperimentExecutionMode] = useState( EXPERIMENT_EXECUTION_MODE_STOP );
 
   const RUN_MODE_QUEUE = 'Queue';
   const RUN_MODE_THREADS = 'Threads';
@@ -47,11 +40,33 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   function delayFunction(time) {
     return new Promise(resolve => setTimeout(resolve, time));
   }
-  const [delayMS, setDelayMS] = useState( 5000 );
+  const [delayMS, setDelayMS] = useState( 1000 );
 
   const SLEEP_MODE_NORMAL = 'Normal';
   const SLEEP_MODE_RANDOM = 'Random';
   const [sleepMode, setSleepMode] = useState(SLEEP_MODE_NORMAL);
+
+  useEffect(() => {
+    console.log( 'useEffect', 'experimentExecutionMode', experimentExecutionMode );
+
+    switch ( experimentExecutionMode ) {
+      case EXPERIMENT_EXECUTION_MODE_PLAY:
+        switch ( runMode )
+        {
+          case RUN_MODE_QUEUE:          runModeQueue();         break;
+          case RUN_MODE_THREADS:        runModeThreads();       break;
+          case RUN_MODE_THREADS_QUEUE:  runModeThreadsQueue();  break;
+        }
+        break;
+
+      case EXPERIMENT_EXECUTION_MODE_PAUSE:
+        break;
+
+      case EXPERIMENT_EXECUTION_MODE_STOP:
+        break;
+    }
+
+  }, [experimentExecutionMode, runMode, sleepMode, delayMS]);
 
   const mode1 = {};
   const mode2 = {};
@@ -60,53 +75,44 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   {
     const delayTime = (sleepMode===SLEEP_MODE_NORMAL) ? delayMS : getRandomIntInclusive( 0, delayMS );
 
-    const intervalDelay = 1000;
+    const span = document.getElementById(id);
+    span.style.backgroundColor = 'yellow';
+    span.style.color = 'black';
+
+    const intervalDelay = 100;
     let showDelay = delayTime;
-    setIntervalObject(
-      setInterval( () => {
-        const span = document.getElementById(id);
-        if ( experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_STOP || experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_PAUSE )
-        {
-          console.log( experimentExecutionModeAsync );
-          if ( experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_PAUSE )
-          {
-            span.innerHTML = 'PAUSED';
-            span.style.backgroundColor = 'gray';
-            span.style.color = 'black';
-          }
-
-          clearInterval( intervalObject );
-          return;
-        }
-
-
-        span.innerHTML = `SLEEPING - ${showDelay}ms`;
-        showDelay -= intervalDelay;
-        span.style.backgroundColor = 'yellow';
-        span.style.color = 'black';
-
-
-      }, intervalDelay )
-    );
-
+    const interval = setInterval( () => {
+      span.innerHTML = `SLEEPING - ${showDelay}ms`;
+      showDelay -= intervalDelay;
+      if ( showDelay < 0 )
+        clearInterval( interval );
+    }, intervalDelay );
 
     await delayFunction(delayTime);
-    clearInterval( intervalObject );
+    clearInterval( interval );
   }
 
-  const spanWorking = ( id ) =>
+  const spanWorking = ( id, text) =>
   {
     const span = document.getElementById(id);
-    span.innerHTML = 'WORKING';
-    span.style.backgroundColor = 'red';
+    span.innerHTML = `WORKING with testId=${text}`;
+    span.style.backgroundColor = 'lightblue';
     span.style.color = 'black';
   }
 
-  const spanDone = ( id ) =>
+  const spanDone = ( id, testId, text ) =>
   {
     const span = document.getElementById(id);
-    span.innerHTML = 'DONE';
-    span.style.backgroundColor = 'green';
+    span.innerHTML = `DONE testId=${testId} server request time=${text}`;
+    span.style.backgroundColor = 'lightgreen';
+    span.style.color = 'black';
+  }
+
+  const spanError = ( id, text) =>
+  {
+    const span = document.getElementById(id);
+    span.innerHTML = `ERROR=${text}`;
+    span.style.backgroundColor = 'rose';
     span.style.color = 'black';
   }
 
@@ -116,46 +122,50 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const keys = Object.keys( mode1 );
     for ( ; runModeQueueKey < keys.length; runModeQueueKey++ )
     {
-      if ( experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_PAUSE || experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_STOP )
-        return;
       const key = keys[runModeQueueKey];
       const { id, testId } = mode1[key];
       await apiCall( id, testId );
     } // end for k
-    setExperimentExecutionModeAsync( EXPERIMENT_EXECUTION_MODE_DONE );
+    setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
   }
 
-  let runModeThreadsKey = 0;
-  let runModeThreadsThread = 0;
-  let runModeThreadsLoop = 0;
+
   const runModeThreads = async () =>
   {
+    // let runModeThreadsKey = 0;
+    // let runModeThreadsThread = 0;
+    // let runModeThreadsLoop = 0;
     const keys = Object.keys( mode2 );
-
-    for ( ; runModeThreadsKey < keys.length; runModeThreadsKey++ )
+    const promises = [];
+    for ( let runModeThreadsKey = 0; runModeThreadsKey < keys.length; runModeThreadsKey++)
     {
       const key = keys[runModeThreadsKey];
-      const {testId, threads, loops} = mode2[key];
-      for ( ; runModeThreadsThread < threads; runModeThreadsThread++ )
+      const {threads, loops} = mode2[key];
+
+      for ( let runModeThreadsThread = 0; runModeThreadsThread < threads; runModeThreadsThread++ )
       {
         const p = new Promise( async (resolve, reject) => {
-          for ( ; runModeThreadsLoop < loops; runModeThreadsLoop++ )
+          for ( let runModeThreadsLoop = 0; runModeThreadsLoop < loops; runModeThreadsLoop++)
           {
-            if ( experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_PAUSE || experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_STOP )
-              return;
-            const newKey = `${key}${runModeThreadsThread}${runModeThreadsLoop}`;
+            const newKey = `${key}Thread-${runModeThreadsThread}Loop-${runModeThreadsLoop}`;
+            let {testId} = mode1[newKey];
             await apiCall( newKey, testId );
           }
-        })
+          resolve(1);
+        });
+        promises.push( p );
       }
-    }
-    setExperimentExecutionModeAsync( EXPERIMENT_EXECUTION_MODE_DONE );
+    } // end for
+    await Promise.all( [...promises] );
+
+    setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
   }
 
   let runModeThreadsQueueKey = 0;
   let runModeThreadsQueueThread = 0;
   let runModeThreadsQueueLoop = 0;
-  const runModeThreadsQueue = () =>
+  const promises = [];
+  const runModeThreadsQueue = async () =>
   {
     const keys = Object.keys( mode2 );
 
@@ -168,36 +178,40 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       {
           for ( ; runModeThreadsQueueLoop < loops; runModeThreadsQueueLoop++ )
           {
-            if ( experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_PAUSE || experimentExecutionModeAsync === EXPERIMENT_EXECUTION_MODE_STOP )
-              return;
             const newKey = `${key}${runModeThreadsQueueThread}${runModeThreadsQueueLoop}`;
             await apiCall( newKey, testId );
           }
       }
       });
+      promises.push( p );
     }
-    setExperimentExecutionModeAsync( EXPERIMENT_EXECUTION_MODE_DONE );
+    await Promise.all( promises );
+    setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
   }
 
   const apiCall = async ( key, testId ) =>
   {
     await spanSleeping(key);
-    spanWorking(key);
+    spanWorking(key, testId);
 
     const RUN_BROWSER_EXPERIMENT = gql`
           query RunBrowserExperiment($bodyId: Int!, $testId: Int!) {
             runBrowserExperiment(bodyId: $bodyId, testId: $testId) {
-              bodyId testId
+              bodyId testId requestTime
             }
           }
         `;
-    const data = await client.query({
+    client.query({
       query: RUN_BROWSER_EXPERIMENT,
-      variables: {bodyId: 1, testId:1}
-    });
-    console.log( data.data.runBrowserExperiment );
+      variables: {testId:testId}
+    })
+    .then( data => {
+      const {requestTime} = data.data.runBrowserExperiment;
+      console.log( data.data.runBrowserExperiment );
+      spanDone(key, testId, requestTime);
+    })
+    .catch( e => spanError(key,e.message) );
 
-    spanDone(key);
   }
 
   const stylingObject = {
@@ -252,37 +266,26 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             if ( experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY )
               return;
 
-            setExperimentExecutionModeAsync(EXPERIMENT_EXECUTION_MODE_PLAY);
-
-            setExperimentExecutionModeAsync((previousState) => (
-              EXPERIMENT_EXECUTION_MODE_PLAY
-            ));
-
-            switch ( runMode )
-            {
-              case RUN_MODE_QUEUE:          runModeQueue();         break;
-              case RUN_MODE_THREADS:        runModeThreads();       break;
-              case RUN_MODE_THREADS_QUEUE:  runModeThreadsQueue();  break;
-            }
+            setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_PLAY);
           }}
         />
         <PauseCircleOutlined
           style={{...stylingObject.stop, color: `${experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE?'green':'black'}`}}
-          onClick={()=>{
+          onClick={async ()=>{
             if ( experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE )
               return;
 
-            setExperimentExecutionModeAsync(EXPERIMENT_EXECUTION_MODE_PAUSE);
+            setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_PAUSE);
 
           }}
         />
         <BorderOutlined
           style={{...stylingObject.stop, color: `${experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_STOP?'green':'black'}`}}
-          onClick={()=>{
+          onClick={ async ()=>{
             if ( experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_STOP )
               return;
 
-            setExperimentExecutionModeAsync(EXPERIMENT_EXECUTION_MODE_STOP);
+            setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_STOP);
 
             const keys = Object.keys( mode1 );
             keys.map( k => {
@@ -293,9 +296,9 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
             runModeQueueKey = 0;
 
-            runModeThreadsKey = 0;
+/*            runModeThreadsKey = 0;
             runModeThreadsThread = 0;
-            runModeThreadsLoop = 0;
+            runModeThreadsLoop = 0;*/
 
             runModeThreadsQueueKey = 0;
             runModeThreadsQueueThread = 0;
@@ -304,6 +307,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
         />
       </span>
 
+      &nbsp;&nbsp;&nbsp;&nbsp;Experiment: {experimentExecutionMode}
       <br/>
       <br/>
 
@@ -362,7 +366,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                       const DIV = [];
                       for ( let loop = 0; loop < cAse.loops; loop++ )
                       {
-                        const modeKey = `span${collection.id}${suite.id}${cAse.id}${test.id}${thread}${loop}`;
+                        const modeKey = `span${collection.id}${suite.id}${cAse.id}${test.id}Thread-${thread}Loop-${loop}`;
                         mode1[modeKey] = { id: modeKey, testId: test.id };
                         DIV.push(
                           <span id={modeKey} key={modeKey} style={{width:`${100/cAse.loops}%`, border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'}}>

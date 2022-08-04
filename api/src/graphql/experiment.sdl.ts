@@ -15,8 +15,8 @@ export const schema = gql`
   }
 
   type RunBrowserExperimentResult {
-    bodyId: Int
     testId: Int
+    requestTime: Int
   }
 
   type Query {
