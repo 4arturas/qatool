@@ -272,7 +272,7 @@ export const findExperiment = async ( { id: id } ) =>
   };
 }
 
-export const runBrowserExperiment = async ({testId}) =>
+export const runBrowserExperiment = async ({testId, thread, loop}) =>
 {
 
 
@@ -280,10 +280,10 @@ export const runBrowserExperiment = async ({testId}) =>
     return new Promise(resolve => setTimeout(resolve, time));
   }
 
-  const delayTime = getRandomIntInclusive( 500, 5000);
+  const delayTime = getRandomIntInclusive( 0, 5000);
   console.log( 'delayTime', delayTime );
   await delay(delayTime);
 
-  return {testId: testId, requestTime: delayTime }
+  return {testId: testId, thread: thread, loop: loop, requestTime: delayTime }
 
 }

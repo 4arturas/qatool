@@ -17,11 +17,13 @@ export const schema = gql`
   type RunBrowserExperimentResult {
     testId: Int
     requestTime: Int
+    thread: Int
+    loop: Int
   }
 
   type Query {
     runExperiment(experimentId: Int, delay: Int): ExperimentResult @requireAuth
     findExperiment(id: Int): Experiment @requireAuth
-    runBrowserExperiment(testId: Int): RunBrowserExperimentResult @requireAuth
+    runBrowserExperiment(testId: Int, thread: Int, loop: Int): RunBrowserExperimentResult @requireAuth
   }
 `

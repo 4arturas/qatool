@@ -9,9 +9,10 @@ import {
   typeIdToName
 } from "src/global";
 import React, {useEffect, useRef, useState} from "react";
-import {Button, Modal, Segmented, Tag, Tooltip} from "antd";
+import {Button, Modal, Segmented, Spin, Tag, Tooltip} from "antd";
 import {useApolloClient} from "@apollo/client";
 import {BorderOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-design/icons";
+import ReactDOM from "react-dom";
 
 const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
@@ -71,7 +72,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const mode1 = {};
   const mode2 = {};
 
-  async function spanSleeping(id)
+  async function spanSleeping(id:string, thread:number, loop:number)
   {
     const delayTime = (sleepMode===SLEEP_MODE_NORMAL) ? delayMS : getRandomIntInclusive( 0, delayMS );
 
@@ -82,7 +83,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const intervalDelay = 100;
     let showDelay = delayTime;
     const interval = setInterval( () => {
-      span.innerHTML = `SLEEPING - ${showDelay}ms`;
+      span.innerHTML = `SLEEPING - ${showDelay}ms  thread=${thread} loop=${loop}`;
       showDelay -= intervalDelay;
       if ( showDelay < 0 )
         clearInterval( interval );
@@ -92,39 +93,41 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     clearInterval( interval );
   }
 
-  const spanWorking = ( id, text) =>
+  const spanWorking = ( id, text:string, thread:number, loop:number) =>
   {
     const span = document.getElementById(id);
-    span.innerHTML = `WORKING with testId=${text}`;
+    span.innerHTML = `WORKING with testId=${text} thread=${thread} loop=${loop}`;
     span.style.backgroundColor = 'lightblue';
     span.style.color = 'black';
+    // ReactDOM.render(<div><Spin size={'small'} /> WORKING with testId={text} thread={thread} loop={loop}</div>, span);
   }
 
-  const spanDone = ( id, testId, text ) =>
+  const spanDone = ( id, testId, text, thread:number, loop:number ) =>
   {
     const span = document.getElementById(id);
-    span.innerHTML = `DONE testId=${testId} server request time=${text}`;
+    span.innerHTML = `DONE testId=${testId} server request time=${text} thread=${thread} loop=${loop}`;
     span.style.backgroundColor = 'lightgreen';
     span.style.color = 'black';
   }
 
-  const spanError = ( id, text) =>
+  const spanError = ( id, text, thread:number, loop:number) =>
   {
     const span = document.getElementById(id);
-    span.innerHTML = `ERROR=${text}`;
+    span.innerHTML = `ERROR=${text} thread=${thread} loop=${loop}`;
     span.style.backgroundColor = 'red';
     span.style.color = 'black';
   }
 
-  let runModeQueueKey = 0;
+
   const runModeQueue = async () =>
   {
+    let runModeQueueKey = 0;
     const keys = Object.keys( mode1 );
     for ( ; runModeQueueKey < keys.length; runModeQueueKey++ )
     {
       const key = keys[runModeQueueKey];
       const { id, testId } = mode1[key];
-      await apiCall( id, testId );
+      await apiCall( id, testId, runModeQueueKey, runModeQueueKey );
     } // end for k
     setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
   }
@@ -149,7 +152,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           {
             const newKey = `${key}Thread-${runModeThreadsThread}Loop-${runModeThreadsLoop}`;
             let {testId} = mode1[newKey];
-            await apiCall( newKey, testId );
+            await apiCall( newKey, testId, runModeThreadsThread, runModeThreadsLoop );
           }
           resolve(1);
         });
@@ -179,7 +182,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           for ( ; runModeThreadsQueueLoop < loops; runModeThreadsQueueLoop++ )
           {
             const newKey = `${key}${runModeThreadsQueueThread}${runModeThreadsQueueLoop}`;
-            await apiCall( newKey, testId );
+            await apiCall( newKey, testId, runModeThreadsQueueThread, runModeThreadsQueueLoop );
           }
       }
       });
@@ -189,28 +192,28 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
   }
 
-  const apiCall = async ( key, testId ) =>
+  const apiCall = async ( key, paramTestId, thread, loop ) =>
   {
-    await spanSleeping(key);
-    spanWorking(key, testId);
+    await spanSleeping(key, thread, loop);
+    spanWorking(key, paramTestId, thread, loop);
 
     const RUN_BROWSER_EXPERIMENT = gql`
-          query RunBrowserExperiment($testId: Int!) {
-            runBrowserExperiment(testId: $testId) {
-              testId requestTime
+          query RunBrowserExperiment($testId: Int!, $thread: Int!, $loop: Int!) {
+            runBrowserExperiment(testId: $testId, thread: $thread, loop: $loop) {
+              testId thread loop requestTime
             }
           }
         `;
     client.query({
       query: RUN_BROWSER_EXPERIMENT,
-      variables: {testId:testId}
+      variables: {testId:paramTestId, thread: thread, loop: loop }
     })
     .then( data => {
-      const {requestTime} = data.data.runBrowserExperiment;
+      const runBrowserExperiment = data.data.runBrowserExperiment;
       // console.log( data.data.runBrowserExperiment );
-      spanDone(key, testId, requestTime);
+      spanDone(key, runBrowserExperiment.testId, runBrowserExperiment.requestTime, runBrowserExperiment.thread, runBrowserExperiment.loop);
     })
-    .catch( e => spanError(key,e.message) );
+    .catch( e => spanError(key,e.message, thread, loop) );
 
   }
 
@@ -294,7 +297,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
               span.style.backgroundColor = 'white';
             });
 
-            runModeQueueKey = 0;
+            // runModeQueueKey = 0;
 
 /*            runModeThreadsKey = 0;
             runModeThreadsThread = 0;
