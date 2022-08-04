@@ -112,7 +112,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   {
     const span = document.getElementById(id);
     span.innerHTML = `ERROR=${text}`;
-    span.style.backgroundColor = 'rose';
+    span.style.backgroundColor = 'red';
     span.style.color = 'black';
   }
 
@@ -195,9 +195,9 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     spanWorking(key, testId);
 
     const RUN_BROWSER_EXPERIMENT = gql`
-          query RunBrowserExperiment($bodyId: Int!, $testId: Int!) {
-            runBrowserExperiment(bodyId: $bodyId, testId: $testId) {
-              bodyId testId requestTime
+          query RunBrowserExperiment($testId: Int!) {
+            runBrowserExperiment(testId: $testId) {
+              testId requestTime
             }
           }
         `;
@@ -207,7 +207,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     })
     .then( data => {
       const {requestTime} = data.data.runBrowserExperiment;
-      console.log( data.data.runBrowserExperiment );
+      // console.log( data.data.runBrowserExperiment );
       spanDone(key, testId, requestTime);
     })
     .catch( e => spanError(key,e.message) );
