@@ -1,7 +1,7 @@
 import {useApolloClient} from "@apollo/client";
 import {useAuth} from "@redwoodjs/auth";
 import React, {useEffect, useState} from "react";
-import {Input, Popconfirm, Tag, Tooltip} from "antd";
+import {Button, Input, Popconfirm, Tag, Tooltip} from "antd";
 import {
   BODY,
   CASE,
@@ -454,7 +454,15 @@ const TreeNew = ( { id }) => {
                   {
                     (qaObject.typeId === EXPERIMENT && !qaObject.executed) &&
                     <span key={`runExperimentInBrowser${qaObject.id}`} style={stylingObject.runExperiment}>
-                      <ExperimentBrowser qaObject={qaObject} objects={objects} hierarchy={hierarchy}/>
+                          <Tooltip title={'Request Length Box Plot'}>
+                            <Button
+                              onClick={ ()=> {
+                                navigate(routes.experimentBrowser({id:qaObject.id}));
+                              }}
+                            >
+                             Run Experiment in Browser
+                            </Button>
+                          </Tooltip>
                     </span>
                   }
 

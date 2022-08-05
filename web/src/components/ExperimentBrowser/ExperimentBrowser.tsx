@@ -14,17 +14,19 @@ import {useApolloClient} from "@apollo/client";
 import {BorderOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-design/icons";
 import ReactDOM from "react-dom";
 
+const RUN_BROWSER_EXPERIMENT = gql`
+          query RunBrowserExperiment($testId: Int!, $thread: Int!, $loop: Int!) {
+            runBrowserExperiment(testId: $testId, thread: $thread, loop: $loop) {
+              testId thread loop requestTime
+            }
+          }
+        `;
+
 const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   const client = useApolloClient();
 
   if ( qaObject.typeId !== EXPERIMENT ) return <></>
-  if ( qaObject.executed ) return <></>
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [intervalObject, setIntervalObject] = useState(null);
-  // let intervalObject = null;
-  // function setIntervalObject(i) { intervalObject = i; }
 
   const EXPERIMENT_EXECUTION_MODE_PLAY = 'Play';
   const EXPERIMENT_EXECUTION_MODE_PAUSE = 'Pause';
@@ -48,7 +50,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const [sleepMode, setSleepMode] = useState(SLEEP_MODE_NORMAL);
 
   useEffect(() => {
-    console.log( 'useEffect', 'experimentExecutionMode', experimentExecutionMode );
 
     switch ( experimentExecutionMode ) {
       case EXPERIMENT_EXECUTION_MODE_PLAY:
@@ -118,23 +119,25 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     span.style.color = 'black';
   }
 
-
+  let requestsLeftToRun = 0;
   const runModeQueue = async () =>
   {
     let runModeQueueKey = 0;
     const keys = Object.keys( mode1 );
+    requestsLeftToRun = keys.length;
     for ( ; runModeQueueKey < keys.length; runModeQueueKey++ )
     {
       const key = keys[runModeQueueKey];
       const { id, testId } = mode1[key];
       await apiCall( id, testId, runModeQueueKey, runModeQueueKey );
     } // end for k
-    setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
+
   }
 
 
   const runModeThreads = async () =>
   {
+    requestsLeftToRun = Object.keys(mode1).length;
     // let runModeThreadsKey = 0;
     // let runModeThreadsThread = 0;
     // let runModeThreadsLoop = 0;
@@ -160,8 +163,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       }
     } // end for
     await Promise.all( [...promises] );
-
-    setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
   }
 
   let runModeThreadsQueueKey = 0;
@@ -170,6 +171,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const promises = [];
   const runModeThreadsQueue = async () =>
   {
+    requestsLeftToRun = Object.keys(mode1).length;
+
     const keys = Object.keys( mode2 );
 
     for ( ;runModeThreadsQueueKey < keys.length; runModeThreadsQueueKey++ )
@@ -189,7 +192,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       promises.push( p );
     }
     await Promise.all( promises );
-    setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
   }
 
   const apiCall = async ( key, paramTestId, thread, loop ) =>
@@ -197,13 +199,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     await spanSleeping(key, thread, loop);
     spanWorking(key, paramTestId, thread, loop);
 
-    const RUN_BROWSER_EXPERIMENT = gql`
-          query RunBrowserExperiment($testId: Int!, $thread: Int!, $loop: Int!) {
-            runBrowserExperiment(testId: $testId, thread: $thread, loop: $loop) {
-              testId thread loop requestTime
-            }
-          }
-        `;
     client.query({
       query: RUN_BROWSER_EXPERIMENT,
       variables: {testId:paramTestId, thread: thread, loop: loop }
@@ -212,8 +207,16 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       const runBrowserExperiment = data.data.runBrowserExperiment;
       // console.log( data.data.runBrowserExperiment );
       spanDone(key, runBrowserExperiment.testId, runBrowserExperiment.requestTime, runBrowserExperiment.thread, runBrowserExperiment.loop);
+      requestsLeftToRun--;
+      if ( requestsLeftToRun === 0 )
+          setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
     })
-    .catch( e => spanError(key,e.message, thread, loop) );
+    .catch( e => {
+      spanError(key,e.message, thread, loop);
+      requestsLeftToRun--;
+      if ( requestsLeftToRun === 0 )
+        setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
+    } );
 
   }
 
@@ -233,22 +236,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   }
 
   return <>
-    <Tooltip title={'Request Length Box Plot'}>
-      <Button
-        onClick={ ()=> {
-          setIsModalVisible(true)
-        }}
-      >
-       Run Experiment in Browser
-      </Button>
-    </Tooltip>
-    <Modal
-      title={'Run Experiment in Browser'}
-      visible={isModalVisible}
-      onOk={()=>setIsModalVisible(false)}
-      onCancel={()=>setIsModalVisible(false)}
-      width={'100%'}
-    >
+
 
       <span style={{marginLeft:'20px'}}>
         Run mode: <Segmented options={[RUN_MODE_QUEUE, RUN_MODE_THREADS, RUN_MODE_THREADS_QUEUE]} defaultValue={runMode} disabled={false} onChange={(e)=>setRunMode(e)}/>
@@ -395,7 +383,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           })
         }
       </div>
-    </Modal>
   </>
 
 }

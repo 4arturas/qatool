@@ -39,6 +39,7 @@ const Routes = () => {
           <Route path="/experiment/{id:Int}" page={ExperimentPage} name="experiment" />
           <Route path="/experiment-test/{testId:Int}" page={ExperimentTestPage} name="experimentTest" />
           <Route path="/experiments/{page:Int}/{pageSize:Int}/{count:Int}" page={ExperimentResultsPage} name="experimentResults" />
+          <Route path="/experiment-browser/{id:Int}" page={ExperimentBrowserPage} name="experimentBrowser" />
 
           <Private unauthenticated="forbidden" roles={['admin']}>
             <Route path="/blockly-tree/{id:Int}" page={BlocklyTreePage} name="blocklyTree" />
