@@ -143,6 +143,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const maxThreads = Math.max(...cases.map( c => c.threads ) );
     const maxLoops = Math.max(...cases.map( c => c.loops ) );
 
+    let apiCallObject: ApiCallObject;
     for ( let thread = 0; thread < maxThreads; thread++ )
     {
       for ( let loop = 0; loop < maxLoops; loop++ )
@@ -155,7 +156,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             const testsIds = hierarchy.filter( h => h.parentId === cAse.id && h.childrenObjectTypeId === TEST ).map( m => m.childrenId );
             testsIds.map( testId => {
               const test = objects.find( o => o.id === testId );
-              const apiCallObject: ApiCallObject = {
+              apiCallObject = {
                 collectionId: collectionId,
                 suiteId: suiteId,
                 caseId: cAse.id,
@@ -170,6 +171,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           } // end if
         });
       } // end for thread
+      if ( apiCallObject )
+        apiCallObject.wait = true;
     } // end for loop
     return tmpApiObjectsArr;
   }
