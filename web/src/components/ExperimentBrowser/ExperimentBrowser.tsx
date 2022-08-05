@@ -22,9 +22,22 @@ const RUN_BROWSER_EXPERIMENT = gql`
           }
         `;
 
+interface ApiCallObject
+{
+  collectionId: number,
+  suiteId: number,
+  caseId: number,
+  testId: number,
+  thread: number,
+  loop: number,
+  num: number,
+  wait: boolean
+}
+
 const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   const client = useApolloClient();
+  const [apiObjects, setApiObjects] = useState([]);
 
   if ( qaObject.typeId !== EXPERIMENT ) return <></>
 
@@ -38,6 +51,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const RUN_MODE_QUEUE = 'Queue';
   const RUN_MODE_THREADS = 'Threads';
   const RUN_MODE_THREADS_QUEUE = 'Threads Queue';
+  const RUN_MODE_RANDOM = 'Random';
   const [runMode, setRunMode] = useState(RUN_MODE_THREADS);
 
   function delayFunction(time) {
@@ -49,29 +63,163 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const SLEEP_MODE_RANDOM = 'Random';
   const [sleepMode, setSleepMode] = useState(SLEEP_MODE_NORMAL);
 
-  useEffect(() => {
-
-    switch ( experimentExecutionMode ) {
-      case EXPERIMENT_EXECUTION_MODE_PLAY:
-        switch ( runMode )
-        {
-          case RUN_MODE_QUEUE:          runModeQueue();         break;
-          case RUN_MODE_THREADS:        runModeThreads();       break;
-          case RUN_MODE_THREADS_QUEUE:  runModeThreadsQueue();  break;
+  const set_RUN_MODE_QUEUE = ():Array<ApiCallObject> =>
+  {
+    let num = 0;
+    const tmpApiObjectsArr:Array<ApiCallObject> = [];
+    const tests = objects.filter( o => o.typeId === TEST );
+    tests.map( test => {
+      const caseId = hierarchy.find(h => h.childrenId === test.id).parentId;
+      const suiteId = hierarchy.find(h => h.childrenId === caseId).parentId;
+      const collectionId = hierarchy.find(h => h.childrenId === suiteId).parentId;
+      const cAse = objects.find( o => o.id === caseId );
+      for (let thread = 0; thread < cAse.threads; thread++) {
+        for (let loop = 0; loop < cAse.loops; loop++) {
+          const apiCallObject: ApiCallObject = {
+            collectionId: collectionId,
+            suiteId: suiteId,
+            caseId: caseId,
+            testId: test.id,
+            thread: thread,
+            loop: loop,
+            num: num++,
+            wait: true
+          };
+          tmpApiObjectsArr.push(apiCallObject);
         }
-        break;
+      }
+    });
+    return tmpApiObjectsArr;
+  }
 
-      case EXPERIMENT_EXECUTION_MODE_PAUSE:
-        break;
+  const set_RUN_MODE_THREADS = ():Array<ApiCallObject> =>
+  {
+    let num = 0;
+    const tmpApiObjectsArr:Array<ApiCallObject> = [];
+    const cases = objects.filter( o => o.typeId === CASE );
+    const maxThreads = Math.max(...cases.map( c => c.threads ) );
+    const maxLoops = Math.max(...cases.map( c => c.loops ) );
 
-      case EXPERIMENT_EXECUTION_MODE_STOP:
-        break;
+    for ( let loop = 0; loop < maxLoops; loop++ )
+    {
+      let apiCallObject: ApiCallObject;
+      for ( let thread = 0; thread < maxThreads; thread++ )
+      {
+        cases.map( cAse => {
+          if ( loop < cAse.loops && thread < cAse.threads )
+          {
+            const suiteId = hierarchy.find(h => h.childrenId === cAse.id).parentId;
+            const collectionId = hierarchy.find(h => h.childrenId === suiteId).parentId;
+            const testsIds = hierarchy.filter( h => h.parentId === cAse.id && h.childrenObjectTypeId === TEST ).map( m => m.childrenId );
+            testsIds.map( testId => {
+              const test = objects.find( o => o.id === testId );
+              apiCallObject = {
+                collectionId: collectionId,
+                suiteId: suiteId,
+                caseId: cAse.id,
+                testId: test.id,
+                thread: thread,
+                loop: loop,
+                num: num++,
+                wait: false
+              };
+              tmpApiObjectsArr.push(apiCallObject);
+            });
+
+          } // end if
+        });
+      } // end for thread
+      apiCallObject.wait = true;
+    } // end for loop
+
+    return tmpApiObjectsArr;
+  }
+
+  const set_RUN_MODE_THREADS_QUEUE = ():Array<ApiCallObject> =>
+  {
+    let num = 0;
+    const tmpApiObjectsArr:Array<ApiCallObject> = [];
+    const cases = objects.filter( o => o.typeId === CASE );
+    const maxThreads = Math.max(...cases.map( c => c.threads ) );
+    const maxLoops = Math.max(...cases.map( c => c.loops ) );
+
+    for ( let thread = 0; thread < maxThreads; thread++ )
+    {
+      for ( let loop = 0; loop < maxLoops; loop++ )
+      {
+        cases.map( cAse => {
+          if ( loop < cAse.loops && thread < cAse.threads )
+          {
+            const suiteId = hierarchy.find(h => h.childrenId === cAse.id).parentId;
+            const collectionId = hierarchy.find(h => h.childrenId === suiteId).parentId;
+            const testsIds = hierarchy.filter( h => h.parentId === cAse.id && h.childrenObjectTypeId === TEST ).map( m => m.childrenId );
+            testsIds.map( testId => {
+              const test = objects.find( o => o.id === testId );
+              const apiCallObject: ApiCallObject = {
+                collectionId: collectionId,
+                suiteId: suiteId,
+                caseId: cAse.id,
+                testId: test.id,
+                thread: thread,
+                loop: loop,
+                num: num++,
+                wait: false
+              };
+              tmpApiObjectsArr.push(apiCallObject);
+            });
+          } // end if
+        });
+      } // end for thread
+    } // end for loop
+    return tmpApiObjectsArr;
+  }
+
+  const set_RUN_MODE_RANDOM = ():Array<ApiCallObject> =>
+  {
+    const tmpApiObjectsArr:Array<ApiCallObject> = set_RUN_MODE_QUEUE();
+    const newApiObjectsArr:Array<ApiCallObject> = [];
+    let num = 0;
+    while ( tmpApiObjectsArr.length > 0 )
+    {
+      const idx = getRandomIntInclusive( 0, tmpApiObjectsArr.length-1 );
+      const apiCallObject:ApiCallObject = tmpApiObjectsArr[idx];
+      apiCallObject.num = num++;
+      newApiObjectsArr.push( apiCallObject );
+      tmpApiObjectsArr.splice( idx, 1 );
     }
+    return newApiObjectsArr;
+  }
 
-  }, [experimentExecutionMode, runMode, sleepMode, delayMS]);
+  const createKey = ( apiCallObject:ApiCallObject ): string =>
+  {
+    return `span${apiCallObject.collectionId}${apiCallObject.suiteId}${apiCallObject.caseId}${apiCallObject.testId}${apiCallObject.thread}${apiCallObject.loop}`;
+  }
+  const getSpan = ( apiCallObject:ApiCallObject ) =>
+  {
+    return document.getElementById(createKey(apiCallObject));
+  }
+  const toString = ( apiCallObject:ApiCallObject ): any =>
+  {
+    // return `<b>Collection</b>${apiCallObject.collectionId} <b>Suite</b>${apiCallObject.suiteId} <b>Case</b>${apiCallObject.caseId} <b>Test</b>${apiCallObject.testId} <b>Thread</b>${apiCallObject.thread} <b>Loop</b>${apiCallObject.loop} <b>Num</b>${apiCallObject.num}`;
+    return `<b>Num: </b>${apiCallObject.num}`;
+  }
 
-  const mode1 = {};
-  const mode2 = {};
+  const spanStatus = ( apiCallObject:ApiCallObject ) =>
+  {
+    const span = getSpan( apiCallObject );
+    span.innerHTML = `${toString(apiCallObject)}`;
+    span.style.backgroundColor = `white`;
+  }
+
+
+
+  useEffect(() => {
+    const tmpApiObjectsArr = set_RUN_MODE_THREADS();
+    setApiObjects( tmpApiObjectsArr );
+    tmpApiObjectsArr.map( ( apiCallObject:ApiCallObject ) => {
+      spanStatus( apiCallObject );
+    });
+  }, []);
 
   async function spanSleeping(id:string, thread:number, loop:number)
   {
@@ -120,82 +268,42 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   }
 
   let requestsLeftToRun = 0;
-  const runModeQueue = async () =>
+  const [abortControllerArr, setAbortControllerArr] = useState( [] );
+  const run = async () =>
   {
-    let runModeQueueKey = 0;
-    const keys = Object.keys( mode1 );
-    requestsLeftToRun = keys.length;
-    for ( ; runModeQueueKey < keys.length; runModeQueueKey++ )
+    // setAbortControllerArr( [] );
+    let promises = [];
+    for ( let i = 0; i < apiObjects.length; i++ )
     {
-      const key = keys[runModeQueueKey];
-      const { id, testId } = mode1[key];
-      await apiCall( id, testId, runModeQueueKey, runModeQueueKey );
-    } // end for k
-
-  }
-
-
-  const runModeThreads = async () =>
-  {
-    requestsLeftToRun = Object.keys(mode1).length;
-    // let runModeThreadsKey = 0;
-    // let runModeThreadsThread = 0;
-    // let runModeThreadsLoop = 0;
-    const keys = Object.keys( mode2 );
-    const promises = [];
-    for ( let runModeThreadsKey = 0; runModeThreadsKey < keys.length; runModeThreadsKey++)
-    {
-      const key = keys[runModeThreadsKey];
-      const {threads, loops} = mode2[key];
-
-      for ( let runModeThreadsThread = 0; runModeThreadsThread < threads; runModeThreadsThread++ )
-      {
-        const p = new Promise( async (resolve, reject) => {
-          for ( let runModeThreadsLoop = 0; runModeThreadsLoop < loops; runModeThreadsLoop++)
-          {
-            const newKey = `${key}Thread-${runModeThreadsThread}Loop-${runModeThreadsLoop}`;
-            let {testId} = mode1[newKey];
-            await apiCall( newKey, testId, runModeThreadsThread, runModeThreadsLoop );
-          }
-          resolve(1);
-        });
-        promises.push( p );
-      }
-    } // end for
-    await Promise.all( [...promises] );
-  }
-
-  let runModeThreadsQueueKey = 0;
-  let runModeThreadsQueueThread = 0;
-  let runModeThreadsQueueLoop = 0;
-  const promises = [];
-  const runModeThreadsQueue = async () =>
-  {
-    requestsLeftToRun = Object.keys(mode1).length;
-
-    const keys = Object.keys( mode2 );
-
-    for ( ;runModeThreadsQueueKey < keys.length; runModeThreadsQueueKey++ )
-    {
-      const key = keys[runModeThreadsQueueKey];
-      const {threads, loops, testId} = mode2[key];
+      const apiCallObject:ApiCallObject = apiObjects[i];
+      const key = createKey( apiCallObject );
+      const cancel = new AbortController();
+      abortControllerArr.push( cancel );
       const p = new Promise( async (resolve, reject) => {
-      for ( ; runModeThreadsQueueThread < threads; runModeThreadsQueueThread++ )
-      {
-          for ( ; runModeThreadsQueueLoop < loops; runModeThreadsQueueLoop++ )
-          {
-            const newKey = `${key}${runModeThreadsQueueThread}${runModeThreadsQueueLoop}`;
-            await apiCall( newKey, testId, runModeThreadsQueueThread, runModeThreadsQueueLoop );
-          }
-      }
+        let abortHandler = () => {
+          reject( 'Aborted' );
+        };
+        cancel.signal.addEventListener( 'abort',  abortHandler );
+          await apiCall( key, apiCallObject.testId, apiCallObject.thread, apiCallObject.loop );
+        resolve( 1 );
       });
       promises.push( p );
+      if ( apiCallObject.wait )
+      {
+        await Promise.all( promises );
+        promises = [];
+      }
     }
-    await Promise.all( promises );
+
   }
 
   const apiCall = async ( key, paramTestId, thread, loop ) =>
   {
+    // if ( experimentExecutionMode === EXPERIMENT_EXECUTION_MODE_STOP ) return;
+    requestsLeftToRun--;
+    if ( requestsLeftToRun < 0 )
+      return;
+
     await spanSleeping(key, thread, loop);
     spanWorking(key, paramTestId, thread, loop);
 
@@ -207,14 +315,12 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       const runBrowserExperiment = data.data.runBrowserExperiment;
       // console.log( data.data.runBrowserExperiment );
       spanDone(key, runBrowserExperiment.testId, runBrowserExperiment.requestTime, runBrowserExperiment.thread, runBrowserExperiment.loop);
-      requestsLeftToRun--;
-      if ( requestsLeftToRun === 0 )
-          setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
+      if ( requestsLeftToRun <= 0 )
+        setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
     })
     .catch( e => {
       spanError(key,e.message, thread, loop);
-      requestsLeftToRun--;
-      if ( requestsLeftToRun === 0 )
+      if ( requestsLeftToRun <= 0 )
         setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
     } );
 
@@ -236,34 +342,95 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   }
 
   return <>
-
-
       <span style={{marginLeft:'20px'}}>
-        Run mode: <Segmented options={[RUN_MODE_QUEUE, RUN_MODE_THREADS, RUN_MODE_THREADS_QUEUE]} defaultValue={runMode} disabled={false} onChange={(e)=>setRunMode(e)}/>
+        <b>Run mode: </b>
+        <Segmented
+          options={[RUN_MODE_QUEUE, RUN_MODE_THREADS, RUN_MODE_THREADS_QUEUE, RUN_MODE_RANDOM]}
+          defaultValue={runMode}
+          disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
+          style={{backgroundColor:'darkgray'}}
+          onChange={ (e) => {
+            setRunMode(e);
+            let tmpApiObjectsArr:Array<ApiCallObject>;
+            switch ( e )
+            {
+              case RUN_MODE_QUEUE:
+                tmpApiObjectsArr = set_RUN_MODE_QUEUE();
+                break;
+
+              case RUN_MODE_THREADS:
+                tmpApiObjectsArr = set_RUN_MODE_THREADS();
+                break;
+
+              case RUN_MODE_THREADS_QUEUE:
+                tmpApiObjectsArr = set_RUN_MODE_THREADS_QUEUE();
+                break;
+
+              case RUN_MODE_RANDOM:
+                tmpApiObjectsArr = set_RUN_MODE_RANDOM();
+                break;
+            }
+
+
+            tmpApiObjectsArr.map( ( apiCallObject:ApiCallObject ) => {
+              spanStatus( apiCallObject );
+            });
+            setApiObjects(tmpApiObjectsArr);
+
+          }}
+        />
       </span>
 
       <span style={{marginLeft:'20px'}}>
-        Sleep: <input type='number' value={delayMS} style={{width:'100px', border: '1px solid gray'}} onChange={(e)=>setDelayMS(parseInt(e.target.value))}/>ms
+        <b>Sleep: </b>
+        <input
+          type='number'
+          value={delayMS}
+          style={{width:'100px', border: '1px solid gray'}}
+          disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
+          onChange={(e)=>setDelayMS(parseInt(e.target.value))}/>ms
       </span>
 
       <span style={{marginLeft:'20px'}}>
-        Sleep mode: <Segmented options={[SLEEP_MODE_NORMAL, SLEEP_MODE_RANDOM]} defaultValue={sleepMode} disabled={false} onChange={(e)=>setSleepMode(e)}/>
+        <b>Sleep mode: </b>
+        <Segmented
+          options={[SLEEP_MODE_NORMAL, SLEEP_MODE_RANDOM]}
+          defaultValue={sleepMode}
+          disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
+          style={{backgroundColor:'darkgray'}}
+          onChange={(e)=>setSleepMode(e)}
+        />
       </span>
 
       <span style={{marginLeft:'20px'}}>
         <PlayCircleOutlined
           style={{...stylingObject.stop, color: `${experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY?'green':'black'}`}}
+          disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
           onClick={ () => {
             if ( experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY )
               return;
 
             setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_PLAY);
+
+            requestsLeftToRun = apiObjects.length;
+
+            apiObjects.map( ( apiCallObject:ApiCallObject ) => {
+              spanStatus( apiCallObject );
+            });
+
+            switch ( runMode )
+            {
+              case RUN_MODE_QUEUE:          run();  break;
+              case RUN_MODE_THREADS:        run();  break;
+              case RUN_MODE_THREADS_QUEUE:  run();  break;
+              case RUN_MODE_RANDOM:         run();  break;
+            }
           }}
         />
         <PauseCircleOutlined
           style={{...stylingObject.stop, color: `${experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE?'green':'black'}`}}
-          onClick={async ()=>{
-            if ( experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE )
+          onClick={ ()=>{
+            if ( experimentExecutionMode!==EXPERIMENT_EXECUTION_MODE_PLAY )
               return;
 
             setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_PAUSE);
@@ -272,28 +439,22 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
         />
         <BorderOutlined
           style={{...stylingObject.stop, color: `${experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_STOP?'green':'black'}`}}
-          onClick={ async ()=>{
+          onClick={ ()=>{
             if ( experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_STOP )
               return;
 
             setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_STOP);
+            requestsLeftToRun = 0;
+            abortControllerArr.map( cancel => {
+              // cancel.signal.removeEventListener( 'abort', abortHandler );
+              cancel.abort()
+            } );
+            setAbortControllerArr( [] );
 
-            const keys = Object.keys( mode1 );
-            keys.map( k => {
-              const span = document.getElementById(k);
-              span.innerHTML = 'Waiting';
-              span.style.backgroundColor = 'white';
+            apiObjects.map( (apiCallObject:ApiCallObject) => {
+              spanStatus( apiCallObject );
             });
 
-            // runModeQueueKey = 0;
-
-/*            runModeThreadsKey = 0;
-            runModeThreadsThread = 0;
-            runModeThreadsLoop = 0;*/
-
-            runModeThreadsQueueKey = 0;
-            runModeThreadsQueueThread = 0;
-            runModeThreadsQueueLoop = 0;
           }}
         />
       </span>
@@ -335,9 +496,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                 testIds.map( testId => {
                   const test = objects.find( o => o.id === testId );
 
-                  const idMode2 = `span${collection.id}${suite.id}${cAse.id}${test.id}`;
-                  mode2[idMode2] = {caseId: caseId, testId:testId, threads:cAse.threads, loops:cAse.loops};
-
                     HTML.push(
                       <div key={`testBrowserExperiment${collection.id}${suite.id}${cAse.id}${test.id}`} style={{paddingLeft:'60px'}}>
                         <Tag color={typeIdToColor(test.typeId)}>{typeIdToName(test.typeId)}</Tag>- {test.name}
@@ -357,10 +515,10 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                       const DIV = [];
                       for ( let loop = 0; loop < cAse.loops; loop++ )
                       {
-                        const modeKey = `span${collection.id}${suite.id}${cAse.id}${test.id}Thread-${thread}Loop-${loop}`;
-                        mode1[modeKey] = { id: modeKey, testId: test.id };
+                        const apiCallObject:ApiCallObject = {collectionId:collection.id,suiteId:suite.id,caseId:cAse.id,testId:test.id,thread:thread,loop:loop,num:0, wait:false};
+                        const key = createKey( apiCallObject );
                         DIV.push(
-                          <span id={modeKey} key={modeKey} style={{width:`${100/cAse.loops}%`, border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'}}>
+                          <span id={key} key={key} style={{width:`${100/cAse.loops}%`, border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'}}>
                             Loop {loop+1} is waiting
                           </span>
                         )
