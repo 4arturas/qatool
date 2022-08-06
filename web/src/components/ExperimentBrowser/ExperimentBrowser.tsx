@@ -356,7 +356,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
           style={{backgroundColor:'darkgray'}}
           onChange={ (e) => {
-            setRunMode(e);
+            setRunMode(e.toString());
             let tmpApiObjectsArr:Array<ApiCallObject>;
             switch ( e )
             {
