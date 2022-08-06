@@ -404,7 +404,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           defaultValue={sleepMode}
           disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
           style={{backgroundColor:'darkgray'}}
-          onChange={(e)=>setSleepMode(e)}
+          onChange={(e)=>setSleepMode(e.toString())}
         />
       </span>
 
