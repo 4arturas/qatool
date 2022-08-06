@@ -280,7 +280,7 @@ export const runBrowserExperiment = async ({testId, thread, loop}) =>
     return new Promise(resolve => setTimeout(resolve, time));
   }
 
-  const delayTime = getRandomIntInclusive( 0, 500);
+  const delayTime = getRandomIntInclusive( 0, 5000);
   console.log( 'delayTime', delayTime );
   await delay(delayTime);
 
