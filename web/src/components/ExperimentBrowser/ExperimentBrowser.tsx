@@ -207,11 +207,17 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     return `<b>Num: </b>${apiCallObject.num}`;
   }
 
+  const norm = ( x ) => (x)*(255/apiObjects.length);
   const spanStatus = ( apiCallObject:ApiCallObject ) =>
   {
     const span = getSpan( apiCallObject );
     span.innerHTML = `${toString(apiCallObject)}`;
+    const n = norm(apiCallObject.num);
+    const r = 255-n;
+    const g = 0;
+    const b = 0;
     span.style.backgroundColor = `white`;
+    span.style.color = `rgb(${r},${g},${b})`;
   }
 
 
@@ -347,6 +353,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     },
   }
 
+  const mHTML = [];
+
   return <>
       <span style={{marginLeft:'20px'}}>
         <b>Run mode: </b>
@@ -469,83 +477,74 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       <br/>
       <br/>
 
-      <div style={{textAlign: 'left'}}>
+      <div>
         <Tag color={typeIdToColor(qaObject.typeId)}>{typeIdToName(qaObject.typeId)}</Tag> - {qaObject.name}
         {
-          hierarchy.filter( c => c.childrenObjectTypeId === COLLECTION ).map( m => m.childrenId ).map( childrenId => {
-            const collection = objects.find(o => o.id === childrenId);
-            let HTML = [
-              <div key={`collectionBrowserExperiment${collection.id}`} style={{paddingLeft:'10px'}}>
-                <Tag color={typeIdToColor(collection.typeId)}>{typeIdToName(collection.typeId)}</Tag>- {collection.name}
-              </div>
-            ];
-            const suiteIds = hierarchy.filter( c => c.parentId === collection.id && c.childrenObjectTypeId === SUITE ).map( m => m.childrenId );
-            suiteIds.map( suiteId => {
-              const suite =  objects.find( o => o.id === suiteId );
-              HTML.push(
-                <div key={`suiteBrowserExperiment${collection.id}${suite.id}`} style={{paddingLeft:'20px'}}>
-                  <Tag color={typeIdToColor(suite.typeId)}>{typeIdToName(suite.typeId)}</Tag>- {suite.name}
-                </div>
-              )
-
-              const caseIds = hierarchy.filter( c => c.parentId === suite.id && c.childrenObjectTypeId === CASE ).map( m => m.childrenId );
-              caseIds.map( caseId => {
-                const cAse = objects.find( o => o.id === caseId );
-                HTML.push(
-                  <div key={`caseBrowserExperiment${collection.id}${suite.id}${cAse.id}`} style={{paddingLeft:'40px'}}>
-                    <Tag color={typeIdToColor(cAse.typeId)}>{typeIdToName(cAse.typeId)}</Tag>- {cAse.name}
+          objects.filter( o => o.typeId === CASE ).map( cAse => {
+              const suiteId = hierarchy.find(h => h.childrenId === cAse.id).parentId;
+              const collectionId = hierarchy.find(h => h.childrenId === suiteId).parentId;
+              const testsIds = hierarchy.filter( h => h.parentId === cAse.id && h.childrenObjectTypeId === TEST ).map( m => m.childrenId );
+              const suite = objects.find( o => o.id === suiteId );
+              const collection = objects.find( o => o.id === collectionId );
+              testsIds.map( testId => {
+                const test = objects.find( o => o.id === testId );
+                mHTML.push(
+                  <div key={`col${collection.id}${suiteId}${cAse.id}${testId}`} style={{paddingLeft:'10px', marginTop:'10px'}}>
+                    <Tag color={typeIdToColor(collection.typeId)}>{typeIdToName(collection.typeId)}</Tag>{collection.name}
+                    &nbsp;&nbsp;&nbsp;
+                    <Tag color={typeIdToColor(suite.typeId)}>{typeIdToName(suite.typeId)}</Tag>{suite.name}
+                    &nbsp;&nbsp;&nbsp;
+                    <Tag color={typeIdToColor(cAse.typeId)}>{typeIdToName(cAse.typeId)}</Tag>{cAse.name}
+                    &nbsp;&nbsp;&nbsp;
+                    <Tag color={typeIdToColor(test.typeId)}>{typeIdToName(test.typeId)}</Tag>{test.name}
                   </div>
                 );
 
-                const testIds = hierarchy.filter( c => c.parentId === cAse.id && c.childrenObjectTypeId === TEST ).map( m => m.childrenId );
-
-                testIds.map( testId => {
-                  const test = objects.find( o => o.id === testId );
-
-                    HTML.push(
-                      <div key={`testBrowserExperiment${collection.id}${suite.id}${cAse.id}${test.id}`} style={{paddingLeft:'60px'}}>
-                        <Tag color={typeIdToColor(test.typeId)}>{typeIdToName(test.typeId)}</Tag>- {test.name}
-                      </div>
-                    );
-
-                    const TH = [<th>Thread</th>];
-                    for ( let l = 0; l < cAse.loops; l++ )
-                    {
-                      TH.push(<th>Loop: {l+1}</th>)
-                    }
-
-                    const TR = [];
-                    Array(...Array(cAse.threads)).map((_, thread) =>
-                    {
-                      const trKey = `${collection.id}${suite.id}${cAse.id}${test.id}${thread}`;
-                      const DIV = [];
-                      for ( let loop = 0; loop < cAse.loops; loop++ )
-                      {
-                        const apiCallObject:ApiCallObject = {collectionId:collection.id,suiteId:suite.id,caseId:cAse.id,testId:test.id,thread:thread,loop:loop,num:0, wait:false};
-                        const key = createKey( apiCallObject );
-                        DIV.push(
-                          <span id={key} key={key} style={{width:`${100/cAse.loops}%`, border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'}}>
+                const TH = [
+                  <tr key={`trthT${collection.id}${suite.id}${cAse.id}${test.id}`}>
+                    <th key={`thT${collection.id}${suite.id}${cAse.id}${test.id}`}>Thread</th>
+                    <th key={`thL${collection.id}${suite.id}${cAse.id}${test.id}`} style={{textAlign:'center'}} colSpan={cAse.loops}>Loops</th>
+                  </tr>
+                ];
+                const TR = [];
+                for ( let thread = 0; thread < cAse.threads; thread++ )
+                {
+                  const DIV = [];
+                  for ( let loop = 0; loop < cAse.loops; loop++ )
+                  {
+                    const apiCallObject:ApiCallObject = {
+                      collectionId: collectionId,
+                      suiteId: suiteId,
+                      caseId: cAse.id,
+                      testId: test.id,
+                      thread: thread,
+                      loop: loop,
+                      num: 0,
+                      wait: false
+                    };
+                    const key = createKey( apiCallObject );
+                    DIV.push(
+                      <span id={key} key={key} style={{width:`${100/cAse.loops}%`, border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'}}>
                             Loop {loop+1} is waiting
                           </span>
-                        )
-                      } // end for loops
-                      TR.push( <tr key={`tr${trKey}`}><td>{thread+1}</td><td style={{width:'100%'}}>{DIV}</td></tr>)
-                    }) // end for threads
-                  HTML.push(
-                    <table key={`tableExperiment${collection.id}${suite.id}${cAse.id}${test.id}`} style={{width:'100%', marginTop: '10px', marginBottom: '10px', border:'1px solid black'}}>
-                      <tbody>
-                        <tr><th style={{width:'1px'}}>Thread</th><th>Loops</th></tr>
-                        {TR}
-                      </tbody>
-                    </table>
-                  );
-                });
-
+                    )
+                  } // end for loop
+                  const trKey = `${collection.id}${suite.id}${cAse.id}${test.id}${thread}`;
+                  TR.push( <tr key={`tr${trKey}`}><td>{thread+1}</td><td style={{width:'100%'}}>{DIV}</td></tr>)
+                } // end for thread
+                mHTML.push(
+                  <table key={`tbl${collectionId}${suiteId}${cAse.id}${testId}`} style={{border:'1px solid black'}}>
+                    <thead>{TH}</thead>
+                    <tbody>
+                      {TR}
+                    </tbody>
+                  </table>
+                )
               });
-            });
-            return <div key={`divExperiment`}>{HTML}</div>
           })
         }
+
+        <div key={`divExperiment`}>{mHTML}</div>
       </div>
   </>
 
