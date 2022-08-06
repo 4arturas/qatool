@@ -532,7 +532,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                       TR.push( <tr key={`tr${trKey}`}><td>{thread+1}</td><td style={{width:'100%'}}>{DIV}</td></tr>)
                     }) // end for threads
                   HTML.push(
-                    <table key={`tableExperiment${collection.id}${suite.id}${cAse.id}${test.id}`} style={{width:'100%', marginTop: '10px', marginBottom: '10px'}} border={1}>
+                    <table key={`tableExperiment${collection.id}${suite.id}${cAse.id}${test.id}`} style={{width:'100%', marginTop: '10px', marginBottom: '10px', border:'1px solid black'}}>
                       <tbody>
                         <tr><th style={{width:'1px'}}>Thread</th><th>Loops</th></tr>
                         {TR}
