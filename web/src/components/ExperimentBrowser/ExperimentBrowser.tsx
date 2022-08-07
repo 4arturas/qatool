@@ -59,8 +59,9 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   }
   const [delayMS, setDelayMS] = useState( 1000 );
 
-  const SLEEP_MODE_NORMAL = 'Normal';
-  const SLEEP_MODE_RANDOM = 'Random';
+  const SLEEP_MODE_NORMAL     = 'Normal';
+  const SLEEP_MODE_RANDOM     = 'Random';
+  const SLEEP_MODE_NO_SLEEP   = 'No Sleep';
   const [sleepMode, setSleepMode] = useState(SLEEP_MODE_NORMAL);
 
   const set_RUN_MODE_QUEUE = ():Array<ApiCallObject> =>
@@ -316,7 +317,9 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     if ( requestsLeftToRun < 0 )
       return;
 
-    await spanSleeping(key, thread, loop);
+    if ( sleepMode !== SLEEP_MODE_NO_SLEEP )
+      await spanSleeping(key, thread, loop);
+
     spanWorking(key, paramTestId, thread, loop);
 
     client.query({
@@ -408,7 +411,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       <span style={{marginLeft:'20px'}}>
         <b>Sleep mode: </b>
         <Segmented
-          options={[SLEEP_MODE_NORMAL, SLEEP_MODE_RANDOM]}
+          options={[SLEEP_MODE_NORMAL, SLEEP_MODE_RANDOM, SLEEP_MODE_NO_SLEEP]}
           defaultValue={sleepMode}
           disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
           style={{backgroundColor:'darkgray'}}
