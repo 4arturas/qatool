@@ -1,7 +1,7 @@
 import {
   calculateMedian,
   CASE,
-  COLLECTION, CompMinMaxAvg,
+  COLLECTION,
   EXPERIMENT,
   getRandomIntInclusive, minMaxAvg, MSG_INCOMING,
   SUITE,
@@ -45,7 +45,7 @@ interface ServerResponse
 
 interface ApiCallObject
 {
-  collectionId: number, suiteId: number, caseId: number, testId: number, thread: number, loop: number, num: number, wait: boolean,
+  collectionId: number, suiteId: number, caseId: number, testId: number, thread: number, loop: number, num: number, numRGB: string, wait: boolean,
   response: ServerResponse
 }
 
@@ -98,7 +98,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             testId: test.id,
             thread: thread,
             loop: loop,
-            num: num++,
+            num: num,
+            numRGB: numRGB(num++),
             wait: true,
             response: null
           };
@@ -137,6 +138,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                 testId: test.id,
                 thread: thread,
                 loop: loop,
+                numRGB: numRGB(num),
                 num: num++,
                 wait: false,
                 response: null
@@ -181,6 +183,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                 testId: test.id,
                 thread: thread,
                 loop: loop,
+                numRGB: numRGB(num),
                 num: num++,
                 wait: false,
                 response: null
@@ -205,6 +208,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     {
       const idx = getRandomIntInclusive( 0, tmpApiObjectsArr.length-1 );
       const apiCallObject:ApiCallObject = tmpApiObjectsArr[idx];
+      apiCallObject.numRGB = numRGB(num);
       apiCallObject.num = num++;
       newApiObjectsArr.push( apiCallObject );
       tmpApiObjectsArr.splice( idx, 1 );
@@ -220,16 +224,20 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   {
     return document.getElementById(createKey(apiCallObject));
   }
-  const toString = ( apiCallObject:ApiCallObject ): any =>
+  const toString = ( apiCallObject:ApiCallObject ): string =>
   {
-    // return `<b>Collection</b>${apiCallObject.collectionId} <b>Suite</b>${apiCallObject.suiteId} <b>Case</b>${apiCallObject.caseId} <b>Test</b>${apiCallObject.testId} <b>Thread</b>${apiCallObject.thread} <b>Loop</b>${apiCallObject.loop} <b>Num</b>${apiCallObject.num}`;
-    return `<b>Num: </b>${apiCallObject.num}`;
+    return `<span style="color:${apiCallObject.numRGB}"><b>Num: </b>${apiCallObject.num}</span>`;
   }
 
   useEffect(() => {
     const tmpApiObjectsArr = set_RUN_MODE_THREADS();
     setApiObjects( tmpApiObjectsArr );
+
     tmpApiObjectsArr.map( ( apiCallObject:ApiCallObject ) => {
+      apiObjects.push(apiCallObject);
+    });
+    tmpApiObjectsArr.map( ( apiCallObject:ApiCallObject ) => {
+      apiCallObject.numRGB = numRGB(apiCallObject.num);
       spanStatus( apiCallObject );
     });
   }, []);
@@ -237,7 +245,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const maxColor = 255;
   const norm = ( x ) => (x)*(maxColor/apiObjects.length);
   const numRGB = ( num:number ) => {
-    const n = norm( num );
+    const n = norm( num+0.0000001 );
     const r = maxColor-n;
     const g = 0;
     const b = 0;
@@ -248,9 +256,9 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   {
     const span = getSpan( apiCallObject );
     span.innerHTML = `${toString(apiCallObject)}`;
-    span.innerHTML += apiCallObject.wait ? ' wait' : '';
-    span.style.backgroundColor = `white`;
-    span.style.color = numRGB( apiCallObject.num );
+    // span.innerHTML += apiCallObject.wait ? ' wait' : '';
+    // span.style.backgroundColor = `white`;
+    // span.style.color = numRGB( apiCallObject.num );
   }
 
   async function spanSleeping( apiCallObject:ApiCallObject )
@@ -265,7 +273,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     let showDelay = delayTime;
     const interval = setInterval( () => {
       span.innerHTML = `<i class="fa-solid fa-moon" style="color:blue"></i>`;
-      span.innerHTML += ` <span style="color:${numRGB( apiCallObject.num )}">Num ${apiCallObject.num}</span> - ${showDelay}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+      span.innerHTML += ` <span style="color:${apiCallObject.numRGB}">Num ${apiCallObject.num}</span> - ${showDelay}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
       showDelay -= intervalDelay;
       if ( showDelay < 0 )
         clearInterval( interval );
@@ -281,7 +289,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const span = getSpan(apiCallObject);
     // span.appendChild( test() );
     span.innerHTML = '<span style="font-size: 18px; margin-bottom: -5px" class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>';
-    span.innerHTML += ` <span style="color:${numRGB( apiCallObject.num )}">Num ${apiCallObject.num}</span> - `;
+    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}">Num ${apiCallObject.num}</span> - `;
     span.innerHTML += ` testId=${apiCallObject.testId} thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
     span.style.backgroundColor = 'white';
     span.style.color = 'black';
@@ -300,7 +308,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const time = new Date(apiCallObject.response.responseDate).getTime()-new Date(apiCallObject.response.requestDate).getTime();
     const span = getSpan(apiCallObject);
     span.innerHTML = `<i class="fa-solid fa-check" style="color:green"></i>`;
-    span.innerHTML += ` <span style="color:${numRGB( apiCallObject.num )}">Num ${apiCallObject.num}</span> - `;
+    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}">Num ${apiCallObject.num}</span> - `;
     span.innerHTML += ` testId=${apiCallObject.testId} time=${time}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
     // span.style.backgroundColor = 'lightgreen';
     span.style.color = 'black';
@@ -564,6 +572,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                       thread: thread,
                       loop: loop,
                       num: 0,
+                      numRGB: 'rgb(0,0,0)',
                       wait: false,
                       response: null
                     };
