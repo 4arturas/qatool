@@ -45,14 +45,7 @@ interface ServerResponse
 
 interface ApiCallObject
 {
-  collectionId: number,
-  suiteId: number,
-  caseId: number,
-  testId: number,
-  thread: number,
-  loop: number,
-  num: number,
-  wait: boolean
+  collectionId: number, suiteId: number, caseId: number, testId: number, thread: number, loop: number, num: number, wait: boolean,
   response: ServerResponse
 }
 
