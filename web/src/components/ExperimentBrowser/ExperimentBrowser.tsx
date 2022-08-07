@@ -99,7 +99,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             thread: thread,
             loop: loop,
             num: num++,
-            wait: true
+            wait: true,
+            response: null
           };
           tmpApiObjectsArr.push(apiCallObject);
         }
@@ -137,7 +138,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                 thread: thread,
                 loop: loop,
                 num: num++,
-                wait: false
+                wait: false,
+                response: null
               };
               tmpApiObjectsArr.push(apiCallObject);
             });
@@ -180,7 +182,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                 thread: thread,
                 loop: loop,
                 num: num++,
-                wait: false
+                wait: false,
+                response: null
               };
               tmpApiObjectsArr.push(apiCallObject);
             });
