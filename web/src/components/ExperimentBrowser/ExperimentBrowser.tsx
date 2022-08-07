@@ -258,7 +258,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const span = document.getElementById(id);
     // span.appendChild( test() );
     span.innerHTML = '<span style="font-size: 18px; margin-bottom: -5px" class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>';
-    span.innerHTML += ` WORKING with testId=${text} thread=${thread} loop=${loop}`;
+    span.innerHTML += ` testId=${text} thread=${thread} loop=${loop}`;
     span.style.backgroundColor = 'white';
     span.style.color = 'black';
     // ReactDOM.render(<div><Spin size={'small'} /> WORKING with testId={text} thread={thread} loop={loop}</div>, span);
