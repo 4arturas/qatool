@@ -23,6 +23,21 @@ const RUN_BROWSER_EXPERIMENT = gql`
             }
           }`;
 
+const stylingObject = {
+  loop: {
+    border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'
+  },
+  play: {
+    marginLeft:'10px', fontSize: '30px', cursor: 'pointer'
+  },
+  pause: {
+    marginLeft:'10px', fontSize: '30px', cursor: 'pointer'
+  },
+  stop: {
+    marginLeft:'10px', fontSize: '30px', cursor: 'pointer'
+  },
+}
+
 interface ServerResponse
 {
   type: number, paymentId: number, request:string, response:string, requestDate:string, responseDate:string, jsonata:string, txnId:string
@@ -377,21 +392,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
         setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
     } );
 
-  }
-
-  const stylingObject = {
-    loop: {
-      border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'
-    },
-    play: {
-      marginLeft:'10px', fontSize: '30px', cursor: 'pointer'
-    },
-    pause: {
-      marginLeft:'10px', fontSize: '30px', cursor: 'pointer'
-    },
-    stop: {
-      marginLeft:'10px', fontSize: '30px', cursor: 'pointer'
-    },
   }
 
   const mHTML = [];
