@@ -280,10 +280,50 @@ export const runBrowserExperiment = async ({testId, thread, loop}) =>
     return new Promise(resolve => setTimeout(resolve, time));
   }
 
+  const requestDate: Date = new Date();
+
   const delayTime = getRandomIntInclusive( 0, 5000);
   console.log( 'delayTime', delayTime );
   await delay(delayTime);
+  const responseDate: Date = new Date();
 
-  return {testId: testId, thread: thread, loop: loop, requestTime: delayTime }
+
+  const experimentId = null;
+  const collectionId = null;
+  const suiteId = null;
+  const caseId = null;
+  const paymentId = null;
+  const messageOutgoing = {
+    type: MSG_OUTGOING,
+    experimentId: experimentId,
+    collectionId: collectionId,
+    suiteId: suiteId,
+    caseId: caseId,
+    testId: testId,
+    thread: thread,
+    loop: loop,
+    paymentId: paymentId,
+    request: '_JSON$stringify(changedBody)',
+    response: '_JSON$stringify(responseJSon)',
+    requestDate: requestDate.toISOString(),
+    responseDate: responseDate.toISOString(),
+    status: 200,
+    statusText: 'OK',
+    txnId: null,
+    jsonata: null
+  };
+
+  return {
+    testId: testId, thread: thread, loop: loop,
+
+    type: MSG_OUTGOING,
+    paymentId: 1,
+    request: 'request',
+    response: 'response',
+    requestDate: requestDate.toISOString(),
+    responseDate: responseDate.toISOString(),
+    jsonata: '',
+    txnId: '111'
+  }
 
 }

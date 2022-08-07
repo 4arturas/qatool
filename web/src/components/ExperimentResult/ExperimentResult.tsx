@@ -1,8 +1,9 @@
 import {Button, Modal, Space, Table, Tag} from "antd";
 import {
+  calculateMedian,
   dateFormatYYYYMMDDHHmmss,
   messageTypeToColor,
-  messageTypeToNameShort,
+  messageTypeToNameShort, minMaxAvg,
   mySubstr,
   typeIdToColor,
   typeIdToName
@@ -133,25 +134,7 @@ const ExperimentResult = ( { experiment } ) => {
 
 
   const CompMinMaxAvg = ( { arr } ) => {
-    function calculateMedian( array:Array<number> ):number {
-      array.sort(function(a, b) {
-        return a - b;
-      });
-      const mid = array.length / 2;
-      return mid % 1 ? array[mid - 0.5] : (array[mid - 1] + array[mid]) / 2;
-    }
-    const minMaxAvg = ( arr:Array<number> ): { min:number, max:number, avg:number } =>
-    {
-      let min = arr[0], max = arr[0], avg: number;
-      let sum:number = 0;
-      arr.forEach( n => {
-        min = Math.min( min, n );
-        max = Math.max( max, n );
-        sum += n;
-      });
-      avg = sum/arr.length;
-      return { min, max, avg };
-    }
+
     const median: number = calculateMedian( arr );
     const { min, max, avg } = minMaxAvg( arr );
     return <><b>Min:</b> {min} <b>Max:</b> {max} <b>Avg:</b> {avg} <b>Median:</b> {median}</>

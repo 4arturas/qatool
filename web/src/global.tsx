@@ -289,3 +289,25 @@ export const typeIdToHelp = (typeId: number) =>
   }
 }
 
+export const calculateMedian = ( array:Array<number> ):number =>
+{
+  array.sort(function(a, b) {
+    return a - b;
+  });
+  const mid = array.length / 2;
+  return mid % 1 ? array[mid - 0.5] : (array[mid - 1] + array[mid]) / 2;
+}
+
+export const minMaxAvg = ( arr:Array<number> ): { min:number, max:number, avg:number } =>
+{
+  let min = arr[0], max = arr[0], avg: number;
+  let sum:number = 0;
+  arr.forEach( n => {
+    min = Math.min( min, n );
+    max = Math.max( max, n );
+    sum += n;
+  });
+  avg = sum/arr.length;
+  return { min, max, avg };
+}
+

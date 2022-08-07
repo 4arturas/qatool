@@ -19,6 +19,15 @@ export const schema = gql`
     requestTime: Int
     thread: Int
     loop: Int
+
+    type: Int
+    paymentId: Int
+    request: String
+    response: String
+    requestDate: String
+    responseDate: String
+    jsonata: String
+    txnId: String
   }
 
   type Query {

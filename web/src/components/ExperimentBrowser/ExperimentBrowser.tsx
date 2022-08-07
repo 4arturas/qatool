@@ -1,8 +1,9 @@
 import {
+  calculateMedian,
   CASE,
-  COLLECTION,
+  COLLECTION, CompMinMaxAvg,
   EXPERIMENT,
-  getRandomIntInclusive,
+  getRandomIntInclusive, minMaxAvg, MSG_INCOMING,
   SUITE,
   TEST,
   typeIdToColor,
@@ -17,10 +18,15 @@ import ReactDOM from "react-dom";
 const RUN_BROWSER_EXPERIMENT = gql`
           query RunBrowserExperiment($testId: Int!, $thread: Int!, $loop: Int!) {
             runBrowserExperiment(testId: $testId, thread: $thread, loop: $loop) {
-              testId thread loop requestTime
+              testId thread loop
+              type paymentId request response requestDate responseDate jsonata txnId
             }
-          }
-        `;
+          }`;
+
+interface ServerResponse
+{
+  type: number, paymentId: number, request:string, response:string, requestDate:string, responseDate:string, jsonata:string, txnId:string
+}
 
 interface ApiCallObject
 {
@@ -32,6 +38,7 @@ interface ApiCallObject
   loop: number,
   num: number,
   wait: boolean
+  response: ServerResponse
 }
 
 const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
@@ -208,21 +215,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     return `<b>Num: </b>${apiCallObject.num}`;
   }
 
-  const norm = ( x ) => (x)*(255/apiObjects.length);
-  const spanStatus = ( apiCallObject:ApiCallObject ) =>
-  {
-    const span = getSpan( apiCallObject );
-    span.innerHTML = `${toString(apiCallObject)}`;
-    const n = norm(apiCallObject.num);
-    const r = 255-n;
-    const g = 0;
-    const b = 0;
-    span.style.backgroundColor = `white`;
-    span.style.color = `rgb(${r},${g},${b})`;
-  }
-
-
-
   useEffect(() => {
     const tmpApiObjectsArr = set_RUN_MODE_THREADS();
     setApiObjects( tmpApiObjectsArr );
@@ -231,18 +223,38 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     });
   }, []);
 
-  async function spanSleeping(id:string, thread:number, loop:number)
+  const maxColor = 255;
+  const norm = ( x ) => (x)*(maxColor/apiObjects.length);
+  const numRGB = ( num:number ) => {
+    const n = norm( num );
+    const r = maxColor-n;
+    const g = 0;
+    const b = 0;
+    const rgb = `rgb(${r},${g},${b})`;
+    return rgb;
+  }
+  const spanStatus = ( apiCallObject:ApiCallObject ) =>
+  {
+    const span = getSpan( apiCallObject );
+    span.innerHTML = `${toString(apiCallObject)}`;
+    span.innerHTML += apiCallObject.wait ? ' wait' : '';
+    span.style.backgroundColor = `white`;
+    span.style.color = numRGB( apiCallObject.num );
+  }
+
+  async function spanSleeping( apiCallObject:ApiCallObject )
   {
     const delayTime = (sleepMode===SLEEP_MODE_NORMAL) ? delayMS : getRandomIntInclusive( 0, delayMS );
 
-    const span = document.getElementById(id);
-    span.style.backgroundColor = 'yellow';
+    const span = getSpan(apiCallObject);
+    // span.style.backgroundColor = 'yellow';
     span.style.color = 'black';
 
     const intervalDelay = 100;
     let showDelay = delayTime;
     const interval = setInterval( () => {
-      span.innerHTML = `SLEEPING - ${showDelay}ms  thread=${thread} loop=${loop}`;
+      span.innerHTML = `<i class="fa-solid fa-moon" style="color:blue"></i>`;
+      span.innerHTML += ` <span style="color:${numRGB( apiCallObject.num )}">Num ${apiCallObject.num}</span> - ${showDelay}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
       showDelay -= intervalDelay;
       if ( showDelay < 0 )
         clearInterval( interval );
@@ -252,24 +264,48 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     clearInterval( interval );
   }
 
-  const spanWorking = ( id, text:string, thread:number, loop:number) =>
+  const spanWorking = ( apiCallObject:ApiCallObject ) =>
   {
 
-    const span = document.getElementById(id);
+    const span = getSpan(apiCallObject);
     // span.appendChild( test() );
     span.innerHTML = '<span style="font-size: 18px; margin-bottom: -5px" class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>';
-    span.innerHTML += ` testId=${text} thread=${thread} loop=${loop}`;
+    span.innerHTML += ` <span style="color:${numRGB( apiCallObject.num )}">Num ${apiCallObject.num}</span> - `;
+    span.innerHTML += ` testId=${apiCallObject.testId} thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
     span.style.backgroundColor = 'white';
     span.style.color = 'black';
     // ReactDOM.render(<div><Spin size={'small'} /> WORKING with testId={text} thread={thread} loop={loop}</div>, span);
   }
 
-  const spanDone = ( id, testId, text, thread:number, loop:number ) =>
+  const calculateStatistics = ( arr ) =>
   {
-    const span = document.getElementById(id);
-    span.innerHTML = `DONE testId=${testId} server request time=${text} thread=${thread} loop=${loop}`;
-    span.style.backgroundColor = 'lightgreen';
+    const { min, max, avg } = minMaxAvg( arr );
+    const median = calculateMedian( arr );
+    return `<b><u>STATISTICS</u></b>&nbsp;&nbsp;&nbsp;<b>Total:</b>${arr.length} <b>Min:</b>${min} <b>Max:</b> ${max} <b>Avg:</b> ${avg.toFixed(2)} <b>Median:</b> ${median}`;
+  }
+  const statistics = {};
+  const spanDone = ( apiCallObject:ApiCallObject, text ) =>
+  {
+    const time = new Date(apiCallObject.response.responseDate).getTime()-new Date(apiCallObject.response.requestDate).getTime();
+    const span = getSpan(apiCallObject);
+    span.innerHTML = `<i class="fa-solid fa-check" style="color:green"></i>`;
+    span.innerHTML += ` <span style="color:${numRGB( apiCallObject.num )}">Num ${apiCallObject.num}</span> - `;
+    span.innerHTML += ` testId=${apiCallObject.testId} time=${time}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+    // span.style.backgroundColor = 'lightgreen';
     span.style.color = 'black';
+
+    statistics[apiCallObject.testId].push(time);
+    const statisticsDiv = document.getElementById(`statistics${apiCallObject.testId}`);
+    statisticsDiv.innerHTML =  calculateStatistics(statistics[apiCallObject.testId]);
+
+    const globalArr = []
+    const keys = Object.keys( statistics );
+    keys.forEach( key => {
+      const arr = statistics[key];
+      globalArr.push( ...arr );
+    });
+    const statisticsExperimentDiv = document.getElementById(`statisticsExperiment${qaObject.typeId}`);
+    statisticsExperimentDiv.innerHTML = calculateStatistics( globalArr );
   }
 
   const spanError = ( id, text, thread:number, loop:number) =>
@@ -284,6 +320,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const [abortControllerArr, setAbortControllerArr] = useState( [] );
   const run = async () =>
   {
+    Object.keys( statistics ).map( testId => statistics[testId] = [] );
     // setAbortControllerArr( [] );
     let promises = [];
     for ( let i = 0; i < apiObjects.length; i++ )
@@ -297,7 +334,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           reject( 'Aborted' );
         };
         cancel.signal.addEventListener( 'abort',  abortHandler );
-          await apiCall( key, apiCallObject.testId, apiCallObject.thread, apiCallObject.loop );
+          await apiCall( key, apiCallObject );
         resolve( 1 );
       });
       promises.push( p );
@@ -310,7 +347,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   }
 
-  const apiCall = async ( key, paramTestId, thread, loop ) =>
+  const apiCall = async ( key, apiCallObject:ApiCallObject ) =>
   {
     // if ( experimentExecutionMode === EXPERIMENT_EXECUTION_MODE_STOP ) return;
     requestsLeftToRun--;
@@ -318,23 +355,24 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       return;
 
     if ( sleepMode !== SLEEP_MODE_NO_SLEEP )
-      await spanSleeping(key, thread, loop);
+      await spanSleeping(apiCallObject);
 
-    spanWorking(key, paramTestId, thread, loop);
+    spanWorking(apiCallObject);
 
     client.query({
       query: RUN_BROWSER_EXPERIMENT,
-      variables: {testId:paramTestId, thread: thread, loop: loop }
+      variables: {testId:apiCallObject.testId, thread: apiCallObject.thread, loop: apiCallObject.loop }
     })
     .then( data => {
       const runBrowserExperiment = data.data.runBrowserExperiment;
-      // console.log( data.data.runBrowserExperiment );
-      spanDone(key, runBrowserExperiment.testId, runBrowserExperiment.requestTime, runBrowserExperiment.thread, runBrowserExperiment.loop);
+      const response:ServerResponse = { type: runBrowserExperiment.type, paymentId:runBrowserExperiment.paymentId, request: runBrowserExperiment.request, response: runBrowserExperiment.response, requestDate: runBrowserExperiment.requestDate, responseDate:runBrowserExperiment.responseDate, jsonata:runBrowserExperiment.jsonata, txnId:runBrowserExperiment.txnId};
+      apiCallObject.response = response;
+      spanDone(apiCallObject, `${runBrowserExperiment.requestTime}ms srvThread=${runBrowserExperiment.thread} srvLoop=${runBrowserExperiment.loop}`);
       if ( requestsLeftToRun <= 0 )
         setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
     })
     .catch( e => {
-      spanError(key,e.message, thread, loop);
+      spanError(key,e.message, apiCallObject.thread, apiCallObject.loop);
       if ( requestsLeftToRun <= 0 )
         setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
     } );
@@ -360,6 +398,9 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   return <>
       <span style={{marginLeft:'20px'}}>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+              integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+              crossOrigin="anonymous" referrerPolicy="no-referrer"/>
         <b>Run mode: </b>
         <Segmented
           options={[RUN_MODE_QUEUE, RUN_MODE_THREADS, RUN_MODE_THREADS_QUEUE, RUN_MODE_RANDOM]}
@@ -482,6 +523,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
       <div>
         <Tag color={typeIdToColor(qaObject.typeId)}>{typeIdToName(qaObject.typeId)}</Tag> - {qaObject.name}
+        <span id={`statisticsExperiment${qaObject.typeId}`} key={`statisticsExperiment${qaObject.typeId}`} style={{marginLeft:'20px', marginTop:'10px'}}>Statistics:</span>
         {
           objects.filter( o => o.typeId === CASE ).map( cAse => {
               const suiteId = hierarchy.find(h => h.childrenId === cAse.id).parentId;
@@ -490,9 +532,10 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
               const suite = objects.find( o => o.id === suiteId );
               const collection = objects.find( o => o.id === collectionId );
               testsIds.map( testId => {
+                statistics[testId] = [];
                 const test = objects.find( o => o.id === testId );
                 mHTML.push(
-                  <div key={`col${collection.id}${suiteId}${cAse.id}${testId}`} style={{paddingLeft:'10px', marginTop:'10px'}}>
+                  <div key={`col${collection.id}${suiteId}${cAse.id}${testId}`} style={{paddingLeft:'10px', marginTop:'40px'}}>
                     <Tag color={typeIdToColor(collection.typeId)}>{typeIdToName(collection.typeId)}</Tag>{collection.name}
                     &nbsp;&nbsp;&nbsp;
                     <Tag color={typeIdToColor(suite.typeId)}>{typeIdToName(suite.typeId)}</Tag>{suite.name}
@@ -500,8 +543,10 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                     <Tag color={typeIdToColor(cAse.typeId)}>{typeIdToName(cAse.typeId)}</Tag>{cAse.name}
                     &nbsp;&nbsp;&nbsp;
                     <Tag color={typeIdToColor(test.typeId)}>{typeIdToName(test.typeId)}</Tag>{test.name}
+                    <span id={`statistics${testId}`} key={`statistics${testId}`} style={{marginRight:'20px', float:'right'}}><b><u>STATISTICS</u></b></span>
                   </div>
                 );
+                mHTML.push();
 
                 const TH = [
                   <tr key={`trthT${collection.id}${suite.id}${cAse.id}${test.id}`}>
@@ -523,7 +568,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                       thread: thread,
                       loop: loop,
                       num: 0,
-                      wait: false
+                      wait: false,
+                      response: null
                     };
                     const key = createKey( apiCallObject );
                     DIV.push(
