@@ -311,7 +311,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       }
 
       span.innerHTML = `<i class="fa-solid fa-moon" style="color:blue"></i>`;
-      span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> - ${showDelay}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+      span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> - ${showDelay}ms`;
       showDelay -= intervalDelay;
 
     }, intervalDelay );
@@ -326,8 +326,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const span = getSpan(apiCallObject);
     // span.appendChild( test() );
     span.innerHTML = '<span style="font-size: 18px; margin-bottom: -5px" class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>';
-    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> - `;
-    span.innerHTML += ` thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> `;
     span.style.backgroundColor = 'white';
     span.style.color = 'black';
     // ReactDOM.render(<div><Spin size={'small'} /> WORKING with testId={text} thread={thread} loop={loop}</div>, span);
@@ -343,16 +342,26 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   const displayStatistics = ( length:number, min:number, max:number, avg:number, median:number ) =>
   {
-    return `<b><u>STATISTICS</u></b>&nbsp;&nbsp;&nbsp;<b>Total:</b>${length} <b>Min:</b>${min} <b>Max:</b> ${max} <b>Avg:</b> ${avg.toFixed(2)} <b>Median:</b> ${median}`;
+    return `<b><u>STATISTICS</u></b>&nbsp;&nbsp;&nbsp;<b>Total:</b> ${length} <b>Min:</b> <span style="color: ${tmpNormRGB(min)}">${min}</span> <b>Max:</b> <span style="color: ${tmpNormRGB(max)}">${max}</span> <b>Avg:</b> <span style="color: ${tmpNormRGB(avg)}">${avg.toFixed(2)}</span> <b>Median:</b> <span style="color: ${tmpNormRGB(median)}">${median}</span>`;
   }
   const statistics = {};
+  let gMin=1, gMax=1, gAvg=1, gMedian=1;
+
+  const tmpNormRGB = ( x ) => {
+    const HI = 255;
+    const n = Math.abs(((x-gMin)/(gMin-gMax))*HI);
+    const r = HI-n;
+    const g = 0;
+    const b = 0;
+    return `rgb(${r},${g},${b})`;
+  };
+
   const spanDone = ( apiCallObject:ApiCallObject, text ) =>
   {
     apiCallObject.time = new Date(apiCallObject.response.responseDate).getTime()-new Date(apiCallObject.response.requestDate).getTime();
     const span = getSpan(apiCallObject);
     span.innerHTML = `<i class="fa-solid fa-check" style="color:green"></i>`;
-    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> - `;
-    span.innerHTML += ` thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> `;
     // span.style.backgroundColor = 'lightgreen';
     span.style.color = 'black';
 
@@ -369,29 +378,22 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       const arr = statistics[key];
       globalArr.push( ...arr );
     });
-    const { min:gMin, max:gMax, avg:gAvg, median:gMedian } = MinMaxAvgMedian( globalArr );
+    const { min:ggMin, max:ggMax, avg:ggAvg, median:ggMedian } = MinMaxAvgMedian( globalArr );
+    gMin = ggMin;
+    gMax = ggMax;
+    gAvg = ggAvg;
+    gMedian = ggMedian;
     const statisticsExperimentDiv = document.getElementById(`statisticsExperiment${qaObject.typeId}`);
-    statisticsExperimentDiv.innerHTML = displayStatistics( globalArr.length, gMin, gMax, gAvg, gMedian );
-    globalArr.map( (a:ApiCallObject) => {
-      const sp = getSpan(a);
+    statisticsExperimentDiv.innerHTML = displayStatistics( globalArr.length, ggMin, ggMax, ggAvg, ggMedian );
 
 
-      sp.style.backgroundColor = `rgb(${r},${g},${b})`;
-    });
-
-    const HI = 255;
-    const tmpNorm = ( x ) => Math.abs(((x-gMin)/(gMin-gMax))*HI);
-    const n = tmpNorm( apiCallObject.time );
-    const r = HI-n;
-    const g = 0;
-    const b = 0;
-    span.innerHTML += `<span style="color:rgb(${r},${g},${b})"> time=${apiCallObject.time}</span>`
+    span.innerHTML += ` time=<span style="color:${tmpNormRGB(apiCallObject.time)}">${apiCallObject.time}</span>ms`
   }
 
   const spanError = ( apiCallObject:ApiCallObject, text:string ) =>
   {
     const span = getSpan(apiCallObject);
-    span.innerHTML = `ERROR=${text} thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+    span.innerHTML = `ERROR=${text}`;
     span.style.backgroundColor = 'red';
     span.style.color = 'black';
   }
