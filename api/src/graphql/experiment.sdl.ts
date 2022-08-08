@@ -21,7 +21,7 @@ export const schema = gql`
     loop: Int
 
     type: Int
-    paymentId: Int
+    paymentId: String
     request: String
     response: String
     requestDate: String
@@ -33,7 +33,7 @@ export const schema = gql`
   type Query {
     runExperiment(experimentId: Int, delay: Int): ExperimentResult @requireAuth
     findExperiment(id: Int): Experiment @requireAuth
-    runBrowserExperiment(testId: Int, thread: Int, loop: Int): RunBrowserExperimentResult @requireAuth
-    runBrowserExperimentDemo(testId: Int, thread: Int, loop: Int): RunBrowserExperimentResult @requireAuth
+    runBrowserExperiment(experimentId:Int, collectionId:Int, suiteId:Int, caseId:Int, testId: Int, thread: Int, loop: Int, num: Int): RunBrowserExperimentResult @requireAuth
+    runBrowserExperimentDemo(experimentId:Int, collectionId:Int, suiteId:Int, caseId:Int, testId: Int, thread: Int, loop: Int, num: Int): RunBrowserExperimentResult @requireAuth
   }
 `

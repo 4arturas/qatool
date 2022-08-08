@@ -14,7 +14,10 @@ import {
   TEST
 } from "src/functions/global";
 import {createExperimentResult} from "src/services/experimentResults/experimentResults";
-import {qaObjectRelationships} from "src/services/qaObjectRelationships/qaObjectRelationships";
+import {
+  qaObjectRelationships,
+  qaObjectRelationshipsWithTheSameParentId
+} from "src/services/qaObjectRelationships/qaObjectRelationships";
 import * as https from "https";
 
 export const runExperiment = async ({experimentId, delay}) =>
@@ -272,63 +275,99 @@ export const findExperiment = async ( { id: id } ) =>
   };
 }
 
-export const runBrowserExperiment = async ({testId, thread, loop}) =>
+export const runBrowserExperiment = async ({experimentId, collectionId, suiteId, caseId, testId, thread, loop, num}) =>
 {
-  console.log( 'runBrowserExperiment' );
 
-  function delay(time) {
-    return new Promise(resolve => setTimeout(resolve, time));
-  }
+  const hierarchy = await db.qaObjectRelationship.findMany({
+    where: {
+      parentId: {
+        in: [experimentId,caseId,testId]
+      }
+    }
+  });
+  const serverId = hierarchy.find( f => f.childrenObjectTypeId === SERVER ).childrenId;
+  const bodyId = hierarchy.find( f => f.parentId === caseId && f.childrenObjectTypeId === BODY ).childrenId;
+  const replaceId = hierarchy.find( f => f.parentId === testId && f.childrenObjectTypeId === REPLACE ).childrenId;
+  const removeId = hierarchy.find( f => f.parentId === testId && f.childrenObjectTypeId === REMOVE ).childrenId;
+  const resultId = hierarchy.find( f => f.parentId === testId && f.childrenObjectTypeId === RESULT ).childrenId;
 
-  const requestDate: Date = new Date();
+  const objectsId = [ collectionId,suiteId,caseId,testId,serverId,bodyId,replaceId,removeId,resultId];
 
-  const delayTime = getRandomIntInclusive( 0, 5000);
-  console.log( 'delayTime', delayTime );
-  await delay(delayTime);
-  const responseDate: Date = new Date();
+  const objects = await db.qaObject.findMany( {
+    where: {
+      id: { in: objectsId }
+    }
+  } );
+
+  const server = objects.find( o => o.id === serverId );
+  const collection = objects.find( o => o.id === collectionId );
+  const suite = objects.find( o => o.id === suiteId );
+  const cAse = objects.find( o => o.id === caseId );
+  const body = objects.find( o => o.id === bodyId );
+  const replace = objects.find( o => o.id === replaceId );
+  const remove = objects.find( o => o.id === removeId );
+  const result = objects.find( o => o.id === resultId );
+
+  try {
+
+    const paymentId: string = generatePaymentId(collection, suite, cAse, num);
+    const changedBody = merge(paymentId, JSON.parse(body.json), JSON.parse(replace.json), JSON.parse(remove.json));
 
 
-  const experimentId = null;
-  const collectionId = null;
-  const suiteId = null;
-  const caseId = null;
-  const paymentId = null;
-  const messageOutgoing = {
-    type: MSG_OUTGOING,
-    experimentId: experimentId,
-    collectionId: collectionId,
-    suiteId: suiteId,
-    caseId: caseId,
-    testId: testId,
-    thread: thread,
-    loop: loop,
-    paymentId: paymentId,
-    request: '_JSON$stringify(changedBody)',
-    response: '_JSON$stringify(responseJSon)',
-    requestDate: requestDate.toISOString(),
-    responseDate: responseDate.toISOString(),
-    status: 200,
-    statusText: 'OK',
-    txnId: null,
-    jsonata: null
-  };
+    const requestDate: Date = new Date();
+    const res = await makeCall(server.address, server.method, JSON.parse(server.header), changedBody);
+    const responseDate: Date = new Date();
 
-  return {
-    testId: testId, thread: thread, loop: loop,
+    let responseJSon: any;
+    try {
+      responseJSon = await res.json();
+    } catch (e) {
+      responseJSon = null;
+    }
 
-    type: MSG_OUTGOING,
-    paymentId: 1,
-    request: 'request',
-    response: 'response',
-    requestDate: requestDate.toISOString(),
-    responseDate: responseDate.toISOString(),
-    jsonata: '',
-    txnId: '111'
+    const messageOutgoing = {
+      type: MSG_OUTGOING,
+      experimentId: experimentId,
+      collectionId: collection.id,
+      suiteId: suite.id,
+      caseId: cAse.id,
+      testId: testId,
+      thread: thread,
+      loop: loop,
+      paymentId: paymentId,
+      request: JSON.stringify(changedBody),
+      response: JSON.stringify(responseJSon),
+      requestDate: requestDate.toISOString(),
+      responseDate: responseDate.toISOString(),
+      status: res.status,
+      statusText: res.statusText,
+      txnId: responseJSon?.txnId,
+      jsonata: result.jsonata
+    };
+/*    const dbResult = await createExperimentResult({
+      input: messageOutgoing
+    });*/
+
+    return {
+      testId: testId, thread: thread, loop: loop,
+
+      type: MSG_OUTGOING,
+      paymentId: paymentId,
+      request: messageOutgoing.request,
+      response: messageOutgoing.response,
+      requestDate: requestDate.toISOString(),
+      responseDate: responseDate.toISOString(),
+      jsonata: result.jsonata,
+      txnId: responseJSon?.txnId
+    }
+
+  } catch (e) {
+    // errors.push(e);
   }
 
 }
 
-export const runBrowserExperimentDemo = async ({testId, thread, loop}) =>
+export const runBrowserExperimentDemo = async ({experimentId, collectionId, suiteId, caseId, testId, thread, loop, num}) =>
 {
   console.log( 'runBrowserExperimentDemo' );
 
@@ -344,10 +383,6 @@ export const runBrowserExperimentDemo = async ({testId, thread, loop}) =>
   const responseDate: Date = new Date();
 
 
-  const experimentId = null;
-  const collectionId = null;
-  const suiteId = null;
-  const caseId = null;
   const paymentId = null;
   const messageOutgoing = {
     type: MSG_OUTGOING,

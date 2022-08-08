@@ -16,16 +16,16 @@ import {BorderOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-desi
 import ReactDOM from "react-dom";
 
 const QUERY_RUN_BROWSER_EXPERIMENT = gql`
-          query RunBrowserExperiment($testId: Int!, $thread: Int!, $loop: Int!) {
-            runBrowserExperiment: runBrowserExperiment(testId: $testId, thread: $thread, loop: $loop) {
+          query RunBrowserExperiment($experimentId: Int!, $collectionId: Int!, $suiteId: Int!, $caseId: Int!, $testId: Int!, $thread: Int!, $loop: Int!, $num: Int!) {
+            runBrowserExperiment: runBrowserExperiment(experimentId: $experimentId, collectionId: $collectionId, suiteId: $suiteId, caseId: $caseId, testId: $testId, thread: $thread, loop: $loop, num: $num) {
               testId thread loop
               type paymentId request response requestDate responseDate jsonata txnId
             }
           }`;
 
 const QUERY_RUN_BROWSER_EXPERIMENT_DEMO = gql`
-          query RunBrowserExperimentDemo($testId: Int!, $thread: Int!, $loop: Int!) {
-            runBrowserExperiment: runBrowserExperimentDemo(testId: $testId, thread: $thread, loop: $loop) {
+          query RunBrowserExperimentDemo($experimentId: Int!, $collectionId: Int!, $suiteId: Int!, $caseId: Int!, $testId: Int!, $thread: Int!, $loop: Int!, $num: Int!) {
+            runBrowserExperiment: runBrowserExperimentDemo(experimentId: $experimentId, collectionId: $collectionId, suiteId: $suiteId, caseId: $caseId, testId: $testId, thread: $thread, loop: $loop, num: $num) {
               testId thread loop
               type paymentId request response requestDate responseDate jsonata txnId
             }
@@ -48,12 +48,12 @@ const stylingObject = {
 
 interface ServerResponse
 {
-  type: number, paymentId: number, request:string, response:string, requestDate:string, responseDate:string, jsonata:string, txnId:string
+  type: number, paymentId: string, request:string, response:string, requestDate:string, responseDate:string, jsonata:string, txnId:string
 }
 
 interface ApiCallObject
 {
-  collectionId: number, suiteId: number, caseId: number, testId: number, thread: number, loop: number, num: number, numRGB: string, wait: boolean,
+  experimentId:number, collectionId: number, suiteId: number, caseId: number, testId: number, thread: number, loop: number, num: number, numRGB: string, wait: boolean,
   response: ServerResponse
 }
 
@@ -116,6 +116,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       for (let thread = 0; thread < cAse.threads; thread++) {
         for (let loop = 0; loop < cAse.loops; loop++) {
           const apiCallObject: ApiCallObject = {
+            experimentId: qaObject.id,
             collectionId: collectionId,
             suiteId: suiteId,
             caseId: caseId,
@@ -156,6 +157,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             testsIds.map( testId => {
               const test = objects.find( o => o.id === testId );
               apiCallObject = {
+                experimentId: qaObject.id,
                 collectionId: collectionId,
                 suiteId: suiteId,
                 caseId: cAse.id,
@@ -201,6 +203,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             testsIds.map( testId => {
               const test = objects.find( o => o.id === testId );
               apiCallObject = {
+                experimentId: qaObject.id,
                 collectionId: collectionId,
                 suiteId: suiteId,
                 caseId: cAse.id,
@@ -356,10 +359,10 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     statisticsExperimentDiv.innerHTML = calculateStatistics( globalArr );
   }
 
-  const spanError = ( id, text, thread:number, loop:number) =>
+  const spanError = ( apiCallObject:ApiCallObject, text:string ) =>
   {
-    const span = document.getElementById(id);
-    span.innerHTML = `ERROR=${text} thread=${thread} loop=${loop}`;
+    const span = getSpan(apiCallObject);
+    span.innerHTML = `ERROR=${text} thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
     span.style.backgroundColor = 'red';
     span.style.color = 'black';
   }
@@ -418,7 +421,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
     if ( runMode === RUN_MODE_DEMO_BROWSER )
     {
-      apiCallObject.response = {type: MSG_OUTGOING, paymentId: 0, request:'request', response:'response', requestDate:new Date().toISOString(), responseDate:new Date().toISOString(), jsonata:'jsonata', txnId:null};
+      apiCallObject.response = {type: MSG_OUTGOING, paymentId: '0', request:'request', response:'response', requestDate:new Date().toISOString(), responseDate:new Date().toISOString(), jsonata:'jsonata', txnId:null};
       responseServerOk( apiCallObject, {requestTime: 0, thread: apiCallObject.thread, loop: apiCallObject.loop })
       return;
     }
@@ -426,7 +429,9 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const query = (runMode===RUN_MODE_NORMAL) ? QUERY_RUN_BROWSER_EXPERIMENT : QUERY_RUN_BROWSER_EXPERIMENT_DEMO;
     client.query({
       query: query,
-      variables: {testId:apiCallObject.testId, thread: apiCallObject.thread, loop: apiCallObject.loop }
+      variables: {
+        experimentId:apiCallObject.experimentId, collectionId:apiCallObject.collectionId, suiteId:apiCallObject.suiteId, caseId:apiCallObject.caseId, testId:apiCallObject.testId, thread: apiCallObject.thread, loop: apiCallObject.loop, num: apiCallObject.num
+      }
     })
     .then( data => {
       const runBrowserExperiment = data.data.runBrowserExperiment;
@@ -436,7 +441,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
     })
     .catch( e => {
-      spanError(key,e.message, apiCallObject.thread, apiCallObject.loop);
+      spanError(apiCallObject,e.message);
       if ( requestsLeftToRun <= 0 )
       {
         setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
@@ -634,6 +639,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                   for ( let loop = 0; loop < cAse.loops; loop++ )
                   {
                     const apiCallObject:ApiCallObject = {
+                      experimentId: qaObject.id,
                       collectionId: collectionId,
                       suiteId: suiteId,
                       caseId: cAse.id,
