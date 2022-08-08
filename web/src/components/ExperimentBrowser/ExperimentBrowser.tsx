@@ -63,11 +63,11 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   const [experimentExecutionMode, setExperimentExecutionMode] = useState( EXPERIMENT_EXECUTION_MODE_STOP );
 
-  const RUN_MODE_QUEUE = 'Queue';
-  const RUN_MODE_THREADS = 'Threads';
-  const RUN_MODE_THREADS_QUEUE = 'Threads Queue';
-  const RUN_MODE_RANDOM = 'Random';
-  const [runMode, setRunMode] = useState(RUN_MODE_THREADS);
+  const QUEUE_MODE_QUEUE = 'Queue';
+  const QUEUE_MODE_THREADS = 'Threads';
+  const QUEUE_MODE_THREADS_QUEUE = 'Threads Queue';
+  const QUEUE_MODE_RANDOM = 'Random';
+  const [queueMode, setQueueMode] = useState(QUEUE_MODE_THREADS);
 
   function delayFunction(time) {
     return new Promise(resolve => setTimeout(resolve, time));
@@ -405,30 +405,30 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
               integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
               crossOrigin="anonymous" referrerPolicy="no-referrer"/>
-        <b>Run mode: </b>
+        <b>Queue mode: </b>
         <Segmented
-          options={[RUN_MODE_QUEUE, RUN_MODE_THREADS, RUN_MODE_THREADS_QUEUE, RUN_MODE_RANDOM]}
-          defaultValue={runMode}
+          options={[QUEUE_MODE_QUEUE, QUEUE_MODE_THREADS, QUEUE_MODE_THREADS_QUEUE, QUEUE_MODE_RANDOM]}
+          defaultValue={queueMode}
           disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
           style={{backgroundColor:'darkgray'}}
           onChange={ (e) => {
-            setRunMode(e.toString());
+            setQueueMode(e.toString());
             let tmpApiObjectsArr:Array<ApiCallObject>;
             switch ( e )
             {
-              case RUN_MODE_QUEUE:
+              case QUEUE_MODE_QUEUE:
                 tmpApiObjectsArr = set_RUN_MODE_QUEUE();
                 break;
 
-              case RUN_MODE_THREADS:
+              case QUEUE_MODE_THREADS:
                 tmpApiObjectsArr = set_RUN_MODE_THREADS();
                 break;
 
-              case RUN_MODE_THREADS_QUEUE:
+              case QUEUE_MODE_THREADS_QUEUE:
                 tmpApiObjectsArr = set_RUN_MODE_THREADS_QUEUE();
                 break;
 
-              case RUN_MODE_RANDOM:
+              case QUEUE_MODE_RANDOM:
                 tmpApiObjectsArr = set_RUN_MODE_RANDOM();
                 break;
             }
@@ -480,12 +480,12 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
               spanStatus( apiCallObject );
             });
 
-            switch ( runMode )
+            switch ( queueMode )
             {
-              case RUN_MODE_QUEUE:          run();  break;
-              case RUN_MODE_THREADS:        run();  break;
-              case RUN_MODE_THREADS_QUEUE:  run();  break;
-              case RUN_MODE_RANDOM:         run();  break;
+              case QUEUE_MODE_QUEUE:          run();  break;
+              case QUEUE_MODE_THREADS:        run();  break;
+              case QUEUE_MODE_THREADS_QUEUE:  run();  break;
+              case QUEUE_MODE_RANDOM:         run();  break;
             }
           }}
         />
@@ -604,4 +604,4 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
 }
 
-export default ExperimentBrowser
+export default ExperimentBrowser;
