@@ -15,9 +15,9 @@ import {useApolloClient} from "@apollo/client";
 import {BorderOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-design/icons";
 import ReactDOM from "react-dom";
 
-const RUN_BROWSER_EXPERIMENT = gql`
-          query RunBrowserExperiment($testId: Int!, $thread: Int!, $loop: Int!) {
-            runBrowserExperiment(testId: $testId, thread: $thread, loop: $loop) {
+const RUN_BROWSER_EXPERIMENT_DEMO = gql`
+          query RunBrowserExperimentDemo($testId: Int!, $thread: Int!, $loop: Int!) {
+            runBrowserExperiment: runBrowserExperimentDemo(testId: $testId, thread: $thread, loop: $loop) {
               testId thread loop
               type paymentId request response requestDate responseDate jsonata txnId
             }
@@ -392,7 +392,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     spanWorking(apiCallObject);
 
     client.query({
-      query: RUN_BROWSER_EXPERIMENT,
+      query: RUN_BROWSER_EXPERIMENT_DEMO,
       variables: {testId:apiCallObject.testId, thread: apiCallObject.thread, loop: apiCallObject.loop }
     })
     .then( data => {

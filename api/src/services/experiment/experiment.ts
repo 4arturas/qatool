@@ -272,7 +272,7 @@ export const findExperiment = async ( { id: id } ) =>
   };
 }
 
-export const runBrowserExperiment = async ({testId, thread, loop}) =>
+export const runBrowserExperimentDemo = async ({testId, thread, loop}) =>
 {
 
 
