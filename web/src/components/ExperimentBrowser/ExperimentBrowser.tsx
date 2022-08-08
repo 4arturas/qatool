@@ -61,13 +61,20 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const EXPERIMENT_EXECUTION_MODE_STOP = 'Stop';
   const EXPERIMENT_EXECUTION_MODE_DONE = 'Done';
 
-  const [experimentExecutionMode, setExperimentExecutionMode] = useState( EXPERIMENT_EXECUTION_MODE_STOP );
+  const [experimentExecutionMode, setExperimentExecutionMode] = useState(EXPERIMENT_EXECUTION_MODE_STOP);
+  let experimentExecutionModeRef = EXPERIMENT_EXECUTION_MODE_STOP;
+  const setExperimentExecutionModeRef = ( m ) =>
+  {
+    experimentExecutionModeRef = m;
+  }
 
   const QUEUE_MODE_QUEUE = 'Queue';
   const QUEUE_MODE_THREADS = 'Threads';
   const QUEUE_MODE_THREADS_QUEUE = 'Threads Queue';
   const QUEUE_MODE_RANDOM = 'Random';
   const [queueMode, setQueueMode] = useState(QUEUE_MODE_THREADS);
+  let queueModeRef = QUEUE_MODE_THREADS;
+  const setQueueModeRef = ( m ) => queueModeRef = m;
 
   function delayFunction(time) {
     return new Promise(resolve => setTimeout(resolve, time));
@@ -78,6 +85,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const SLEEP_MODE_RANDOM     = 'Random';
   const SLEEP_MODE_NO_SLEEP   = 'No Sleep';
   const [sleepMode, setSleepMode] = useState(SLEEP_MODE_NORMAL);
+  let sleepModeRef = SLEEP_MODE_NORMAL;
+  const setSleepModeRef = ( m ) => sleepModeRef = m;
 
   const set_RUN_MODE_QUEUE = ():Array<ApiCallObject> =>
   {
@@ -272,11 +281,16 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const intervalDelay = 100;
     let showDelay = delayTime;
     const interval = setInterval( () => {
+      if ( showDelay < 0 )
+      {
+        clearInterval( interval );
+        return;
+      }
+
       span.innerHTML = `<i class="fa-solid fa-moon" style="color:blue"></i>`;
       span.innerHTML += ` <span style="color:${apiCallObject.numRGB}">Num ${apiCallObject.num}</span> - ${showDelay}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
       showDelay -= intervalDelay;
-      if ( showDelay < 0 )
-        clearInterval( interval );
+
     }, intervalDelay );
 
     await delayFunction(delayTime);
@@ -368,7 +382,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   const apiCall = async ( key, apiCallObject:ApiCallObject ) =>
   {
-    // if ( experimentExecutionMode === EXPERIMENT_EXECUTION_MODE_STOP ) return;
     requestsLeftToRun--;
     if ( requestsLeftToRun < 0 )
       return;
@@ -388,12 +401,18 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       apiCallObject.response = response;
       spanDone(apiCallObject, `${runBrowserExperiment.requestTime}ms srvThread=${runBrowserExperiment.thread} srvLoop=${runBrowserExperiment.loop}`);
       if ( requestsLeftToRun <= 0 )
+      {
         setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
+        setExperimentExecutionModeRef( EXPERIMENT_EXECUTION_MODE_DONE );
+      }
     })
     .catch( e => {
       spanError(key,e.message, apiCallObject.thread, apiCallObject.loop);
       if ( requestsLeftToRun <= 0 )
+      {
         setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
+        setExperimentExecutionModeRef( EXPERIMENT_EXECUTION_MODE_DONE );
+      }
     } );
 
   }
@@ -413,6 +432,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           style={{backgroundColor:'darkgray'}}
           onChange={ (e) => {
             setQueueMode(e.toString());
+            setQueueModeRef(e.toString());
             let tmpApiObjectsArr:Array<ApiCallObject>;
             switch ( e )
             {
@@ -460,7 +480,10 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           defaultValue={sleepMode}
           disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
           style={{backgroundColor:'darkgray'}}
-          onChange={(e)=>setSleepMode(e.toString())}
+          onChange={(e)=>{
+            setSleepMode(e.toString());
+            setSleepModeRef(e.toString());
+          }}
         />
       </span>
 
@@ -473,6 +496,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
               return;
 
             setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_PLAY);
+            setExperimentExecutionModeRef(EXPERIMENT_EXECUTION_MODE_PLAY);
 
             requestsLeftToRun = apiObjects.length;
 
@@ -496,6 +520,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
               return;
 
             setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_PAUSE);
+            setExperimentExecutionModeRef(EXPERIMENT_EXECUTION_MODE_PAUSE);
 
           }}
         />
@@ -506,6 +531,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
               return;
 
             setExperimentExecutionMode(EXPERIMENT_EXECUTION_MODE_STOP);
+            setExperimentExecutionModeRef(EXPERIMENT_EXECUTION_MODE_STOP);
             requestsLeftToRun = 0;
             abortControllerArr.map( cancel => {
               // cancel.signal.removeEventListener( 'abort', abortHandler );
