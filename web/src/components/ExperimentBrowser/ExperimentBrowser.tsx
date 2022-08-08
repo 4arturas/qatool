@@ -674,7 +674,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                     <th key={`thT${collection.id}${suite.id}${cAse.id}${test.id}`} style={{textAlign:'left', width:'80px'}}>Thread</th>
                     {
                       Array.from(Array(cAse.loops).keys()).map( loop => {
-                        return <th key={`thL${collection.id}${suite.id}${cAse.id}${test.id}${loop}`} style={{textAlign:'left'}}>Loop {loop}</th>
+                        return <th key={`thL${collection.id}${suite.id}${cAse.id}${test.id}${loop}`} style={{textAlign:'left'}}>Loop {loop+1}</th>
                       })
                     }
 
