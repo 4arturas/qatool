@@ -33,7 +33,7 @@ const QUERY_RUN_BROWSER_EXPERIMENT_DEMO = gql`
 
 const stylingObject = {
   loop: {
-    border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'
+    border:'0px solid green', display:'inline-block', textAlign:'left', padding:'5px'
   },
   play: {
     marginLeft:'10px', fontSize: '30px', cursor: 'pointer'
@@ -54,7 +54,8 @@ interface ServerResponse
 interface ApiCallObject
 {
   experimentId:number, collectionId: number, suiteId: number, caseId: number, testId: number, thread: number, loop: number, num: number, numRGB: string, wait: boolean,
-  response: ServerResponse
+  response: ServerResponse,
+  time:number
 }
 
 const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
@@ -126,7 +127,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             num: num,
             numRGB: numRGB(num++),
             wait: true,
-            response: null
+            response: null,
+            time: null
           };
           tmpApiObjectsArr.push(apiCallObject);
         }
@@ -167,7 +169,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                 numRGB: numRGB(num),
                 num: num++,
                 wait: false,
-                response: null
+                response: null,
+                time: null
               };
               tmpApiObjectsArr.push(apiCallObject);
             });
@@ -213,7 +216,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                 numRGB: numRGB(num),
                 num: num++,
                 wait: false,
-                response: null
+                response: null,
+                time: null
               };
               tmpApiObjectsArr.push(apiCallObject);
             });
@@ -253,7 +257,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   }
   const toString = ( apiCallObject:ApiCallObject ): string =>
   {
-    return `<span style="color:${apiCallObject.numRGB}"><b>Num: </b>${apiCallObject.num}</span>`;
+    return `<span style="color:${apiCallObject.numRGB}"><b># </b>${apiCallObject.num}</span>`;
   }
 
   useEffect(() => {
@@ -283,6 +287,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   {
     const span = getSpan( apiCallObject );
     span.innerHTML = `${toString(apiCallObject)}`;
+    span.style.backgroundColor = 'white';
     // span.innerHTML += apiCallObject.wait ? ' wait' : '';
     // span.style.backgroundColor = `white`;
     // span.style.color = numRGB( apiCallObject.num );
@@ -306,7 +311,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       }
 
       span.innerHTML = `<i class="fa-solid fa-moon" style="color:blue"></i>`;
-      span.innerHTML += ` <span style="color:${apiCallObject.numRGB}">Num ${apiCallObject.num}</span> - ${showDelay}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+      span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> - ${showDelay}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
       showDelay -= intervalDelay;
 
     }, intervalDelay );
@@ -321,33 +326,42 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const span = getSpan(apiCallObject);
     // span.appendChild( test() );
     span.innerHTML = '<span style="font-size: 18px; margin-bottom: -5px" class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>';
-    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}">Num ${apiCallObject.num}</span> - `;
-    span.innerHTML += ` testId=${apiCallObject.testId} thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> - `;
+    span.innerHTML += ` thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
     span.style.backgroundColor = 'white';
     span.style.color = 'black';
     // ReactDOM.render(<div><Spin size={'small'} /> WORKING with testId={text} thread={thread} loop={loop}</div>, span);
   }
 
-  const calculateStatistics = ( arr ) =>
+  const MinMaxAvgMedian = ( arr ) =>
   {
-    const { min, max, avg } = minMaxAvg( arr );
-    const median = calculateMedian( arr );
-    return `<b><u>STATISTICS</u></b>&nbsp;&nbsp;&nbsp;<b>Total:</b>${arr.length} <b>Min:</b>${min} <b>Max:</b> ${max} <b>Avg:</b> ${avg.toFixed(2)} <b>Median:</b> ${median}`;
+    const tmpArr = arr.map(a=>a.time);
+    const { min, max, avg } = minMaxAvg( tmpArr );
+    const median = calculateMedian( tmpArr );
+    return { min, max, avg, median };
+  }
+
+  const displayStatistics = ( length:number, min:number, max:number, avg:number, median:number ) =>
+  {
+    return `<b><u>STATISTICS</u></b>&nbsp;&nbsp;&nbsp;<b>Total:</b>${length} <b>Min:</b>${min} <b>Max:</b> ${max} <b>Avg:</b> ${avg.toFixed(2)} <b>Median:</b> ${median}`;
   }
   const statistics = {};
   const spanDone = ( apiCallObject:ApiCallObject, text ) =>
   {
-    const time = new Date(apiCallObject.response.responseDate).getTime()-new Date(apiCallObject.response.requestDate).getTime();
+    apiCallObject.time = new Date(apiCallObject.response.responseDate).getTime()-new Date(apiCallObject.response.requestDate).getTime();
     const span = getSpan(apiCallObject);
     span.innerHTML = `<i class="fa-solid fa-check" style="color:green"></i>`;
-    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}">Num ${apiCallObject.num}</span> - `;
-    span.innerHTML += ` testId=${apiCallObject.testId} time=${time}ms thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
+    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"># ${apiCallObject.num}</span> - `;
+    span.innerHTML += ` thread=${apiCallObject.thread} loop=${apiCallObject.loop}`;
     // span.style.backgroundColor = 'lightgreen';
     span.style.color = 'black';
 
-    statistics[apiCallObject.testId].push(time);
+    statistics[apiCallObject.testId].push(apiCallObject);
+
+    const arr = statistics[apiCallObject.testId];
+    const { min, max, avg, median } = MinMaxAvgMedian( arr );
     const statisticsDiv = document.getElementById(`statistics${apiCallObject.testId}`);
-    statisticsDiv.innerHTML =  calculateStatistics(statistics[apiCallObject.testId]);
+    statisticsDiv.innerHTML =  displayStatistics( arr.length, min, max, avg, median );
 
     const globalArr = []
     const keys = Object.keys( statistics );
@@ -355,8 +369,23 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       const arr = statistics[key];
       globalArr.push( ...arr );
     });
+    const { min:gMin, max:gMax, avg:gAvg, median:gMedian } = MinMaxAvgMedian( globalArr );
     const statisticsExperimentDiv = document.getElementById(`statisticsExperiment${qaObject.typeId}`);
-    statisticsExperimentDiv.innerHTML = calculateStatistics( globalArr );
+    statisticsExperimentDiv.innerHTML = displayStatistics( globalArr.length, gMin, gMax, gAvg, gMedian );
+    globalArr.map( (a:ApiCallObject) => {
+      const sp = getSpan(a);
+
+
+      sp.style.backgroundColor = `rgb(${r},${g},${b})`;
+    });
+
+    const HI = 255;
+    const tmpNorm = ( x ) => Math.abs(((x-gMin)/(gMin-gMax))*HI);
+    const n = tmpNorm( apiCallObject.time );
+    const r = HI-n;
+    const g = 0;
+    const b = 0;
+    span.innerHTML += `<span style="color:rgb(${r},${g},${b})"> time=${apiCallObject.time}</span>`
   }
 
   const spanError = ( apiCallObject:ApiCallObject, text:string ) =>
@@ -628,8 +657,13 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
                 const TH = [
                   <tr key={`trthT${collection.id}${suite.id}${cAse.id}${test.id}`}>
-                    <th key={`thT${collection.id}${suite.id}${cAse.id}${test.id}`}>Thread</th>
-                    <th key={`thL${collection.id}${suite.id}${cAse.id}${test.id}`} style={{textAlign:'center'}} colSpan={cAse.loops}>Loops</th>
+                    <th key={`thT${collection.id}${suite.id}${cAse.id}${test.id}`} style={{textAlign:'left', width:'80px'}}>Thread</th>
+                    {
+                      Array.from(Array(cAse.loops).keys()).map( loop => {
+                        return <th key={`thL${collection.id}${suite.id}${cAse.id}${test.id}${loop}`} style={{textAlign:'left'}}>Loop {loop}</th>
+                      })
+                    }
+
                   </tr>
                 ];
                 const TR = [];
@@ -649,20 +683,21 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                       num: 0,
                       numRGB: 'rgb(0,0,0)',
                       wait: false,
-                      response: null
+                      response: null,
+                      time:null
                     };
                     const key = createKey( apiCallObject );
                     DIV.push(
-                      <span id={key} key={key} style={{width:`${100/cAse.loops}%`, border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'}}>
+                      <td id={key} key={key} style={{border: '1px solid gray', width:`${100/cAse.loops}%`}}>
                         Loop {loop+1} is waiting
-                      </span>
+                      </td>
                     )
                   } // end for loop
                   const trKey = `${collection.id}${suite.id}${cAse.id}${test.id}${thread}`;
-                  TR.push( <tr key={`tr${trKey}`}><td>{thread+1}</td><td style={{width:'100%'}}>{DIV}</td></tr>)
+                  TR.push( <tr key={`tr${trKey}`}><td>&nbsp;&nbsp;&nbsp;{thread+1}</td>{DIV}</tr>)
                 } // end for thread
                 mHTML.push(
-                  <table key={`tbl${collectionId}${suiteId}${cAse.id}${testId}`} style={{border:'1px solid black'}}>
+                  <table key={`tbl${collectionId}${suiteId}${cAse.id}${testId}`} style={{border:'1px solid black', width:'100%'}} cellPadding={2} cellSpacing={2}>
                     <thead>{TH}</thead>
                     <tbody>
                       {TR}
