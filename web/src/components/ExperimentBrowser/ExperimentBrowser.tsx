@@ -579,8 +579,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                     const key = createKey( apiCallObject );
                     DIV.push(
                       <span id={key} key={key} style={{width:`${100/cAse.loops}%`, border:'1px solid green', display:'inline-block', textAlign:'left', paddingLeft:'5px'}}>
-                            Loop {loop+1} is waiting
-                          </span>
+                        Loop {loop+1} is waiting
+                      </span>
                     )
                   } // end for loop
                   const trKey = `${collection.id}${suite.id}${cAse.id}${test.id}${thread}`;
