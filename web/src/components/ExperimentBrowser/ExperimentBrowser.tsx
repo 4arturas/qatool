@@ -90,11 +90,11 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   }
   const [delayMS, setDelayMS] = useState( 1000 );
 
-  const SLEEP_MODE_NORMAL     = 'Normal';
-  const SLEEP_MODE_RANDOM     = 'Random';
+  const SLEEP_MODE_SLEEP     = 'Sleep';
   const SLEEP_MODE_NO_SLEEP   = 'No Sleep';
-  const [sleepMode, setSleepMode] = useState(SLEEP_MODE_NORMAL);
-  let sleepModeRef = SLEEP_MODE_NORMAL;
+  const SLEEP_MODE_RANDOM     = 'Random';
+  const [sleepMode, setSleepMode] = useState(SLEEP_MODE_SLEEP);
+  let sleepModeRef = SLEEP_MODE_SLEEP;
   const setSleepModeRef = ( m ) => sleepModeRef = m;
 
   const RUN_MODE_NORMAL = 'Normal';
@@ -295,7 +295,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   async function spanSleeping( apiCallObject:ApiCallObject )
   {
-    const delayTime = (sleepMode===SLEEP_MODE_NORMAL) ? delayMS : getRandomIntInclusive( 0, delayMS );
+    const delayTime = (sleepMode===SLEEP_MODE_SLEEP) ? delayMS : getRandomIntInclusive( 0, delayMS );
 
     const span = getSpan(apiCallObject);
     // span.style.backgroundColor = 'yellow';
@@ -539,7 +539,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       <span style={{marginLeft:'20px'}}>
         <b>Sleep mode: </b>
         <Segmented
-          options={[SLEEP_MODE_NORMAL, SLEEP_MODE_RANDOM, SLEEP_MODE_NO_SLEEP]}
+          options={[SLEEP_MODE_SLEEP, SLEEP_MODE_NO_SLEEP, SLEEP_MODE_RANDOM]}
           defaultValue={sleepMode}
           disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
           style={{backgroundColor:'darkgray'}}
