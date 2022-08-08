@@ -3,7 +3,7 @@ import {
   CASE,
   COLLECTION,
   EXPERIMENT,
-  getRandomIntInclusive, minMaxAvg, MSG_INCOMING,
+  getRandomIntInclusive, minMaxAvg, MSG_INCOMING, MSG_OUTGOING,
   SUITE,
   TEST,
   typeIdToColor,
@@ -15,7 +15,15 @@ import {useApolloClient} from "@apollo/client";
 import {BorderOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-design/icons";
 import ReactDOM from "react-dom";
 
-const RUN_BROWSER_EXPERIMENT_DEMO = gql`
+const QUERY_RUN_BROWSER_EXPERIMENT = gql`
+          query RunBrowserExperiment($testId: Int!, $thread: Int!, $loop: Int!) {
+            runBrowserExperiment: runBrowserExperiment(testId: $testId, thread: $thread, loop: $loop) {
+              testId thread loop
+              type paymentId request response requestDate responseDate jsonata txnId
+            }
+          }`;
+
+const QUERY_RUN_BROWSER_EXPERIMENT_DEMO = gql`
           query RunBrowserExperimentDemo($testId: Int!, $thread: Int!, $loop: Int!) {
             runBrowserExperiment: runBrowserExperimentDemo(testId: $testId, thread: $thread, loop: $loop) {
               testId thread loop
@@ -87,6 +95,13 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const [sleepMode, setSleepMode] = useState(SLEEP_MODE_NORMAL);
   let sleepModeRef = SLEEP_MODE_NORMAL;
   const setSleepModeRef = ( m ) => sleepModeRef = m;
+
+  const RUN_MODE_NORMAL = 'Normal';
+  const RUN_MODE_DEMO_SERVER = 'Demo Server';
+  const RUN_MODE_DEMO_BROWSER = 'Demo Browser';
+  const [runMode, setRunMode] = useState( RUN_MODE_NORMAL );
+  let runModeRef = RUN_MODE_NORMAL;
+  const setRunModeRef = ( m ) => runModeRef = m;
 
   const set_RUN_MODE_QUEUE = ():Array<ApiCallObject> =>
   {
@@ -380,6 +395,16 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   }
 
+  const responseServerOk = (apiCallObject:ApiCallObject, runBrowserExperiment) =>
+  {
+    spanDone(apiCallObject, `${runBrowserExperiment.requestTime}ms srvThread=${runBrowserExperiment.thread} srvLoop=${runBrowserExperiment.loop}`);
+    if ( requestsLeftToRun <= 0 )
+    {
+      setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
+      setExperimentExecutionModeRef( EXPERIMENT_EXECUTION_MODE_DONE );
+    }
+  }
+
   const apiCall = async ( key, apiCallObject:ApiCallObject ) =>
   {
     requestsLeftToRun--;
@@ -391,20 +416,24 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
     spanWorking(apiCallObject);
 
+    if ( runMode === RUN_MODE_DEMO_BROWSER )
+    {
+      apiCallObject.response = {type: MSG_OUTGOING, paymentId: 0, request:'request', response:'response', requestDate:new Date().toISOString(), responseDate:new Date().toISOString(), jsonata:'jsonata', txnId:null};
+      responseServerOk( apiCallObject, {requestTime: 0, thread: apiCallObject.thread, loop: apiCallObject.loop })
+      return;
+    }
+
+    const query = (runMode===RUN_MODE_NORMAL) ? QUERY_RUN_BROWSER_EXPERIMENT : QUERY_RUN_BROWSER_EXPERIMENT_DEMO;
     client.query({
-      query: RUN_BROWSER_EXPERIMENT_DEMO,
+      query: query,
       variables: {testId:apiCallObject.testId, thread: apiCallObject.thread, loop: apiCallObject.loop }
     })
     .then( data => {
       const runBrowserExperiment = data.data.runBrowserExperiment;
       const response:ServerResponse = { type: runBrowserExperiment.type, paymentId:runBrowserExperiment.paymentId, request: runBrowserExperiment.request, response: runBrowserExperiment.response, requestDate: runBrowserExperiment.requestDate, responseDate:runBrowserExperiment.responseDate, jsonata:runBrowserExperiment.jsonata, txnId:runBrowserExperiment.txnId};
       apiCallObject.response = response;
-      spanDone(apiCallObject, `${runBrowserExperiment.requestTime}ms srvThread=${runBrowserExperiment.thread} srvLoop=${runBrowserExperiment.loop}`);
-      if ( requestsLeftToRun <= 0 )
-      {
-        setExperimentExecutionMode( EXPERIMENT_EXECUTION_MODE_DONE );
-        setExperimentExecutionModeRef( EXPERIMENT_EXECUTION_MODE_DONE );
-      }
+      responseServerOk( apiCallObject, runBrowserExperiment );
+
     })
     .catch( e => {
       spanError(key,e.message, apiCallObject.thread, apiCallObject.loop);
@@ -483,6 +512,20 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
           onChange={(e)=>{
             setSleepMode(e.toString());
             setSleepModeRef(e.toString());
+          }}
+        />
+      </span>
+
+    <span style={{marginLeft:'20px'}}>
+        <b>Run mode: </b>
+        <Segmented
+          options={[RUN_MODE_NORMAL, RUN_MODE_DEMO_SERVER, RUN_MODE_DEMO_BROWSER]}
+          defaultValue={runMode}
+          disabled={experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PLAY||experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE}
+          style={{backgroundColor:'darkgray'}}
+          onChange={(e)=>{
+            setRunMode(e.toString());
+            setRunModeRef(e.toString());
           }}
         />
       </span>
