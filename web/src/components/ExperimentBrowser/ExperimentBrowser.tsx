@@ -283,7 +283,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   }
   const toString = ( apiCallObject:ApiCallObject ): string =>
   {
-    return `<span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num}</b></span>`;
+    return `<span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num+1}</b></span>`;
   }
 
   useEffect(() => {
@@ -337,7 +337,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
       }
 
       span.innerHTML = `<i class="fa-solid fa-moon" style="color:blue"></i>`;
-      span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num}</b></span> - ${showDelay}ms`;
+      span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num+1}</b></span> - ${showDelay}ms`;
       span.innerHTML += ` <span style="color:black">Browser start:<b>${showTime(apiCallObject.browserTimeStart)}</b>`;
       showDelay -= intervalDelay;
 
@@ -353,7 +353,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const span = getSpan(apiCallObject);
     // span.appendChild( test() );
     span.innerHTML = '<span style="font-size: 18px; margin-bottom: -5px" class="ant-spin-dot ant-spin-dot-spin"><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i><i class="ant-spin-dot-item"></i></span>';
-    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num}</b></span>`;
+    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num+1}</b></span>`;
     span.innerHTML += ` <span style="color:black">Browser start:<b>${showTime(apiCallObject.browserTimeStart)}</b>`;
     span.style.backgroundColor = 'white';
     span.style.color = 'black';
@@ -395,7 +395,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     apiCallObject.time = new Date(apiCallObject.response.responseDate).getTime()-new Date(apiCallObject.response.requestDate).getTime();
     const span = getSpan(apiCallObject);
     span.innerHTML = `<i class="fa-solid fa-check" style="color:green"></i>`;
-    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num}</b></span> `;
+    span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num+1}</b></span> `;
     span.innerHTML += ` <span style="color:black">Browser start:<b>${showTime(apiCallObject.browserTimeStart)}</b> finish:<b>${showTime(apiCallObject.browserTimeFinish)}</b></span> `;
     // span.style.backgroundColor = 'lightgreen';
     span.style.color = 'black';
