@@ -14,6 +14,7 @@ import {Button, Modal, Segmented, Spin, Tag, Tooltip} from "antd";
 import {useApolloClient} from "@apollo/client";
 import {BorderOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-design/icons";
 import ReactDOM from "react-dom";
+import Merge from "src/components/Merge/Merge";
 
 const QUERY_RUN_BROWSER_EXPERIMENT = gql`
           query RunBrowserExperiment($experimentId: Int!, $collectionId: Int!, $suiteId: Int!, $caseId: Int!, $testId: Int!, $thread: Int!, $loop: Int!, $num: Int!) {
@@ -705,7 +706,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                     <Tag color={typeIdToColor(cAse.typeId)}>{typeIdToName(cAse.typeId)}</Tag>{cAse.name}
                     &nbsp;&nbsp;&nbsp;
                     <Tag color={typeIdToColor(test.typeId)}>{typeIdToName(test.typeId)}</Tag>{test.name}
-                    <span id={`timer${testId}`} key={`timer${testId}`} style={{marginLeft:'20px', fontWeight:'bold'}}>{convertTimeToString(0,0,0)}</span>
+                    <span style={{marginLeft:'10px'}}><Merge qaObject={test}/></span>
+                    <span id={`timer${testId}`} key={`timer${testId}`} style={{marginLeft:'30px', fontWeight:'bold'}}>{convertTimeToString(0,0,0)}</span>
                     <span id={`statistics${testId}`} key={`statistics${testId}`} style={{marginRight:'20px', float:'right'}}><b><u>STATISTICS</u></b></span>
                   </div>
                 );
