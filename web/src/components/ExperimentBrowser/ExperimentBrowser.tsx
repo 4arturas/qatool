@@ -12,15 +12,16 @@ import {
 import React, {useEffect, useRef, useState} from "react";
 import {Button, Modal, Segmented, Spin, Tag, Tooltip} from "antd";
 import {useApolloClient} from "@apollo/client";
-import {BorderOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-design/icons";
+import {BorderOutlined, FieldTimeOutlined, PauseCircleOutlined, PlayCircleOutlined} from "@ant-design/icons";
 import ReactDOM from "react-dom";
 import Merge from "src/components/Merge/Merge";
+import Timeline from "src/components/Timeline/Timeline";
 
 const QUERY_RUN_BROWSER_EXPERIMENT = gql`
           query RunBrowserExperiment($experimentId: Int!, $collectionId: Int!, $suiteId: Int!, $caseId: Int!, $testId: Int!, $thread: Int!, $loop: Int!, $num: Int!) {
             runBrowserExperiment: runBrowserExperiment(experimentId: $experimentId, collectionId: $collectionId, suiteId: $suiteId, caseId: $caseId, testId: $testId, thread: $thread, loop: $loop, num: $num) {
               testId thread loop
-              type paymentId request response requestDate responseDate jsonata txnId
+              type paymentId request response requestDate responseDate json jsonata txnId
             }
           }`;
 
@@ -28,7 +29,7 @@ const QUERY_RUN_BROWSER_EXPERIMENT_DEMO = gql`
           query RunBrowserExperimentDemo($experimentId: Int!, $collectionId: Int!, $suiteId: Int!, $caseId: Int!, $testId: Int!, $thread: Int!, $loop: Int!, $num: Int!) {
             runBrowserExperiment: runBrowserExperimentDemo(experimentId: $experimentId, collectionId: $collectionId, suiteId: $suiteId, caseId: $caseId, testId: $testId, thread: $thread, loop: $loop, num: $num) {
               testId thread loop
-              type paymentId request response requestDate responseDate jsonata txnId
+              type paymentId request response requestDate responseDate json jsonata txnId
             }
           }`;
 
@@ -49,7 +50,7 @@ const stylingObject = {
 
 interface ServerResponse
 {
-  type: number, paymentId: string, request:string, response:string, requestDate:string, responseDate:string, jsonata:string, txnId:string
+  type: number, paymentId: string, request:string, response:string, requestDate:string, responseDate:string, json:string, jsonata:string, txnId:string
 }
 
 interface ApiCallObject
@@ -72,6 +73,24 @@ function pad(val)
   }
 }
 const convertTimeToString = (hh:number,mm:number,ss:number):string => `${pad(hh)}h:${pad(mm)}m:${pad(ss)}s`;
+
+const ShowTimeline = ({rec}) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  return <>
+    <FieldTimeOutlined style={{fontSize: '15px'}} onClick={()=>setIsModalVisible(true)}/>
+    <Modal
+      visible={isModalVisible}
+      onOk={()=>setIsModalVisible(false)}
+      onCancel={()=>setIsModalVisible(false)}
+      width='50%'
+      style={{ top: 5 }}
+    >
+      <Timeline experimentResults={rec} />
+    </Modal>
+  </>
+
+}
 
 const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
@@ -400,6 +419,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     // span.style.backgroundColor = 'lightgreen';
     span.style.color = 'black';
 
+
     statistics[apiCallObject.testId].push(apiCallObject);
 
     const arr = statistics[apiCallObject.testId];
@@ -429,6 +449,12 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
 
     span.innerHTML += ` api call time=<span style="font-weight: bold; color:${tmpNormRGB(apiCallObject.time)}">${apiCallObject.time}</span>ms`
+
+    const timeLineSpan = document.createElement('span');
+    timeLineSpan.style.marginLeft = '10px';
+    span.appendChild( timeLineSpan );
+
+    ReactDOM.render( <ShowTimeline rec={[apiCallObject.response]} />, timeLineSpan );
   }
 
   const spanError = ( apiCallObject:ApiCallObject, text:string ) =>
@@ -506,7 +532,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     })
     .then( data => {
       const runBrowserExperiment = data.data.runBrowserExperiment;
-      const response:ServerResponse = { type: runBrowserExperiment.type, paymentId:runBrowserExperiment.paymentId, request: runBrowserExperiment.request, response: runBrowserExperiment.response, requestDate: runBrowserExperiment.requestDate, responseDate:runBrowserExperiment.responseDate, jsonata:runBrowserExperiment.jsonata, txnId:runBrowserExperiment.txnId};
+      const response:ServerResponse = { type: runBrowserExperiment.type, paymentId:runBrowserExperiment.paymentId, request: runBrowserExperiment.request, response: runBrowserExperiment.response, requestDate: runBrowserExperiment.requestDate, responseDate:runBrowserExperiment.responseDate, json:runBrowserExperiment.json, jsonata:runBrowserExperiment.jsonata, txnId:runBrowserExperiment.txnId};
       apiCallObject.response = response;
       responseServerOk( apiCallObject, runBrowserExperiment );
 

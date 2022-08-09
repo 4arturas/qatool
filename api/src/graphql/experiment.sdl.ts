@@ -26,6 +26,7 @@ export const schema = gql`
     response: String
     requestDate: String
     responseDate: String
+    json: String
     jsonata: String
     txnId: String
   }

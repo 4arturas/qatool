@@ -357,6 +357,7 @@ export const runBrowserExperiment = async ({experimentId, collectionId, suiteId,
       response: messageOutgoing.response,
       requestDate: requestDate.toISOString(),
       responseDate: responseDate.toISOString(),
+      json: messageOutgoing.request,
       jsonata: result.jsonata,
       txnId: responseJSon?.txnId
     }
@@ -413,6 +414,7 @@ export const runBrowserExperimentDemo = async ({experimentId, collectionId, suit
     response: 'response',
     requestDate: requestDate.toISOString(),
     responseDate: responseDate.toISOString(),
+    json: '{"paymentId":"4051-1-1-1-30","amount":1.92,"currency":"EUR"}',
     jsonata: '',
     txnId: '111'
   }
