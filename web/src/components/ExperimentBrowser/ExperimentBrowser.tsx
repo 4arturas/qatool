@@ -336,9 +336,9 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
         return;
       }
 
-      span.innerHTML = `<i class="fa-solid fa-moon" style="color:blue"></i>`;
+      span.innerHTML = `<i class="fa-solid fa-moon" style="color:orange"></i>`;
       span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num+1}</b></span> - ${showDelay}ms`;
-      span.innerHTML += ` <span style="color:black">Browser start:<b>${showTime(apiCallObject.browserTimeStart)}</b>`;
+      span.innerHTML += ` <span style="color:black" title="Browser start"><b>${showTime(apiCallObject.browserTimeStart)}</b>`;
       showDelay -= intervalDelay;
 
     }, intervalDelay );
@@ -388,7 +388,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     return `rgb(${r},${g},${b})`;
   };
 
-  const showTime = ( time:Date ) => `${time.getHours()}:${time.getMinutes()}:${time.getSeconds()}`;
+  const showTime = ( time:Date ) => `${pad(time.getHours())}h:${pad(time.getMinutes())}m:${pad(time.getSeconds())}s`;
   const spanDone = ( apiCallObject:ApiCallObject, text ) =>
   {
     apiCallObject.browserTimeFinish = new Date();
@@ -396,7 +396,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
     const span = getSpan(apiCallObject);
     span.innerHTML = `<i class="fa-solid fa-check" style="color:green"></i>`;
     span.innerHTML += ` <span style="color:${apiCallObject.numRGB}"><b>#${apiCallObject.num+1}</b></span> `;
-    span.innerHTML += ` <span style="color:black">Browser start:<b>${showTime(apiCallObject.browserTimeStart)}</b> finish:<b>${showTime(apiCallObject.browserTimeFinish)}</b></span> `;
+    span.innerHTML += ` <span style="color:black" title="Browser start finish"><b>${showTime(apiCallObject.browserTimeStart)}</b>-<b>${showTime(apiCallObject.browserTimeFinish)}</b>=<b>${apiCallObject.browserTimeFinish.getTime()-apiCallObject.browserTimeStart.getTime()}ms</b></span> `;
     // span.style.backgroundColor = 'lightgreen';
     span.style.color = 'black';
 
