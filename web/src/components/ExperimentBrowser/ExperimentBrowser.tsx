@@ -645,7 +645,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             }
           }}
         />
-        <PauseCircleOutlined
+{/*        <PauseCircleOutlined
           style={{...stylingObject.stop, color: `${experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_PAUSE?'green':'black'}`}}
           onClick={ ()=>{
             if ( experimentExecutionMode!==EXPERIMENT_EXECUTION_MODE_PLAY )
@@ -655,7 +655,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             setExperimentExecutionModeRef(EXPERIMENT_EXECUTION_MODE_PAUSE);
 
           }}
-        />
+        />*/}
         <BorderOutlined
           style={{...stylingObject.stop, color: `${experimentExecutionMode===EXPERIMENT_EXECUTION_MODE_STOP?'green':'black'}`}}
           onClick={ ()=>{
