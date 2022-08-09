@@ -518,7 +518,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
     if ( runMode === RUN_MODE_DEMO_BROWSER )
     {
-      apiCallObject.response = {type: MSG_OUTGOING, paymentId: '0', request:'request', response:'response', requestDate:new Date().toISOString(), responseDate:new Date().toISOString(), jsonata:'jsonata', txnId:null};
+      apiCallObject.response = {type: MSG_OUTGOING, paymentId: '0', request:'request', response:'response', requestDate:new Date().toISOString(), responseDate:new Date().toISOString(), json:'{}', jsonata:'jsonata', txnId:null};
       responseServerOk( apiCallObject, {requestTime: 0, thread: apiCallObject.thread, loop: apiCallObject.loop })
       return;
     }
