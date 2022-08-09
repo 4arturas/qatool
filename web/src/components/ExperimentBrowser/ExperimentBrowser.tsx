@@ -91,7 +91,7 @@ const ShowTimeline = ({rec}) => {
   </>
 
 }
-
+let totalSecondsInterval;
 const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
 
   let totalSeconds = 0;
@@ -100,9 +100,6 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
   const [apiObjects, setApiObjects] = useState([]);
 
   if ( qaObject.typeId !== EXPERIMENT ) return <></>
-
-  const [strTime, setStrTime] = useState(convertTimeToString(0,0,0));
-  let totalSecondsInterval;
 
   const EXPERIMENT_EXECUTION_MODE_PLAY = 'Play';
   const EXPERIMENT_EXECUTION_MODE_PAUSE = 'Pause';
@@ -647,7 +644,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
             requestsLeftToRun = apiObjects.length;
 
             totalSeconds = 0;
-            setStrTime(convertTimeToString(0,0,0));
+            const timerExperiment = document.getElementById('timerExperiment');
+            timerExperiment.innerHTML = convertTimeToString(0,0,0);
             totalSecondsInterval = setInterval(() => {
               totalSeconds++;
 
@@ -655,7 +653,8 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
               const minute = Math.floor((totalSeconds - hour * 3600) / 60);
               const seconds = totalSeconds - (hour * 3600 + minute * 60);
               const timeStr = convertTimeToString(hour,minute, seconds);
-              setStrTime(timeStr);
+              timerExperiment.innerHTML = convertTimeToString(hour,minute,seconds);
+
             },1000);
 
             apiObjects.map( ( apiCallObject:ApiCallObject ) => {
@@ -701,12 +700,13 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
               spanStatus( apiCallObject );
             });
 
+            clearInterval( totalSecondsInterval );
           }}
         />
       </span>
 
       &nbsp;&nbsp;&nbsp;&nbsp;Experiment: {experimentExecutionMode}
-      <span style={{marginLeft:'40px', fontWeight:'bold', fontSize:'20px'}}>{strTime}</span>
+      <span id="timerExperiment" key="timerExperiment" style={{marginLeft:'40px', fontWeight:'bold', fontSize:'20px'}}>{convertTimeToString(0,0,0)}</span>
       <br/>
       <br/>
 
