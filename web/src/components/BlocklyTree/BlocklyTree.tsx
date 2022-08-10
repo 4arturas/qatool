@@ -262,6 +262,8 @@ const BlocklyTree = ( { id }) => {
         fetchTree2( null, qaObject, null, tmpTree );
 
         Blockly.serialization.workspaces.load(firstBlock, ws);
+
+        window.onresize = () => document.getElementById('ide').style.height = `${window.innerHeight-100}px`;
       });
   }, [] );
 
