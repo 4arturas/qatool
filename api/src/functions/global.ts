@@ -24,6 +24,24 @@ export const TYPES = [
   RESPONSE
 ];
 
+export const ObjectNameToType = {
+  "Experiment":EXPERIMENT,
+  "Collection":COLLECTION,
+  "Server":SERVER,
+  "Suite":SUITE,
+  "Case":CASE,
+  "Body":BODY,
+  "Test":TEST,
+  "Replace":REPLACE,
+  "Remove":REMOVE,
+  "Result":RESULT,
+  "Response":RESPONSE
+};
+
+let strObjectNameToType = JSON.stringify( ObjectNameToType );
+Object.keys(ObjectNameToType).map( key => strObjectNameToType = strObjectNameToType.replace(key, key.toLowerCase() ) );
+export const ObjectNameToTypeLowercase = JSON.parse( strObjectNameToType );
+
 export const MSG_OUTGOING:number = 1;
 export const MSG_INCOMING:number = 2;
 

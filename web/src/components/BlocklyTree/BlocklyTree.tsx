@@ -15,6 +15,7 @@ import {
   SERVER, SUITE,
   TEST, typeIdToColor
 } from "src/global";
+import {toast} from "@redwoodjs/web/toast";
 
 const QUERY = gql`
   query FindBlocklyTreeQuery($id: Int!) {
@@ -49,6 +50,11 @@ const QUERY = gql`
     }
   }
 `
+const ADD_BLOCKLY = gql`
+  mutation addBlockly($blocklyJsonOld: String!, $blocklyJsonNew: String!) {
+    addBlockly(blocklyJsonOld: $blocklyJsonOld, blocklyJsonNew: $blocklyJsonNew)
+  }`;
+
 
 
 const BlocklyTree = ( { id }) => {
@@ -58,75 +64,30 @@ const BlocklyTree = ( { id }) => {
 
   const [loading, setLoading] = useState( false );
 
-  const initBlocklyObjects = ( gen ) =>
+  const [blocklyJsonOld, setBlocklyJsonOld] = useState(null);
+
+  const addBlockly = ( blocklyJsonNew:string ) =>
   {
-    const experimentJSON = {
-      "message0": "EXPERIMENT %1 name: %2 %3 Server %4 Collection(s): %5",
-      "args0": [
-        {
-          "type": "input_dummy",
-        },
-        {
-          "type": "field_input",
-          "name": "NAME",
-          "text": ""
-        },
-        {
-          "type": "input_dummy"
-        },
-        {
-          "type": "input_value",
-          "name": "SERVER",
-          "check": "serverCheck"
-        },
-        {
-          "type": "input_statement",
-          "name": "COLLECTIONS",
-          "check": "collection"
-        }
-      ],
-      "colour": `${typeIdToColor(EXPERIMENT)}`,
-      "tooltip": "",
-      "helpUrl": ""
-    };
-    Blockly.Blocks['experiment'] = {
-      init: function() {
-        this.jsonInit(experimentJSON);
-        // Assign 'this' to a variable for use in the tooltip closure below.
-        // var thisBlock = this;
-        // this.setTooltip(function() {
-        //   return 'Add a number to variable "%1".'.replace('%1',
-        //     thisBlock.getFieldValue('VAR'));
-        // });
-      },
-      onchange: function ( e )
-      {
-      }
-    };
-    // Blockly.JavaScript['experiment'] = function (block) {
-    gen['experiment'] = function (block) {
-      var dropdownLightcolor = block.getFieldValue('NAME');
-      // console.log( dropdownLightcolor );
-      return 'bubu';
-
-      var dropdownSwitch = block.getFieldValue('switch');
-
-      let code;
-      if (dropdownSwitch === 'on')
-        code = "document.getElementById('circle').style.backgroundColor = '"+dropdownLightcolor+"'";
-      if (dropdownSwitch === 'off')
-        code = "document.getElementById('circle').style.backgroundColor = 'black'";
-
-      // return code;
-      return 'baba';
-    };
+    client.mutate({
+      mutation: ADD_BLOCKLY,
+      variables: {blocklyJsonOld: blocklyJsonOld, blocklyJsonNew: blocklyJsonNew }
+    })
+      .then( res => {
+        const result = res.data.addBlockly;
+        console.log( result );
+        toast.success( 'Blockly was added' );
+      }).catch( error => {
+      toast.error( error.message )
+    } );
   }
 
   const RunBlocklyCode = () =>
   {
     // localStorage.setItem("workspace", JSON.stringify(jsonWorkspace));
     const jsonWorkspace = Blockly.serialization.workspaces.save(workspace);
-    console.log( jsonWorkspace );
+
+    addBlockly( JSON.stringify(jsonWorkspace) );
+
     // console.log( generator.workspaceToCode(workspace ) );
     return;
 
@@ -264,6 +225,10 @@ const BlocklyTree = ( { id }) => {
         Blockly.serialization.workspaces.load(firstBlock, ws);
 
         window.onresize = () => document.getElementById('ide').style.height = `${window.innerHeight-100}px`;
+
+        const jsonWorkspace = Blockly.serialization.workspaces.save(ws);
+        setBlocklyJsonOld( JSON.stringify(jsonWorkspace) );
+
       });
   }, [] );
 
