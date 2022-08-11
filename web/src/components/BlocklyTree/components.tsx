@@ -9,13 +9,18 @@ import {
   SERVER,
   SUITE,
   TEST,
-  typeIdToColor
+  typeIdToColor, typeIdToName
 } from "src/global";
-import {qaObject} from "src/services/qaObjects/qaObjects";
+import Blockly from "blockly";
+
+const typeIdToNameToLowerCase = ( typeId:number ) =>
+{
+  return typeIdToName(typeId).toLowerCase();
+}
 
 export const comp = [
   {
-    "type": "server",
+    "type": typeIdToNameToLowerCase(SERVER),
     "message0": "SERVER %1 name: %2 %3 address: %4 %5 method: %6 %7 headers: %8",
     "args0": [
       {
@@ -67,7 +72,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "collection",
+    "type": typeIdToNameToLowerCase(COLLECTION),
     "message0": "COLLECTION %1 name: %2 %3 batch: %4 %5 Suite(s): %6",
     "args0": [
       {
@@ -102,7 +107,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "suite",
+    "type": typeIdToNameToLowerCase(SUITE),
     "message0": "SUITE %1 name %2 %3 batch %4 %5 Case(s): %6",
     "args0": [
       {
@@ -137,7 +142,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "case",
+    "type": typeIdToNameToLowerCase(CASE),
     "message0": "CASE %1 name %2 %3 batch %4 %5 users %6 %7 requests %8 %9 Body %10 Test(s): %11",
     "args0": [
       {
@@ -193,7 +198,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "body",
+    "type": typeIdToNameToLowerCase(BODY),
     "message0": "BODY %1 name %2 %3 json %4",
     "args0": [
       {
@@ -220,7 +225,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "test",
+    "type": typeIdToNameToLowerCase(TEST),
     "message0": "TEST %1 name %2 %3 Replace %4 Remove %5 Result %6 Response %7",
     "args0": [
       {
@@ -262,7 +267,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "replace",
+    "type": typeIdToNameToLowerCase(REPLACE),
     "message0": "REPLACE %1 name %2 %3 json %4",
     "args0": [
       {
@@ -289,7 +294,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "remove",
+    "type": typeIdToNameToLowerCase(REMOVE),
     "message0": "REMOVE %1 name %2 %3 json %4",
     "args0": [
       {
@@ -316,7 +321,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "result",
+    "type": typeIdToNameToLowerCase(RESULT),
     "message0": "RESULT %1 name: %2 %3 json %4 %5 jsonata %6",
     "args0": [
       {
@@ -352,7 +357,7 @@ export const comp = [
     "helpUrl": ""
   },
   {
-    "type": "response",
+    "type": typeIdToNameToLowerCase(RESPONSE),
     "message0": "RESPONSE %1 name %2 %3 json %4",
     "args0": [
       {
@@ -385,17 +390,17 @@ export const toolbox = {
 
 
   contents: [
-    { kind: 'block', type: 'experiment' },
-    { kind: 'block', type: 'server' },
-    { kind: 'block', type: 'collection' },
-    { kind: 'block', type: 'suite' },
-    { kind: 'block', type: 'case' },
-    { kind: 'block', type: 'body' },
-    { kind: 'block', type: 'test' },
-    { kind: 'block', type: 'replace' },
-    { kind: 'block', type: 'remove' },
-    { kind: 'block', type: 'result' },
-    { kind: 'block', type: 'response' },
+    { kind: 'block', type: typeIdToNameToLowerCase(EXPERIMENT) },
+    { kind: 'block', type: typeIdToNameToLowerCase(SERVER) },
+    { kind: 'block', type: typeIdToNameToLowerCase(COLLECTION) },
+    { kind: 'block', type: typeIdToNameToLowerCase(SUITE) },
+    { kind: 'block', type: typeIdToNameToLowerCase(CASE) },
+    { kind: 'block', type: typeIdToNameToLowerCase(BODY) },
+    { kind: 'block', type: typeIdToNameToLowerCase(TEST) },
+    { kind: 'block', type: typeIdToNameToLowerCase(REPLACE) },
+    { kind: 'block', type: typeIdToNameToLowerCase(REMOVE) },
+    { kind: 'block', type: typeIdToNameToLowerCase(RESULT) },
+    { kind: 'block', type: typeIdToNameToLowerCase(RESPONSE) },
   ]
 };
 
@@ -439,12 +444,12 @@ const wrap_Block = ( type ) => {
 
 const add_Data = ( qaObject ) =>
 {
-  return JSON.stringify({id:qaObject.id});
+  return JSON.stringify({id:qaObject.id, typeId:qaObject.typeId});
 }
 
 export const restore_Experiment = ( o, name ) => {
   return {
-    "type": "experiment",
+    "type": typeIdToNameToLowerCase(EXPERIMENT),
     "fields": {"NAME": `${name}`},
     "x": 10,
     "y": 10,
@@ -457,14 +462,14 @@ export const restore_Experiment = ( o, name ) => {
 }
 export const restore_Server = ( o, name, address, method, headers ) => {
   return {
-      "type": "server",
+      "type": typeIdToNameToLowerCase(SERVER),
       "fields": {"NAME": `${name}`, "ADDRESS": `${address}`, "METHOD": `${method}`, "HEADERS": `${headers}`},
       "data": add_Data(o)
   };
 }
 export const restore_Collection = ( o, name:string, batchId:number ) => {
   return {
-      "type": "collection",
+      "type": typeIdToNameToLowerCase(COLLECTION),
       "fields": {"NAME": `${name}`, "BATCH": `${batchId}`},
       "next": null,
       "inputs": {
@@ -475,7 +480,7 @@ export const restore_Collection = ( o, name:string, batchId:number ) => {
 }
 export const restore_Suite = ( o, name:string, batchId:number ) => {
   return {
-      "type": "suite",
+      "type": typeIdToNameToLowerCase(SUITE),
       "fields": {"NAME": `${name}`, "BATCH": `${batchId}`},
       "next": null,
       "inputs": {
@@ -486,7 +491,7 @@ export const restore_Suite = ( o, name:string, batchId:number ) => {
 }
 export const restore_Case = ( o, name:string, batchId:number, threads:number, loops:number ) => {
   return {
-      "type": "case",
+      "type": typeIdToNameToLowerCase(CASE),
       "fields": {"NAME": `${name}`, "BATCH": `${batchId}`, "THREADS": `${threads}`, "LOOPS": `${loops}`},
       "next": null,
       "inputs": {
@@ -499,7 +504,7 @@ export const restore_Case = ( o, name:string, batchId:number, threads:number, lo
 
 export const restore_Body = ( o, name:string, json:string ) => {
   return {
-      "type": "body",
+      "type": typeIdToNameToLowerCase(BODY),
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
       "data": add_Data(o)
   };
@@ -507,7 +512,7 @@ export const restore_Body = ( o, name:string, json:string ) => {
 
 export const restore_Test = ( o, name:string ) => {
   return {
-      "type": "test",
+      "type": typeIdToNameToLowerCase(TEST),
       "fields": {"NAME": `${name}`},
       "next": null,
       "inputs": {
@@ -522,7 +527,7 @@ export const restore_Test = ( o, name:string ) => {
 
 export const restore_Replace = ( o, name:string, json:string ) => {
   return {
-      "type": "replace",
+      "type": typeIdToNameToLowerCase(REPLACE),
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
       "data": add_Data(o)
     }
@@ -530,7 +535,7 @@ export const restore_Replace = ( o, name:string, json:string ) => {
 
 export const restore_Remove = ( o, name:string, json:string ) => {
   return {
-      "type": "remove",
+      "type": typeIdToNameToLowerCase(REMOVE),
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
       "data": add_Data(o)
   };
@@ -538,7 +543,7 @@ export const restore_Remove = ( o, name:string, json:string ) => {
 
 export const restore_Result = ( o, name:string, json:string, jsonata:string ) => {
   return {
-      "type": "result",
+      "type": typeIdToNameToLowerCase(RESULT),
       "fields": {"NAME": `${name}`, "JSON": `${json}`, "JSONATA": `${jsonata}`},
       "data": add_Data(o)
   };
@@ -546,8 +551,73 @@ export const restore_Result = ( o, name:string, json:string, jsonata:string ) =>
 
 export const restore_Response = ( o, name:string, json:string ) => {
   return {
-      "type": "response",
+      "type": typeIdToNameToLowerCase(RESPONSE),
       "fields": {"NAME": `${name}`, "JSON": `${json}`},
       "data": add_Data(o)
+  };
+}
+
+////////////////////////////////////////////////////////////////
+export const initBlocklyObjects = ( gen ) =>
+{
+  const experimentJSON = {
+    "message0": "EXPERIMENT %1 name: %2 %3 Server %4 Collection(s): %5",
+    "args0": [
+      {
+        "type": "input_dummy",
+      },
+      {
+        "type": "field_input",
+        "name": "NAME",
+        "text": ""
+      },
+      {
+        "type": "input_dummy"
+      },
+      {
+        "type": "input_value",
+        "name": "SERVER",
+        "check": "serverCheck"
+      },
+      {
+        "type": "input_statement",
+        "name": "COLLECTIONS",
+        "check": "collection"
+      }
+    ],
+    "colour": `${typeIdToColor(EXPERIMENT)}`,
+    "tooltip": "",
+    "helpUrl": ""
+  };
+  Blockly.Blocks[typeIdToNameToLowerCase(EXPERIMENT)] = {
+    init: function() {
+      this.jsonInit(experimentJSON);
+      // Assign 'this' to a variable for use in the tooltip closure below.
+      // var thisBlock = this;
+      // this.setTooltip(function() {
+      //   return 'Add a number to variable "%1".'.replace('%1',
+      //     thisBlock.getFieldValue('VAR'));
+      // });
+    },
+    onchange: function ( e )
+    {
+    }
+  };
+  // Blockly.JavaScript['experiment'] = function (block) {
+  gen['experiment'] = function (block) {
+    var dropdownLightcolor = block.getFieldValue('NAME');
+    // console.log( dropdownLightcolor );
+    return 'bubu';
+
+    var dropdownSwitch = block.getFieldValue('switch');
+
+    let code;
+    if (dropdownSwitch === 'on')
+      code = "document.getElementById('circle').style.backgroundColor = '"+dropdownLightcolor+"'";
+    if (dropdownSwitch === 'off')
+      code = "document.getElementById('circle').style.backgroundColor = 'black'";
+
+    // return code;
+    return 'baba';
   };
 }
