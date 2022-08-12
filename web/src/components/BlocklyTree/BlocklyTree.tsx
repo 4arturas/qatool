@@ -75,7 +75,6 @@ const BlocklyTree = ( { id }) => {
     })
       .then( res => {
         const result = res.data.addBlockly;
-        console.log( result );
         toast.success( 'OK' );
       }).catch( error => {
       toast.error( error.message )
