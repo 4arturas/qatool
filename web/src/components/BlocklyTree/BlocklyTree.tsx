@@ -76,7 +76,7 @@ const BlocklyTree = ( { id }) => {
       .then( res => {
         const result = res.data.addBlockly;
         console.log( result );
-        toast.success( 'Blockly was added' );
+        toast.success( 'OK' );
       }).catch( error => {
       toast.error( error.message )
     } );
@@ -236,9 +236,20 @@ const BlocklyTree = ( { id }) => {
 
 
   return (
-    <>
-      <div id="ide" style={{width:'100%', height: `${window.innerHeight-100}px`}}><button onClick={RunBlocklyCode}>Run Code</button></div>
-    </>
+    <table style={{width:'100%'}}>
+      <tbody>
+      <tr>
+        <td><button onClick={RunBlocklyCode} style={{float:'right', marginRight:'50px'}}>&nbsp;&nbsp;&nbsp;Save&nbsp;&nbsp;&nbsp;</button></td>
+      </tr>
+      <tr>
+        <td>
+          <div id="ide" style={{width:'100%', height: `${window.innerHeight-100}px`}}></div>
+        </td>
+      </tr>
+      </tbody>
+
+
+    </table>
   )
 }
 
