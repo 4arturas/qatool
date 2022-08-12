@@ -24,6 +24,8 @@ import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
 import ObjectView from "src/components/ObjectView/ObjectView";
 import ThreadsLoops from "src/components/ThreadsLoops/ThreadsLoops";
 import ExperimentBrowser from "src/components/ExperimentBrowser/ExperimentBrowser";
+import {faCubesStacked} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 
 export const QUERY = gql`
   query FindTreeQueryNew($id: Int!) {
@@ -423,6 +425,11 @@ const TreeNew = ( { id }) => {
                       </Tooltip>
                     </span>
                   }
+
+                  <FontAwesomeIcon
+                    icon={faCubesStacked}
+                    onClick={()=> navigate(routes.blocklyTree({id:qaObject.id}))}
+                    style={{cursor:'pointer', marginLeft: '10px', color:`${typeIdToColor(qaObject.typeId)}`, fontSize:'18px'}} />
 
                   <span style={{marginLeft:'7px'}}><Merge qaObject={qaObject}/></span>
 
