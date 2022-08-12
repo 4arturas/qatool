@@ -47,6 +47,7 @@ const QUERY = gql`
         organization { id name }
         parent { id parentId childrenId childrenObjectTypeId }
       }
+      organizations { id name }
     }
   }
 `
@@ -188,10 +189,10 @@ const BlocklyTree = ( { id }) => {
       .query( { query: QUERY, variables: { id: id } } )
       .then( ret => {
 
-        Blockly.common.defineBlocksWithJsonArray(comp);
+        // Blockly.common.defineBlocksWithJsonArray(comp);
 
         const generator = new Blockly.Generator('GENERATOR');
-        initBlocklyObjects( generator );
+        initBlocklyObjects( generator, ret.data.tree.organizations );
 
         const ws = (Blockly.inject('ide', {
           toolbox: toolbox, move: {

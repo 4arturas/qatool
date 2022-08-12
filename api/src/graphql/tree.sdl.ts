@@ -10,6 +10,7 @@ export const schema = gql`
     parentId: Int!
     hierarchy: [TreeHierarchy] @requireAuth
     objects: [QaObject] @requireAuth
+    organizations: [Organization] @requireAuth
   }
 
   type Query {

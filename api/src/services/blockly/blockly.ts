@@ -9,8 +9,9 @@ import {
   SUITE,
   TEST
 } from "src/functions/global";
-import {createQaObject, qaObject} from "src/services/qaObjects/qaObjects";
+import {deleteQaObject, updateQaObject} from "src/services/qaObjects/qaObjects";
 import {db} from "src/lib/db";
+import {createQaObjectRelationship} from "src/services/qaObjectRelationships/qaObjectRelationships";
 
 export const addBlockly = async ( { blocklyJsonOld, blocklyJsonNew } ) =>
 {
@@ -18,84 +19,98 @@ export const addBlockly = async ( { blocklyJsonOld, blocklyJsonNew } ) =>
   const objectsNew    = [];
   const jsonWorkspaceNew = JSON.parse( blocklyJsonNew );
   const blocksNew = jsonWorkspaceNew.blocks.blocks;
-  await blocksNew.map( async block => {
+  for ( let i = 0; i < blocksNew.length; i++ )
+  {
+    const block = blocksNew[i];
     await ParseBlocklyFile( ' ', null, block, hierarchyNew, objectsNew );
-  });
+  }
 
   const hierarchyOld:Array<{parentId:number,childrenId:number,childrenObjectTypeId:number}>  = [];
   const objectsOld    = [];
   const jsonWorkspaceOld = JSON.parse( blocklyJsonOld );
   const blocksOld = jsonWorkspaceOld.blocks.blocks;
-  await blocksOld.map( async block => {
+  for ( let i = 0; i < blocksOld.length; i++ )
+  {
+    const block = blocksOld[i];
     await ParseBlocklyFile( ' ', null, block, hierarchyOld, objectsOld );
-  });
+  }
 
-  objectsNew.map( objectNew => {
-    const objectOld = objectsOld.find(o => o.id === objectNew.id);
-    // console.log(objectNew);
-    if (!objectOld)
-      return;
-    console.log(objectOld);
-  });
+  // If there is no object in new objects list, then that means the object was deleted
+  for ( let i = 0; i < objectsOld.length; i++ )
+  {
+    const objectOld = objectsOld[i];
+    const objectNew = objectsNew.find(o => o.id === objectOld.id);
+    const needsToBeUpdated:boolean = compare_Objects( objectOld, objectNew );
+    if ( needsToBeUpdated )
+    {
+      await updateQaObject( { id:objectNew.id, input: objectNew } );
+    }
+    if (objectNew)
+      continue;
 
-  hierarchyOld.map( async h => {
-    const hNew = hierarchyNew.find( hn => hn.parentId === h.parentId && hn.childrenId === h.childrenId && hn.childrenObjectTypeId === h.childrenObjectTypeId )
+    await deleteQaObject( {id:objectOld.id} );
+  }
+
+  // If there is no record was found in new hierarchy, that means that this relationship does not exist - we need to delete
+  for ( let i = 0; i < hierarchyOld.length; i++ )
+  {
+    const hOld = hierarchyOld[i];
+    const hNew = hierarchyNew.find( hn => hn.parentId === hOld.parentId && hn.childrenId === hOld.childrenId && hn.childrenObjectTypeId === hOld.childrenObjectTypeId )
     if ( hNew )
-      return;
+      continue;
 
     await db.qaObjectRelationship.deleteMany({
       where: {
         AND: [
           {
             parentId: {
-              equals: h.parentId
+              equals: hOld.parentId
             }
           },
           {
             childrenId: {
-              equals: h.childrenId
+              equals: hOld.childrenId
             }
           },
           {
             childrenObjectTypeId: {
-              equals: h.childrenObjectTypeId
+              equals: hOld.childrenObjectTypeId
             }
           }
         ]
       }
     });
 
-  } );
+  }
 
-  hierarchyNew.map( async h => {
-    const hOld = hierarchyNew.find(hn => hn.parentId === h.parentId && hn.childrenId === h.childrenId && hn.childrenObjectTypeId === h.childrenObjectTypeId)
-    if ( hOld )
-      return;
+  // If there is no relation found in old hierarchy, then this means we need to create new relationship
+  for ( let i = 0; i < hierarchyNew.length; i++ )
+  {
+    const hNew = hierarchyNew[i];
+    const hOld = hierarchyOld.find(hn => hn.parentId === hNew.parentId && hn.childrenId === hNew.childrenId && hn.childrenObjectTypeId === hNew.childrenObjectTypeId)
+    if (hOld)
+      continue;
 
-    // TODO: create new relationship
-  });
+    await createQaObjectRelationship({input: hNew});
+  }
 
   return 1;
 }
 
 const ProcessBlocklyBlock = async ( parentBlock, block, hierarchy:Array<{parentId:number,childrenId:number,childrenObjectTypeId:number}>, objects  ) =>
 {
-  console.log( 'parent', parentBlock, 'child', block );
   if ( !block.id )
   {
-    // const newObject = await db.qaObject.create( { data: block } );
-    // block.id = newObject.id;
+    const newObject = await db.qaObject.create( { data: block } );
+    block.id = newObject.id;
   }
 
   if ( parentBlock )
   {
-    hierarchy.push( {parentId:parentBlock.id, childrenId:block.id, childrenObjectTypeId: block.typeId })
+    const h = {parentId:parentBlock.id, childrenId:block.id, childrenObjectTypeId: block.typeId };
+    hierarchy.push( h )
   }
   objects.push( block );
-
-  // const data = block.data;
-  // console.log( tab, block );
-  // console.log( tab, 'parentBlock', parentBlock,'block', block );
 }
 
 const ParseBlocklyFile = async ( tab:string, parentBlock, blockJSON, hierarchy:Array<{parentId:number,childrenId:number,childrenObjectTypeId:number}>, objects ) =>
@@ -115,19 +130,20 @@ const ParseBlocklyFile = async ( tab:string, parentBlock, blockJSON, hierarchy:A
   if ( !inputs )
     return;
 
-  Object.keys( inputs ).map( async key =>
+  const keys = Object.keys( inputs );
+  for ( let i = 0; i < keys.length; i++ )
   {
+    const key = keys[i];
     const b/*block*/ = inputs[key];
-    // console.log( b.block );
     await ParseBlocklyFile( tab + '   ', block, b.block, hierarchy, objects );
-  });
+  }
 }
 
 class CommonType {
-  id:number; typeId:number; name:string; description:string;
+  id:number; typeId:number; name:string; description:string;orgId:number;
   public compare( obj:CommonType ):boolean
   {
-    return obj.id === this.id && obj.typeId === this.typeId && obj.name === this.name && obj.description === this.description;
+    return obj.id === this.id && obj.typeId === this.typeId && obj.name === this.name && obj.description === this.description && obj.orgId === this.orgId;
   }
 }
 class Experiment extends CommonType {}
@@ -195,6 +211,30 @@ class Response extends CommonType
   }
 }
 
+const compare_Objects = ( a, b ) => {
+  if ( a.typeId !== b.typeId ) return true;
+  if ( a.id !== b.id ) return true;
+  if ( a.name !== b.name ) return true;
+  if ( a.description !== b.description ) return true;
+  if ( a.orgId !== b.orgId ) return true;
+  switch ( a.typeId )
+  {
+    case SERVER: return a.address !== b.address || a.method !== b.method || a.headers !== b.headers
+    case EXPERIMENT:
+    case COLLECTION:
+    case SUITE:
+      return a.batchId !== b.batchId;
+    case CASE: return a.batch !== b.batch || a.threads !== b.threads || a.loops !== b.loops;
+    case TEST: return false;
+    case BODY:
+    case REPLACE:
+    case REMOVE:
+    case RESPONSE:
+      return a.json !== b.json;
+    case RESULT: return a.json !== b.json || b.jsonata !== b.jsonata;
+    default: return true;
+  }
+}
 
 const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|Body|Test|Replace|Remove|Result|Response =>
 {
@@ -219,6 +259,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       experiment.typeId = typeId;
       experiment.name = getFieldStr('NAME');
       experiment.description = getFieldStr('DESCRIPTION');
+      experiment.orgId = getFieldInt("ORG");
       return experiment;
     }
     case SERVER:
@@ -231,6 +272,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       server.address = getFieldStr('ADDRESS');
       server.method = getFieldStr('METHOD');
       server.headers = getFieldStr('HEADERS');
+      server.orgId = getFieldInt("ORG");
       return server;
     }
     case COLLECTION:
@@ -241,6 +283,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       collection.name = getFieldStr('NAME');
       collection.description = getFieldStr('DESCRIPTION');
       collection.batch = getFieldInt('BATCH');
+      collection.orgId = getFieldInt("ORG");
       return collection;
     }
     case SUITE:
@@ -251,6 +294,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       suite.name = getFieldStr('NAME');
       suite.description = getFieldStr('DESCRIPTION');
       suite.batch = getFieldInt('BATCH');
+      suite.orgId = getFieldInt("ORG");
       return suite;
     }
     case CASE:
@@ -260,6 +304,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       cAse.typeId = typeId;
       cAse.name = getFieldStr('NAME');
       cAse.description = getFieldStr('DESCRIPTION');
+      cAse.orgId = getFieldInt("ORG");
       cAse.batch = getFieldInt('BATCH');
       cAse.threads = getFieldInt('THREADS');
       cAse.loops = getFieldInt('LOOPS');
@@ -272,6 +317,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       body.typeId = typeId;
       body.name = getFieldStr('NAME');
       body.description = getFieldStr('DESCRIPTION');
+      body.orgId = getFieldInt("ORG");
       body.json = getFieldStr('JSON');
       return body;
     }
@@ -282,6 +328,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       test.typeId = typeId;
       test.name = getFieldStr('NAME');
       test.description = getFieldStr('DESCRIPTION');
+      test.orgId = getFieldInt("ORG");
       return test;
     }
     case REPLACE:
@@ -291,6 +338,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       replace.typeId = typeId;
       replace.name = getFieldStr('NAME');
       replace.description = getFieldStr('DESCRIPTION');
+      replace.orgId = getFieldInt("ORG");
       replace.json = getFieldStr('JSON');
       return replace;
     }
@@ -301,6 +349,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       remove.typeId = typeId;
       remove.name = getFieldStr('NAME');
       remove.description = getFieldStr('DESCRIPTION');
+      remove.orgId = getFieldInt("ORG");
       remove.json = getFieldStr('JSON');
       return remove;
     }
@@ -311,6 +360,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       result.typeId = typeId;
       result.name = getFieldStr('NAME');
       result.description = getFieldStr('DESCRIPTION');
+      result.orgId = getFieldInt("ORG");
       result.json = getFieldStr('JSON');
       result.jsonata = getFieldStr('JSONATA');
       return result;
@@ -322,6 +372,7 @@ const blocklyToType = ( blocklyJSON ): Experiment|Server|Collection|Suite|Case|B
       response.typeId = typeId;
       response.name = getFieldStr('NAME');
       response.description = getFieldStr('DESCRIPTION');
+      response.orgId = getFieldInt("ORG");
       response.json = getFieldStr('JSON');
       return response;
     }

@@ -1,5 +1,6 @@
 import {db} from "src/lib/db";
 import {QaObjectRelationship} from "src/models";
+import {getOrganizations} from "src/services/organizations/organizations";
 
 interface Relation
 {
@@ -37,9 +38,12 @@ export const fetchHierarchy = async ( { id } ) => {
     },
   } );
 
+  const organizations = await getOrganizations();
+
   return {
     parentId:   id,
     hierarchy:  tree,
     objects:    objects,
+    organizations: organizations
   }
 }
