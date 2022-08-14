@@ -1,6 +1,5 @@
 // Define your own mock data here:
-export const standard = (/* vars, { ctx, req } */) => (
-  {
+export const standard = (/* vars, { ctx, req } */) => ({
   merge: {
     "__typename": "Merge",
     "caseParent": {
@@ -139,4 +138,3 @@ export const standard = (/* vars, { ctx, req } */) => (
     }
   }
 })
-

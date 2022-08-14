@@ -23,6 +23,7 @@ import ObjectDeepClone from "src/components/ObjectDeepClone/ObjectDeepClone";
 import {faCubesStacked, faPen} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import ObjectView from "src/components/ObjectView/ObjectView";
+import MergeModal from "src/components/MergeModal/MergeModal";
 
 export const QUERY = gql`
   query SearchQaObjectsQuery($searchCriteria: QaObjectSearchCriteria, $page: Int, $pageSize: Int, $count: Int) {
@@ -105,7 +106,7 @@ const SearchQaObjects = ({currentPage, pageSize, count}) => {
             </Tooltip>
             }
 
-            <span style={{float:'right', color: 'black', marginRight:'10px'}}><Merge qaObject={record} /></span>
+            <span style={{float:'right', color: 'black', marginRight:'10px'}}><MergeModal qaObject={record} /></span>
 
           </>
         </div>

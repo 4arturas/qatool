@@ -22,6 +22,7 @@ import {useAuth} from "@redwoodjs/auth";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faQuestionCircle} from "@fortawesome/free-solid-svg-icons";
 import Help from "src/components/Help/Help";
+import MergeModal from "src/components/MergeModal/MergeModal";
 
 export const FETCH_TREE = gql`
   query FetchTree($id: Int!) {
@@ -262,12 +263,6 @@ const Tree = ( { tree, relationId, treeParentId/*id of parent*/  } ) => {
       </span>
     }
     </> }
-    {
-      qaObject.typeId === CASE &&
-      <span key={`merge${parentId}`} style={stylingObject.merge}>
-        <Merge qaObjectParent={qaObject} />
-      </span>
-    }
 
     {
       qaObject.typeId === EXPERIMENT &&

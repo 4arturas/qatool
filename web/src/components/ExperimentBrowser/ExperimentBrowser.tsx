@@ -16,6 +16,7 @@ import {BorderOutlined, FieldTimeOutlined, PauseCircleOutlined, PlayCircleOutlin
 import ReactDOM from "react-dom";
 import Merge from "src/components/Merge/Merge";
 import Timeline from "src/components/Timeline/Timeline";
+import MergeModal from "src/components/MergeModal/MergeModal";
 
 const QUERY_RUN_BROWSER_EXPERIMENT = gql`
           query RunBrowserExperiment($experimentId: Int!, $collectionId: Int!, $suiteId: Int!, $caseId: Int!, $testId: Int!, $thread: Int!, $loop: Int!, $num: Int!) {
@@ -732,7 +733,7 @@ const ExperimentBrowser = ( { qaObject, objects, hierarchy } ) => {
                     <Tag color={typeIdToColor(cAse.typeId)}>{typeIdToName(cAse.typeId)}</Tag>{cAse.name}
                     &nbsp;&nbsp;&nbsp;
                     <Tag color={typeIdToColor(test.typeId)}>{typeIdToName(test.typeId)}</Tag>{test.name}
-                    <span style={{marginLeft:'10px'}}><Merge qaObject={test}/></span>
+                    <span style={{marginLeft:'10px'}}><MergeModal qaObject={test}/></span>
                     <span id={`timer${testId}`} key={`timer${testId}`} style={{marginLeft:'30px', fontWeight:'bold'}}>{convertTimeToString(0,0,0)}</span>
                     <span id={`statistics${testId}`} key={`statistics${testId}`} style={{marginRight:'20px', float:'right'}}><b><u>STATISTICS</u></b></span>
                   </div>

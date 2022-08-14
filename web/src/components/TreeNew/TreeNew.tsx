@@ -26,6 +26,7 @@ import ThreadsLoops from "src/components/ThreadsLoops/ThreadsLoops";
 import ExperimentBrowser from "src/components/ExperimentBrowser/ExperimentBrowser";
 import {faCubesStacked} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import MergeModal from "src/components/MergeModal/MergeModal";
 
 export const QUERY = gql`
   query FindTreeQueryNew($id: Int!) {
@@ -431,7 +432,7 @@ const TreeNew = ( { id }) => {
                     onClick={()=> navigate(routes.blocklyTree({id:qaObject.id}))}
                     style={{cursor:'pointer', marginLeft: '10px', color:`${typeIdToColor(qaObject.typeId)}`, fontSize:'18px'}} />
 
-                  <span style={{marginLeft:'7px'}}><Merge qaObject={qaObject}/></span>
+                  <span style={{marginLeft:'7px'}}><MergeModal qaObject={qaObject}/></span>
 
                   {
                     (!qaObject.executed && possibleToAddChildren.length > 0) &&
