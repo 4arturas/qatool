@@ -7708,6 +7708,7 @@ __metadata:
     "@redwoodjs/api": 1.5.2
     "@redwoodjs/graphql-server": 1.5.2
     "@redwoodjs/record": ^2.0.0
+    jsonwebtoken: ^8.5.1
     otplib: ^12.0.1
     qrcode: ^1.5.1
   languageName: unknown
