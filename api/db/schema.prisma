@@ -97,6 +97,7 @@ model User {
   organization        Organization @relation(fields: [orgId], references: [id])
   orgId               Int
   mfaSecret           String?
+  mfaSet              Boolean    @default(false)
 }
 
 model UserRole {
