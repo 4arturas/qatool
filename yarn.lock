@@ -7709,6 +7709,7 @@ __metadata:
     "@redwoodjs/graphql-server": 1.5.2
     "@redwoodjs/record": ^2.0.0
     otplib: ^12.0.1
+    qrcode: ^1.5.1
   languageName: unknown
   linkType: soft
 
@@ -11742,6 +11743,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dijkstrajs@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "dijkstrajs@npm:1.0.2"
+  checksum: 323e10c46a163a2b8ff6a357f967cff4392981d351de9077d131469d02edfe9cd38ce079bbb58c8cf99e6925a75a3b22269d1886381a8eab1daf0d2e39191728
+  languageName: node
+  linkType: hard
+
 "dir-glob@npm:^2.2.2":
   version: 2.2.2
   resolution: "dir-glob@npm:2.2.2"
@@ -12184,6 +12192,13 @@ __metadata:
     babel-plugin-emotion: ^10.0.27
     create-emotion: ^10.0.27
   checksum: a4c6963ef148cadbd5d72dbf9724d3685ed0d87330ceefcacfe9ae225ad7d8c6a08df232c291dc1ee0523c049c194a1b7dc6959ef98757464186b2d3c6de4592
+  languageName: node
+  linkType: hard
+
+"encode-utf8@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "encode-utf8@npm:1.0.3"
+  checksum: 6b3458b73e868113d31099d7508514a5c627d8e16d1e0542d1b4e3652299b8f1f590c468e2b9dcdf1b4021ee961f31839d0be9d70a7f2a8a043c63b63c9b3a88
   languageName: node
   linkType: hard
 
@@ -21137,6 +21152,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pngjs@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "pngjs@npm:5.0.0"
+  checksum: c074d8a94fb75e2defa8021e85356bf7849688af7d8ce9995b7394d57cd1a777b272cfb7c4bce08b8d10e71e708e7717c81fd553a413f21840c548ec9d4893c6
+  languageName: node
+  linkType: hard
+
 "pnp-webpack-plugin@npm:1.6.4":
   version: 1.6.4
   resolution: "pnp-webpack-plugin@npm:1.6.4"
@@ -22068,6 +22090,20 @@ __metadata:
     is-buffer: ^2.0.3
     to-uint8: ^1.4.1
   checksum: e9ac10bd88e6590b9c5749d44fec81c669d0b6f0de0b3778cd02c3115696e5bfa49a05a3340094a6a15aa8d9d3ba3f95c51a4abc360bc6bcacea0f6d53d7d77a
+  languageName: node
+  linkType: hard
+
+"qrcode@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "qrcode@npm:1.5.1"
+  dependencies:
+    dijkstrajs: ^1.0.1
+    encode-utf8: ^1.0.3
+    pngjs: ^5.0.0
+    yargs: ^15.3.1
+  bin:
+    qrcode: bin/qrcode
+  checksum: 6a6d4a6c83be46d04c22da823d25b28cb6ba434448a551241c8e478d5ebc0220044458c7c2943a6687e5a819e3cb8b4a75aac059d0deb066578b10bb2ea1b630
   languageName: node
   linkType: hard
 
