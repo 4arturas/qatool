@@ -22,11 +22,19 @@ import {UserRole} from "src/models";
 export const getCurrentUser = async (session) => {
   let user = await db.user.findUnique({
     where: { id: session.id },
-    select: { id: true, email: true, orgId: true }
+    select: { id: true, email: true, orgId: true, mfaSet: true }
   });
 
-  const userRoles = await UserRole.where( { userId: session.id } )
-  const userRolesArr = userRoles.map( ur => ur.name );
+  let userRolesArr: Array<string>;
+  if ( !user.mfaSet ) // TODO: need to think, do I really need this check
+  {
+    userRolesArr = ['MFA_IS_NOT_SET'];
+  }
+  else
+  {
+    const userRoles = await UserRole.where( { userId: session.id } )
+    userRolesArr = userRoles.map(ur => ur.name);
+  }
 
   user['roles'] = userRolesArr;
   return user;

@@ -1,6 +1,8 @@
 import { db } from 'src/lib/db'
 import { DbAuthHandler } from '@redwoodjs/api'
 import {UserRole} from "src/models";
+import { NoUserIdError } from "@redwoodjs/api/dist/functions/dbAuth/errors";
+import {authenticator} from "otplib";
 
 export const handler = async (event, context) => {
 
@@ -47,7 +49,7 @@ export const handler = async (event, context) => {
     // by the `logIn()` function from `useAuth()` in the form of:
     // `{ message: 'Error message' }`
     handler: (user) => {
-      return user
+      return user;
     },
 
     errors: {
@@ -146,9 +148,12 @@ export const handler = async (event, context) => {
       id: 'id',
       username: 'email',
       hashedPassword: 'hashedPassword',
+      qrcode: 'qrcode',
       salt: 'salt',
       resetToken: 'resetToken',
       resetTokenExpiresAt: 'resetTokenExpiresAt',
+      mfaSecret: 'mfaSecret',
+      mfaSet: 'mfaSet',
     },
 
     // Specifies attributes on the cookie that dbAuth sets in order to remember
@@ -168,7 +173,40 @@ export const handler = async (event, context) => {
     login: loginOptions,
     resetPassword: resetPasswordOptions,
     signup: signupOptions,
-  })
+  });
+
+
+  // Function is taken from here
+  // https://github.com/redwoodjs/redwood/blob/main/packages/api/src/functions/dbAuth/DbAuthHandler.ts
+  authHandler.login = async function(): Promise<any>
+  {
+    const {
+      username,
+      password
+    } = this.params;
+
+    const loginData = JSON.parse(username);
+
+    const dbUser = await this._verifyUser(loginData.username, loginData.password);
+    if ( dbUser && !dbUser.mfaSet )
+      return [{id:dbUser.id, mfa: 0}];
+
+    if ( dbUser && !loginData.qrcode )
+      return [{id:dbUser.id, mfa: 2}]
+
+    const allGood = authenticator.check(loginData.qrcode, dbUser.mfaSecret);
+    if ( !allGood )
+      throw new NoUserIdError();
+
+    const handlerUser = await this.options.login.handler(dbUser);
+    if (handlerUser == null || handlerUser[this.options.authFields.id] == null) {
+      throw new NoUserIdError();
+      // throw new DbAuthError.NoUserIdError();
+    }
+
+    const loginResponse = this._loginResponse(handlerUser);
+    return loginResponse;
+  }
 
   return await authHandler.invoke()
 }
