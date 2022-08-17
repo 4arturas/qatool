@@ -16,3 +16,7 @@ yarn rw g secret
 ````
 add to .env
 SESSION_SECRET=LCmqLkujp...
+
+## TODO
+* Integrate jwt
+* Use websockets for informing user what is going on the backend whe tests are running
