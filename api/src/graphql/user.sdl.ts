@@ -6,6 +6,7 @@ export const schema = gql`
     id: Int!
     email: String!
     deleted: Date
+    mfaSet: Boolean
     userRoles: [UserRole]
     orgId: Int!
     organization:  Organization
@@ -28,5 +29,6 @@ export const schema = gql`
     updateUser(id: Int!, input: UpdateUserInput!): User! @requireAuth(roles: ["admin"])
     deleteUser(id: Int!): Int! @requireAuth(roles: ["admin"])
     setMfaCode(id: Int!, qrcode: String!): Int! @requireAuth
+    resetMfa(id: Int!): Int! @requireAuth(roles: ["admin"])
   }
 `

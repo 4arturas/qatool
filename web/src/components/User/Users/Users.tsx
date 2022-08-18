@@ -1,6 +1,6 @@
 import {Modal, Popconfirm, Table, Tag, Tooltip} from "antd";
 import React, {useState} from "react";
-import {faPen, faTrash,faCirclePlus} from "@fortawesome/free-solid-svg-icons";
+import {faPen, faTrash, faCirclePlus, faMobileRetro} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useApolloClient} from "@apollo/client";
 import UserEditCell from 'src/components/User/UserEditCell'
@@ -13,6 +13,11 @@ const stylingObject = {
   },
   delete: {
     cursor: 'pointer'
+  },
+  reset2FA: {
+    cursor: 'pointer',
+    fontSize: '16px',
+    marginBottom: '-1px'
   },
 }
 
@@ -158,6 +163,42 @@ const Users = ( {users} ) => {
                   <FontAwesomeIcon icon={faTrash} style={stylingObject.delete}/>
                 </Tooltip>
           </Popconfirm>
+              &nbsp;&nbsp;
+
+          { record.mfaSet &&
+          <Popconfirm
+            title="Are you sure to reset 2FA?"
+            onConfirm={async () => {
+
+              const RESET_MFA = gql`
+              mutation ResetMfa($id: Int!) {
+                resetMfa(id: $id)
+              }`;
+
+              const ret = await client.mutate({
+                mutation: RESET_MFA,
+                variables: {id: record.id}
+              });
+
+              const newDataArray = data.map( u => {
+                // if ( u.id !== record.id )
+                //   return u;
+                const deletedUser = { ... u };
+                deletedUser.mfaSet = false;
+                return deletedUser;
+              } );
+              setData(newDataArray);
+            }
+            }
+            // onCancel={cancel}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Tooltip title={'Reset 2FA'}>
+              <FontAwesomeIcon icon={faMobileRetro} style={stylingObject.reset2FA}/>
+            </Tooltip>
+          </Popconfirm>
+          }
           </span>
           }
         </>

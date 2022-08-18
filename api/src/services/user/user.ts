@@ -13,6 +13,7 @@ export const getUser = async ( { id: id } )  =>
       id: true,
       email: true,
       deleted: true,
+      mfaSet: true,
       userRoles:  {
         select: {
           name: true
@@ -36,6 +37,7 @@ export const getUsers = async ()  =>
       email: true,
       deleted: true,
       orgId: true,
+      mfaSet: true,
       userRoles:  {
         select: {
           name: true
@@ -137,4 +139,12 @@ export const setMfaCode = async ( {id:id, qrcode:qrcode} ) =>
     allGood = false;
   }
   return allGood ? 1:0;
+}
+
+export const resetMfa = ( { id: id } ) =>
+{
+  return db.user.update({
+    data: { mfaSet: false },
+    where: { id },
+  });
 }

@@ -9,6 +9,7 @@ export const QUERY = gql`
       id
       email
       deleted
+      mfaSet
       userRoles {
         name
       }
