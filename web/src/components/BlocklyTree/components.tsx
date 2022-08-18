@@ -12,6 +12,10 @@ import {
   typeIdToColor, typeIdToName
 } from "src/global";
 import Blockly from "blockly";
+import * as ReactDOM from "react-dom";
+import {Chart} from "react-google-charts";
+import React from "react";
+import ObjectNewTest from "src/components/ObjectNewTest/ObjectNewTest";
 
 const typeIdToNameToLowerCase = ( typeId:number ) =>
 {
@@ -210,11 +214,31 @@ export const initBlocklyObjects = ( gen, organizations ) =>
   init_Response( orgArr );
 }
 
+const editImage = {
+  "type": "field_image",
+  "name": "EDIT",
+  "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Edit_icon_%28the_Noun_Project_30184%29.svg/1024px-Edit_icon_%28the_Noun_Project_30184%29.svg.png",
+  "height": "20",
+  "width": "20",
+  "alt": "",
+};
+
+Blockly.Extensions.register('edit_button_extension', function () {
+  this.getField('EDIT').clickHandler_ = (() => {
+    if ( !this.data )
+      return;
+
+    const dataJSON = JSON.parse(this.data);
+    window.location.href = `/tree/${dataJSON.id}`;
+  });
+});
+
 const init_Experiment = ( organizations ) =>
 {
   const json = {
-    "message0": "EXPERIMENT %1 name %2 %3 description %4 %5 organization %6 %7 Server %8 Collection(s): %9",
+    "message0": "EXPERIMENT %1 %2 name %3 %4 description %5 %6 organization %7 %8 Server %9 Collection(s): %10",
     "args0": [
+      editImage,
       {
         "type": "input_dummy",
       },
@@ -251,15 +275,18 @@ const init_Experiment = ( organizations ) =>
         "type": "input_statement",
         "name": "COLLECTIONS",
         "check": "collection"
-      }
+      },
     ],
     "colour": `${typeIdToColor(EXPERIMENT)}`,
     "tooltip": "",
-    "helpUrl": ""
+    "helpUrl": "",
+    "extensions": [ "edit_button_extension" ]
   };
   Blockly.Blocks[typeIdToNameToLowerCase(EXPERIMENT)] = {
     init: function() {
       this.jsonInit(json);
+      // console.log( this.data );
+      // console.log( this );
       // Assign 'this' to a variable for use in the tooltip closure below.
       // var thisBlock = this;
       // this.setTooltip(function() {
@@ -293,8 +320,9 @@ const init_Experiment = ( organizations ) =>
 const init_Server = ( organizations ) =>
 {
   const json = {
-    "message0": "SERVER %1 name %2 %3 description %4 %5 address %6 %7 method %8 %9 headers: %10 %11 organization %12",
+    "message0": "SERVER %1 %2 name %3 %4 description %5 %6 address %7 %8 method %9 %10 headers: %11 %12 organization %13",
     "args0": [
+      editImage,
       {
         "type": "input_dummy"
       },
@@ -353,7 +381,8 @@ const init_Server = ( organizations ) =>
     "output": ["serverCheck"],
     "colour": `${typeIdToColor(SERVER)}`,
     "tooltip": "",
-    "helpUrl": ""
+    "helpUrl": "",
+    "extensions": [ "edit_button_extension" ]
   };
   Blockly.Blocks[typeIdToNameToLowerCase(SERVER)] = {
     init: function() {
@@ -366,8 +395,9 @@ const init_Collection = ( organization ) =>
 {
   const json = {
       "type": typeIdToNameToLowerCase(COLLECTION),
-      "message0": "COLLECTION %1 name: %2 %3 description: %4 %5 batch: %6 %7 organization %8 %9 Suite(s): %10",
+      "message0": "COLLECTION %1 %2 name: %3 %4 description: %5 %6 batch: %7 %8 organization %9 %10 Suite(s): %11",
       "args0": [
+        editImage,
         {
           "type": "input_dummy"
         },
@@ -407,7 +437,8 @@ const init_Collection = ( organization ) =>
       "nextStatement": "collection",
       "colour": `${typeIdToColor(COLLECTION)}`,
       "tooltip": "",
-      "helpUrl": ""
+      "helpUrl": "",
+      "extensions": [ "edit_button_extension" ]
     };
   Blockly.Blocks[typeIdToNameToLowerCase(COLLECTION)] = {
     init: function() {
@@ -418,8 +449,9 @@ const init_Collection = ( organization ) =>
 
 const init_Suite = ( organization ) => {
   const json = {
-      "message0": "SUITE %1 name %2 %3 description %4 %5 batch %6 %7 organization %8 %9 Case(s): %10",
+      "message0": "SUITE %1 %2 name %3 %4 description %5 %6 batch %7 %8 organization %9 %10 Case(s): %11",
       "args0": [
+        editImage,
         {
           "type": "input_dummy"
         },
@@ -459,7 +491,8 @@ const init_Suite = ( organization ) => {
       "nextStatement": "suite",
       "colour": `${typeIdToColor(SUITE)}`,
       "tooltip": "",
-      "helpUrl": ""
+      "helpUrl": "",
+      "extensions": [ "edit_button_extension" ]
     };
   Blockly.Blocks[typeIdToNameToLowerCase(SUITE)] = {
     init: function() {
@@ -470,8 +503,9 @@ const init_Suite = ( organization ) => {
 
 const init_Case = ( organization ) => {
   const json = {
-      "message0": "CASE %1 name %2 %3 description %4 %5 batch %6 %7 users %8 %9 requests %10 %11 organization %12 %13 Body %14 Test(s): %15",
+      "message0": "CASE %1 %2 name %3 %4 description %5 %6 batch %7 %8 users %9 %10 requests %11 %12 organization %13 %14 Body %15 Test(s): %16",
       "args0": [
+        editImage,
         {
           "type": "input_dummy"
         },
@@ -532,7 +566,8 @@ const init_Case = ( organization ) => {
       "nextStatement": "case",
       "colour": `${typeIdToColor(CASE)}`,
       "tooltip": "",
-      "helpUrl": ""
+      "helpUrl": "",
+      "extensions": [ "edit_button_extension" ]
     };
   Blockly.Blocks[typeIdToNameToLowerCase(CASE)] = {
     init: function() {
@@ -543,8 +578,9 @@ const init_Case = ( organization ) => {
 
 const init_Body = ( organization ) => {
   const json = {
-      "message0": "BODY %1 name %2 %3 description %4 %5 organization %6 %7 json %8",
+      "message0": "BODY %1 %2 name %3 %4 description %5 %6 organization %7 %8 json %9",
       "args0": [
+        editImage,
         {
           "type": "input_dummy"
         },
@@ -576,7 +612,8 @@ const init_Body = ( organization ) => {
       "output": ["bodyCheck"],
       "colour": `${typeIdToColor(BODY)}`,
       "tooltip": "",
-      "helpUrl": ""
+      "helpUrl": "",
+      "extensions": [ "edit_button_extension" ]
     };
   Blockly.Blocks[typeIdToNameToLowerCase(BODY)] = {
     init: function() {
@@ -587,8 +624,9 @@ const init_Body = ( organization ) => {
 
 const init_Test = ( organization ) => {
   const json = {
-      "message0": "TEST %1 name %2 %3 description %4 %5 organization %6 %7 Replace %8 Remove %9 Result %10 Response %11",
+      "message0": "TEST %1 %2 name %3 %4 description %5 %6 organization %7 %8 Replace %9 Remove %10 Result %11 Response %12",
       "args0": [
+        editImage,
         {
           "type": "input_dummy"
         },
@@ -635,7 +673,8 @@ const init_Test = ( organization ) => {
       "nextStatement": "test",
       "colour": `${typeIdToColor(TEST)}`,
       "tooltip": "",
-      "helpUrl": ""
+      "helpUrl": "",
+      "extensions": [ "edit_button_extension" ]
     };
   Blockly.Blocks[typeIdToNameToLowerCase(TEST)] = {
     init: function() {
@@ -646,8 +685,9 @@ const init_Test = ( organization ) => {
 
 const init_Replace = ( organization ) => {
   const json = {
-      "message0": "REPLACE %1 name %2 %3 description %4 %5 organization %6 %7 json %8",
+      "message0": "REPLACE %1 %2 name %3 %4 description %5 %6 organization %7 %8 json %9",
       "args0": [
+        editImage,
         {
           "type": "input_dummy"
         },
@@ -679,7 +719,8 @@ const init_Replace = ( organization ) => {
       "output": ["replaceCheck"],
       "colour": `${typeIdToColor(REPLACE)}`,
       "tooltip": "",
-      "helpUrl": ""
+      "helpUrl": "",
+      "extensions": [ "edit_button_extension" ]
     };
   Blockly.Blocks[typeIdToNameToLowerCase(REPLACE)] = {
     init: function() {
@@ -691,8 +732,9 @@ const init_Replace = ( organization ) => {
 const init_Remove = ( organization ) => {
   const json = {
       "type": typeIdToNameToLowerCase(REMOVE),
-      "message0": "REMOVE %1 name %2 %3 description %4 %5 organization %6 %7 json %8",
+      "message0": "REMOVE %1 %2 name %3 %4 description %5 %6 organization %7 %8 json %9",
       "args0": [
+        editImage,
         {
           "type": "input_dummy"
         },
@@ -724,7 +766,8 @@ const init_Remove = ( organization ) => {
       "output": ["removeCheck"],
       "colour": `${typeIdToColor(REMOVE)}`,
       "tooltip": "",
-      "helpUrl": ""
+      "helpUrl": "",
+      "extensions": [ "edit_button_extension" ]
     };
   Blockly.Blocks[typeIdToNameToLowerCase(REMOVE)] = {
     init: function() {
@@ -736,8 +779,9 @@ const init_Remove = ( organization ) => {
 const init_Result = ( organization ) => {
   const json = {
       "type": typeIdToNameToLowerCase(RESULT),
-      "message0": "RESULT %1 name %2 %3 description %4 %5 organization %6 %7 json %8 %9 jsonata %10",
+      "message0": "RESULT %1 %2 name %3 %4 description %5 %6 organization %7 %8 json %9 %10 jsonata %11",
       "args0": [
+        editImage,
         {
           "type": "input_dummy"
         },
@@ -778,7 +822,8 @@ const init_Result = ( organization ) => {
       "output": ["resultCheck"],
       "colour": `${typeIdToColor(RESULT)}`,
       "tooltip": "",
-      "helpUrl": ""
+      "helpUrl": "",
+      "extensions": [ "edit_button_extension" ]
     };
   Blockly.Blocks[typeIdToNameToLowerCase(RESULT)] = {
     init: function() {
@@ -789,8 +834,9 @@ const init_Result = ( organization ) => {
 
 const init_Response = ( organization ) => {
   const json =   {
-    "message0": "RESPONSE %1 name %2 %3 description %4 %5 organization %6 %7 json %8",
+    "message0": "RESPONSE %1 %2 name %3 %4 description %5 %6 organization %7 %8 json %9",
     "args0": [
+      editImage,
       {
         "type": "input_dummy"
       },
@@ -822,7 +868,8 @@ const init_Response = ( organization ) => {
     "output": ["responseCheck"],
     "colour": `${typeIdToColor(RESPONSE)}`,
     "tooltip": "",
-    "helpUrl": ""
+    "helpUrl": "",
+    "extensions": [ "edit_button_extension" ]
   };
   Blockly.Blocks[typeIdToNameToLowerCase(RESPONSE)] = {
     init: function() {
