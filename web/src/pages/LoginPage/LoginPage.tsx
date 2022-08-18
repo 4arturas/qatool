@@ -64,7 +64,7 @@ const LoginPage = () => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          QRCode
+          QR Code
         </Label>
         <TextField
           name="qrcode"
@@ -74,7 +74,7 @@ const LoginPage = () => {
           validation={{
             required: {
               value: true,
-              message: 'QRCode is required',
+              message: 'QR Code is required',
             },
           }}
         />
