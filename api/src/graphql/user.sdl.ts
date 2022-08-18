@@ -15,7 +15,7 @@ export const schema = gql`
   type Query {
     getUser(id: Int!): User @requireAuth(roles: ["admin"])
     getUsers: [User] @requireAuth(roles: ["admin"])
-    showQrCodeImage(id: Int!): String @requireAuth
+    showQrCodeImage(id: Int!): String @skipAuth
   }
 
   input UpdateUserInput {
@@ -28,7 +28,7 @@ export const schema = gql`
   type Mutation {
     updateUser(id: Int!, input: UpdateUserInput!): User! @requireAuth(roles: ["admin"])
     deleteUser(id: Int!): Int! @requireAuth(roles: ["admin"])
-    setMfaCode(id: Int!, qrcode: String!): Int! @requireAuth
+    setMfaCode(id: Int!, qrcode: String!): Int! @skipAuth
     resetMfa(id: Int!): Int! @requireAuth(roles: ["admin"])
   }
 `
