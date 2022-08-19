@@ -231,6 +231,10 @@ Blockly.Extensions.register('edit_button_extension', function () {
     const dataJSON = JSON.parse(this.data);
     window.location.href = `/tree/${dataJSON.id}`;
   });
+
+  /*this.appendDummyInput()
+    // .appendField(this.type)
+    .appendField(new Blockly.FieldImage('https://www.gstatic.com/codesite/ph/images/star_on.gif', 50, 50, 'dummy', ()=>{alert(1)}));*/
 });
 
 const init_Experiment = ( organizations ) =>
