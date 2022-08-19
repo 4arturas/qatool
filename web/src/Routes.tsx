@@ -45,6 +45,9 @@ const Routes = () => {
             <Route path="/blockly-tree/{id:Int}" page={BlocklyTreePage} name="blocklyTree" />
             <Route path="/users" page={UsersPage} name="users" />
             <Route path="/organizations" page={OrganizationsPage} name="organizations" />
+
+            <Route path="/schedulers" page={SchedulerSchedulersPage} name="schedulers" />
+
           </Private>
 
         </Private>

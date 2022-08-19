@@ -36,6 +36,7 @@ model QaObject {
 
   parent        QaObjectRelationship[] @relation("Parent")
   children      QaObjectRelationship[] @relation("Children")
+  schedulers    Scheduler[]
 }
 
 model QaObjectType {
@@ -120,4 +121,15 @@ model Organization {
   updatedAt DateTime @default(now())
   users     User[]
   objects   QaObject[]
+}
+
+model Scheduler {
+  id          Int   @id @default(autoincrement())
+  name        String
+  executeAt   DateTime
+  times       Int
+  executed    Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+  experiments QaObject[]
 }

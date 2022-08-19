@@ -85,6 +85,15 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                       Users
                     </NavLink>
                   </li>
+                  <li style={{display: 'inline', marginRight: "20px"}}>
+                    <NavLink
+                      to={routes.schedulers()}
+                      className="rw-link"
+                      // activeMatchParams
+                      activeClassName="activeLink">
+                      Schedulers
+                    </NavLink>
+                  </li>
                   </>
                 }
               </ul>
