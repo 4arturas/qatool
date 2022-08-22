@@ -5,25 +5,10 @@ import {useApolloClient} from "@apollo/client";
 import moment from "moment";
 
 const SchedulerEdit = ( {scheduler, onSave, error, loading } ) => {
-  const client = useApolloClient();
 
   const onFinish = async (values: any) => {
-    // const qaObjectsExperiments = values.experiments.map( e => e.value );
-    // const qaObjectsExperiments = values.experiments.map( e => { return { id: e.value } } );
-
-    console.log( values.experiments );
-    // return;
-    values.experiments.map( e => console.log( e.value, e.name ))
-    // console.log( values.experiments );
-    // return;
-    console.log( values.experiments.map( e => e.value ) );
-    // return;
-    // console.log( qaObjectsExperiments );
-
     const s = values;
     s.id = scheduler.id;
-    // s.experiments = values.experiments.map( e => e.value );
-    // delete s['experiments'];
     onSave(s.id, s );
   };
 
@@ -33,9 +18,7 @@ const SchedulerEdit = ( {scheduler, onSave, error, loading } ) => {
   };
 
   return (
-    // <div>ba{JSON.stringify(scheduler)}</div>
     <>
-      {error}
     <Form
       name="basic"
       onFinish={onFinish}
@@ -43,7 +26,6 @@ const SchedulerEdit = ( {scheduler, onSave, error, loading } ) => {
       autoComplete="off"
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
-      // initialValues={{...scheduler, executeAt: moment(scheduler.executeAt), experiments: scheduler.experiments.map( e => { return {value:e.id, name:e.name} } ) } }
       initialValues={{...scheduler, executeAt: moment(scheduler.executeAt)} }
       disabled={loading}
     >
@@ -90,7 +72,6 @@ const SchedulerEdit = ( {scheduler, onSave, error, loading } ) => {
           mode={'multiple'}
           placeholder="Select Experiment"
           onChange={ ( v, c ) => {
-            console.log( v );
             // scheduler.experiments.push( { value: v, label: c })
             // form.setFieldsValue({organizationName: c.label });
           } }
