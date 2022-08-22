@@ -64,40 +64,27 @@ export const updateScheduler: MutationResolvers['updateScheduler'] = ( { id, inp
 }
 
 export const schedulerUpdate  = async ( { id, input }) => {
-  console.log( input);
-  // input.experiments = input.experiments.map( v => { return { A: v, B: id } } );
-  // input.experiments = input.experiments.map( v => { return { id: v } } );
-/*  const test = await db.scheduler.update({
-    data: input,
-    where: { id },
-  });*/
 
+  const schedulerWithExperiments = await db.scheduler.findUnique({
+    where: { id: id },
+    select: { experiments: true }
+  });
 
-/*  const test = await db.scheduler.update({
-             data: {
-               id: 1,
-               name: 'test',
-               executeAt: new Date('2022-08-19T05:37:10.000Z'),
-               times: 3,
-             },
-           where: {
-               id: 1
-             }
-         })*/
+  const disconnect = schedulerWithExperiments.experiments.map( e => { return { id: e.id } } );
+  const connect = input.experiments.map( e => { return { id: e } } );
 
-  /*const updatePost = await db.scheduler.update({
+  const updateScheduler = await db.scheduler.update({
     where: {
       id: input.id,
     },
     data: {
-      // name: input.name,
-      // executeAt: input.executeAt,
-      // times: input.times,
+      name: input.name,
+      executeAt: input.executeAt,
+      times: input.times,
+      updatedAt: new Date(),
       experiments: {
-        // disconnect: [{ id: 12 }, { id: 19 }],
-        // connect: input.experiments.map( e => { return { id: e } } )
-        // connect: input.experiments.map( e => { return { id: e } } )
-        // connect: input.experiments
+        disconnect: disconnect,
+        connect: connect
       },
     },
     select: {
@@ -108,56 +95,13 @@ export const schedulerUpdate  = async ( { id, input }) => {
       executed: true,
       // createdAt?: true,
       // updatedAt?: true,
-      experiments: true,
-      // _count?: true
-
-    },
-  });*/
-
-  const updatePost = await db.scheduler.update({
-    where: {
-      id: input.id,
-    },
-    data: {
-      name: input.name,
-      executeAt: input.executeAt,
-      times: input.times,
-      experiments: {
-        disconnect: [ { id: 11 }],
-        // connect: input.experiments.map( e => { return { id: e } } )
-      },
-    },
-    select: {
-      id: true,
-      // name?: true,
-      // executeAt?: true,
-      // times?: true,
-      // executed?: true,
-      // createdAt?: true,
-      // updatedAt?: true,
       // experiments?: true,
       // _count?: true
 
     },
   })
 
-  return updatePost;
-
-/*  const ba = await  db.scheduler.upsert({
-    where: { id: id },
-    create: {
-      id: id,
-      experiments: {
-        connectOrCreate: input.experiments,
-      },
-    },
-    update: {
-      experiments: { connectOrCreate: input.experiments },
-    },
-
-  });*/
-
-  return test;
+  return updateScheduler;
 }
 
 export const deleteScheduler: MutationResolvers['deleteScheduler'] = ({
