@@ -42,7 +42,7 @@ const columns = [
     title: 'Action',
     key: 'action',
     display: true,
-    render: (_, record) => <SchedulerEditModal id={record.id}/>
+    render: (_, record) => !record.executed && <SchedulerEditModal id={record.id}/>
   }
 ];
 
