@@ -1,4 +1,5 @@
-# README
+# Quality Assurance Tool
+The purpose of the program is to test banking API
 
 ##
 ```terminal
