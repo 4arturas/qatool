@@ -3,10 +3,15 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChartBar, faEdit} from "@fortawesome/free-solid-svg-icons";
 import React, {useState} from "react";
 import SchedulerCell from "src/components/Scheduler/SchedulerEditCell"
+import schedulerEditModalContext from "src/components/Scheduler/schedulerEditModalContext";
 
 const SchedulerEditModal = ({id}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const [modalDetails] = useState({
+    name: "Leaving this variable for example",
+    closeModal: () => setIsModalVisible(false)
+  });
   return (
     <>
     <Tooltip title={'Scheduler'}>
@@ -28,7 +33,9 @@ const SchedulerEditModal = ({id}) => {
       // style={{top: 5}}
       footer={null}
     >
-      <SchedulerCell id={id}/>
+      <schedulerEditModalContext.Provider value={modalDetails}>
+        <SchedulerCell id={id}/>
+      </schedulerEditModalContext.Provider>
     </Modal>
   </>
   )

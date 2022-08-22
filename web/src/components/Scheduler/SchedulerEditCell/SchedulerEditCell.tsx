@@ -4,6 +4,8 @@ import SchedulerEdit from "src/components/Scheduler/SchedulerEdit/SchedulerEdit"
 import {useMutation} from "@redwoodjs/web";
 import {toast} from "@redwoodjs/web/toast";
 import {navigate, routes} from "@redwoodjs/router";
+import React from "react";
+import schedulerEditModalContext from "src/components/Scheduler/schedulerEditModalContext";
 
 export const QUERY = gql`
   query FindSchedulerEditQuery($id: Int!) {
@@ -36,9 +38,13 @@ export const Failure = ( { error }: CellFailureProps<FindSchedulerEditQueryVaria
 )
 
 export const Success = ({ schedulerEdit }: CellSuccessProps<FindSchedulerEditQuery, FindSchedulerEditQueryVariables>) => {
+
+  const contextData = React.useContext(schedulerEditModalContext);
+
   const [updateScheduler, { loading, error }] = useMutation(UPDATE_SCHEDULER_MUTATION, {
     onCompleted: () => {
       toast.success('Scheduler updated')
+      contextData.closeModal();
       navigate(routes.schedulers())
     },
     onError: (error) => {
