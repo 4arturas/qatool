@@ -1,6 +1,7 @@
 import {Table} from "antd";
 import React from "react";
 import SchedulerEditModal from "src/components/SchedulerEditModal/SchedulerEditModal";
+import moment from "moment";
 
 const columns = [
   {
@@ -22,7 +23,7 @@ const columns = [
     dataIndex: 'executeAt',
     key: 'executeAt',
     render: (_, record) =>
-      record.executeAt
+      moment(record.executeAt).format('YYYY-MM-DD HH:mm')
   },
   {
     title: 'Times',
