@@ -45,7 +45,7 @@ RUN yarn rw build api
 
 # Migrate database
 # !! Disabled in this repo
-RUN yarn rw prisma migrate deploy
+#RUN yarn rw prisma migrate deploy
 
 # Seed database
 # !! Disabled in this repo
@@ -73,6 +73,8 @@ RUN yarn install
 
 # Install additional dependencies
 RUN yarn add @redwoodjs/api-server @redwoodjs/internal
+
+RUN yarn rw prisma migrate deploy
 
 EXPOSE 8911
 CMD []
