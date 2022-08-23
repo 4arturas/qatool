@@ -74,8 +74,6 @@ RUN yarn install
 # Install additional dependencies
 RUN yarn add @redwoodjs/api-server @redwoodjs/internal
 
-RUN yarn rw prisma migrate deploy
-
 EXPOSE 8911
 CMD []
 ENTRYPOINT [ "yarn", "rw-server", "--port", "8911" ]
