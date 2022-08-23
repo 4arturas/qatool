@@ -1,4 +1,4 @@
-import {navigate, NavLink, routes} from "@redwoodjs/router";
+import {Link, navigate, NavLink, routes} from "@redwoodjs/router";
 import 'antd/dist/antd.css';
 import {DEFAULT_TABLE_PAGE_SIZE, ROLE_ADMIN, ROLE_CUSTOMER} from "src/global";
 import {LoginOutlined, LogoutOutlined} from "@ant-design/icons";
@@ -16,26 +16,22 @@ const QaLayout = ({ children }: QaLayoutProps) => {
 
   const { currentUser, logOut, hasRole } = useAuth()
 
+
   return <>
     <Toaster toastOptions={{ className: 'rw-toast', duration: 6000 }} />
     <div className="rw-scaffold">
-      <header className="rw-header">
+      <header className="rw-header" style={{padding:0,margin:0,width:'100%', boxShadow: '1px 2px 9px gray'}}>
 
-        <table>
+        <span style={{position:"absolute", fontSize:'68px', fontWeight:'bold', fontStyle: 'italic', top: '-20px', left: '10px', color:'white'}}>BBS</span>
+        <span style={{position:"absolute", fontSize:'30px', fontWeight:"bold", top: '12px', left: '165px'}}>
+          <Link to={routes.home()} style={{color:'black'}}>QA TOOL</Link>
+        </span>
+
+        <table style={{backgroundColor:'#40A9FF', color:'black', width:'100%', height:'50px', verticalAlign:'bottom', fontSize:'20px'}} cellPadding={0} cellSpacing={0}>
           <tbody>
           <tr>
-            <td>
-              <h1 className="rw-heading rw-heading-primary">
-                <NavLink
-                  to={routes.home()}
-                  className="rw-link"
-                  // activeMatchParams
-                  activeClassName="activeLink">
-                  BBS QA Tool
-                </NavLink>
-              </h1>
-            </td>
-            <td style={{paddingLeft:'20px'}}>
+            <td style={{width:'370px'}}>&nbsp;</td>
+            <td style={{paddingLeft:'20px', verticalAlign:'bottom'}}>
               <ul>
                 { hasRole([ ROLE_ADMIN, ROLE_CUSTOMER ] ) &&
                   <li style={{display: 'inline', marginRight: "20px"}}>
@@ -98,29 +94,31 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                 }
               </ul>
             </td>
+            <td style={{width:'100px', color:'white'}}>
+            {
+              currentUser ?
+                <>
+                  { currentUser.email }&nbsp;{/*{ hasRole( ['admin', 'customer']) ? 'HAS ROLE':'NO ROLE' }*/}
+                  <Tooltip title={'Logout'}>
+                    <LogoutOutlined style={{fontSize: '20px'}} onClick={()=>logOut()}/>
+                  </Tooltip>
+                </>
+                :
+                <Tooltip title={'Login'}>
+                  <LoginOutlined style={{fontSize: '20px'}} onClick={()=>navigate(routes.login())}/>
+                </Tooltip>
+            }
+            <span style={{marginLeft:'10px'}}><Help anchor='anchorContent' size={20}/></span>
+
+            </td>
           </tr>
           </tbody>
         </table>
 
-        <span>
-          {
-            currentUser ?
-            <>
-              { currentUser.email }&nbsp;{/*{ hasRole( ['admin', 'customer']) ? 'HAS ROLE':'NO ROLE' }*/}
-              <Tooltip title={'Logout'}>
-                <LogoutOutlined style={{fontSize: '20px'}} onClick={()=>logOut()}/>
-              </Tooltip>
-            </>
-            :
-              <Tooltip title={'Login'}>
-                <LoginOutlined style={{fontSize: '20px'}} onClick={()=>navigate(routes.login())}/>
-              </Tooltip>
-          }
-          <span style={{marginLeft:'10px'}}><Help anchor='anchorContent' size={20}/></span>
-        </span>
+
 
     </header>
-    <main>{children}</main>
+    <main style={{marginTop:'30px'}}>{children}</main>
     </div>
   </>
 }

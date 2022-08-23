@@ -15,7 +15,7 @@ const Help = ( { anchor, size= 15 } ) => {
   }
   return <>
     <QuestionCircleOutlined
-    style={{fontSize: `${size}px`, cursor: "pointer", marginLeft: '5px', marginRight:'-2px', color: 'black' }}
+    style={{fontSize: `${size}px`, cursor: "pointer", marginLeft: '5px', marginRight:'-2px' }}
     onClick={ ()=> {
       setIsModalVisible(true);
       setTimeout( () => {
