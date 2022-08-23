@@ -24,7 +24,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
 
         <span style={{position:"absolute", fontSize:'68px', fontWeight:'bold', fontStyle: 'italic', top: '-20px', left: '10px', color:'white'}}>BBS</span>
         <span style={{position:"absolute", fontSize:'30px', fontWeight:"bold", top: '12px', left: '165px'}}>
-          <Link to={routes.home()} style={{color:'black'}}>QA TOOL</Link>
+          <Link to={routes.home()} style={{color:'black', fontStyle:'italic'}}>QA Tool</Link>
         </span>
 
         <table style={{backgroundColor:'#40A9FF', color:'black', width:'100%', height:'50px', verticalAlign:'bottom', fontSize:'20px'}} cellPadding={0} cellSpacing={0}>
