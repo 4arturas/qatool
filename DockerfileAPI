@@ -1,49 +1,82 @@
 ###########################################################################################
-# Runner: node
+# Base
 ###########################################################################################
 
-FROM node:14-alpine as runner
+FROM node:14-alpine as base
+WORKDIR /app
 
-# Node
 ARG NODE_ENV
-ARG RUNTIME_ENV
 ENV NODE_ENV=$NODE_ENV
 ENV RUNTIME_ENV=$RUNTIME_ENV
+ARG RUNTIME_ENV
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
-# Set workdir
-WORKDIR /app
-
-COPY api api
-COPY .nvmrc .
-COPY graphql.config.js .
+# Copy
+COPY api/package.json api/package.json
+COPY web/package.json web/package.json
 COPY package.json .
-COPY redwood.toml .
 COPY yarn.lock .
+COPY redwood.toml .
+COPY graphql.config.js .
+COPY .env.defaults .
+COPY .yarn .yarn
+COPY .yarnrc.yml .
 
 # Install dependencies
-RUN yarn install --frozen-lockfile
+RUN yarn install
+
+###########################################################################################
+# Build
+###########################################################################################
+
+FROM base as build
+
+# Copy
+COPY api api
+COPY scripts scripts
 
 # Build
 RUN yarn rw build api
 
+# Set database baseline
+# We only need to do this once per database
+# RUN yarn rw prisma migrate resolve --applied 20210311161829_baseline0
+
 # Migrate database
-# This has been commented out in this example post
-# RUN yarn rw prisma migrate deploy
+# !! Disabled in this repo
+#RUN yarn rw prisma migrate deploy
 
 # Seed database
-# This has been commented out in this example post
-# RUN yarn rw prisma db seed
+# !! Disabled in this repo
+#RUN yarn rw prisma db seed
 
-# Clean up
-RUN rm -rf ./api/src
+###########################################################################################
+# Runner
+###########################################################################################
 
-# Set api as workdirectory
-WORKDIR /app/api
+FROM node:14-alpine
+WORKDIR /app
 
-# Expose RedwoodJS api port
+# Copy
+COPY --from=build /app/api/dist /app/api/dist
+COPY --from=build /app/node_modules/.prisma /app/node_modules/.prisma
+COPY api/package.json .
+COPY graphql.config.js .
+COPY redwood.toml .
+COPY .env.defaults .
+COPY .yarn .yarn
+COPY .yarnrc.yml .
+
+# Install dependencies
+RUN yarn install
+
+# Install additional dependencies
+RUN yarn add @redwoodjs/api-server @redwoodjs/internal
+
 EXPOSE 8911
-
-# Entrypoint to @redwoodjs/api-server binary
-ENTRYPOINT [ "yarn", "rw", "serve", "api", "--port", "8911", "--rootPath", "/api" ]
+CMD []
+ENTRYPOINT [ "yarn", "rw", "serve" ]
+#ENTRYPOINT [ "yarn", "rw-server", "--port", "8911" ]
+#yarn redwood deploy render api
+#ENTRYPOINT [ "yarn", "redwood", "deploy", "api" ]
