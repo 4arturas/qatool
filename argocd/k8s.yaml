@@ -19,7 +19,7 @@ spec:
             - name: RUNTIME_ENV
               value: dev
             - name: DATABASE_URL
-              value: postgres://postgres:password@dbserver:5432/postgres
+              value: postgres://postgres:password@postgres-server:5432/postgres
           image: arturix/qatoolapi:latest
           name: qatoolapi
           imagePullPolicy: Always
