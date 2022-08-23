@@ -45,7 +45,7 @@ RUN yarn rw build api
 
 # Migrate database
 # !! Disabled in this repo
-#RUN yarn rw prisma migrate deploy
+RUN yarn rw prisma migrate deploy
 
 # Seed database
 # !! Disabled in this repo
