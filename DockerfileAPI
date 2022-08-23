@@ -65,8 +65,8 @@ COPY api/package.json .
 COPY graphql.config.js .
 COPY redwood.toml .
 COPY .env.defaults .
-#COPY .yarn .yarn     # @todo: Fix issue with @prisma/client missing when using yarn 3.x
-#COPY .yarnrc.yml .   # @todo: Fix issue with @prisma/client missing when using yarn 3.x
+COPY .yarn .yarn
+COPY .yarnrc.yml .
 
 # Install dependencies
 RUN yarn install
