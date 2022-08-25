@@ -15,12 +15,13 @@ spec:
       containers:
         - env:
             - name: NODE_ENV
-              value: development
+              value: production
             - name: RUNTIME_ENV
-              value: dev
+              value: production
             - name: DATABASE_URL
               value: postgres://postgres:password@postgres-server:5432/postgres
-          image: arturix/qatoolapi:latest
+#          image: arturix/qatoolapi:latest
+          image: localhost:5000/qatoolapi
           name: qatoolapi
           imagePullPolicy: Always
           ports:
@@ -65,7 +66,8 @@ spec:
               value: production
             - name: RUNTIME_ENV
               value: production
-          image: arturix/qatoolweb:latest
+#          image: arturix/qatoolweb:latest
+          image: localhost:5000/qatoolweb
           name: qatoolweb
           imagePullPolicy: Always
           ports:
