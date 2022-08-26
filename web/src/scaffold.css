@@ -98,9 +98,11 @@
 .rw-link {
   color: white;
   text-decoration: none;
+  font-weight: bold;
 }
 .rw-link:hover {
-  color: black;
+  color: #40A9FF;
+  text-shadow:-1px 0 white, 0 1px white, 1px 0 white, 0 -1px white;
 }
 .rw-forgot-link {
   font-size: 0.75rem;
@@ -383,4 +385,11 @@
   font-size: 90%;
   text-align: center;
   flex-basis: 100%;
+}
+
+.rw-dash {
+  padding-left:22px;
+  font-weight:bold;
+  color:#40A9FF;
+  text-shadow: -1px 0 white, 0 1px white, 1px 0 white, 0 -1px white
 }

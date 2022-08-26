@@ -48,6 +48,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                     >
                       QA Objects
                     </NavLink>
+                    <span className='rw-dash'>-</span>
                   </li>
                 }
                 { hasRole([ROLE_ADMIN, ROLE_CUSTOMER]) &&
@@ -59,6 +60,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                       activeClassName="activeLink">
                       Experiment Results
                     </NavLink>
+                    <span className='rw-dash'>-</span>
                   </li>
                 }
                 { hasRole( [ROLE_ADMIN] ) &&
@@ -71,6 +73,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                       activeClassName="activeLink">
                       Organizations
                     </NavLink>
+                    <span className='rw-dash'>-</span>
                   </li>
                   <li style={{display: 'inline', marginRight: "20px"}}>
                     <NavLink
@@ -80,6 +83,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
                       activeClassName="activeLink">
                       Users
                     </NavLink>
+                    <span className='rw-dash'>-</span>
                   </li>
                   <li style={{display: 'inline', marginRight: "20px"}}>
                     <NavLink
