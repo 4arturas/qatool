@@ -22,7 +22,7 @@ const QaLayout = ({ children }: QaLayoutProps) => {
     <div className="rw-scaffold">
       <header className="rw-header" style={{padding:0,margin:0,width:'100%', boxShadow: '1px 2px 9px gray'}}>
 
-        <span style={{position:"absolute", fontSize:'68px', fontWeight:'bold', fontStyle: 'italic', top: '-20px', left: '10px', color:'white'}}>BBS</span>
+        <span style={{position:"absolute", fontSize:'68px', fontWeight:'bold', fontStyle: 'italic', top: '-20px', left: '10px', color:'white', textShadow:'-1px 0 #40A9FF, 0 1px #40A9FF, 1px 0 #40A9FF, 0 -1px #40A9FF'}}>BBS</span>
         <span style={{position:"absolute", fontSize:'30px', fontWeight:"bold", top: '12px', left: '165px'}}>
           <Link to={routes.home()} style={{color:'black', fontStyle:'italic'}}>QA Tool</Link>
         </span>
