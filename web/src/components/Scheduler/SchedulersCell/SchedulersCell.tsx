@@ -25,7 +25,7 @@ export const Empty = () => {
     <div className="rw-text-center">
       {'No schedulers yet. '}
       <Link
-        to={routes.newScheduler()}
+        to={routes.home()}
         className="rw-link"
       >
         {'Create one?'}
