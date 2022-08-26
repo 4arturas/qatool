@@ -143,3 +143,9 @@ VALUES(26, 13, 17, 10);
 INSERT INTO QaObjectRelationship
 (id, parentId, childrenId, childrenObjectTypeId)
 VALUES(27, 13, 18, 11);
+
+--------------------------------
+
+INSERT INTO Scheduler
+(name, executeAt, times, executed, createdAt, updatedAt)
+VALUES('Init', CURRENT_TIMESTAMP, 3, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

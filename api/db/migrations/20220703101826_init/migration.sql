@@ -99,3 +99,13 @@ CREATE TABLE "Message" (
 -- CreateIndex
 CREATE UNIQUE INDEX "QaObjectRelationship_parentId_childrenId_key" ON "QaObjectRelationship"("parentId", "childrenId");
 
+-- Scheduler definition
+CREATE TABLE "Scheduler" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "executeAt" DATETIME NOT NULL,
+    "times" INTEGER NOT NULL,
+    "executed" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
