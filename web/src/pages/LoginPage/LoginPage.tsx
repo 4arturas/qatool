@@ -46,6 +46,10 @@ const LoginPage = () => {
           console.log( ret );
           const result:number = ret.data.setMfaCode;
           setQrCodeOk( result );
+          if ( result === 1 )
+          {
+            setState(STATE_LOGIN_CODE_FORM);
+          }
           // toast.success('Object was deeply cloned' );
           // setClonedQaObject( ret.data.deepClone );
           // afterSave( ret.data.deepClone );
@@ -64,7 +68,7 @@ const LoginPage = () => {
           className="rw-label"
           errorClassName="rw-label rw-label-error"
         >
-          QR Code
+          Code from your device
         </Label>
         <TextField
           name="qrcode"
@@ -74,13 +78,13 @@ const LoginPage = () => {
           validation={{
             required: {
               value: true,
-              message: 'QR Code is required',
+              message: 'Code from your device is required',
             },
           }}
         />
         <FieldError name="qrcode" className="rw-field-error" />
 
-        { qrCodeOk === 0 && <Alert type={"error"} showIcon={true} message="Please check QR code" /> }
+        { qrCodeOk === 0 && <Alert type={"error"} showIcon={true} message="Please check code" /> }
 
         <div className="rw-button-group">
           <Submit className="rw-button rw-button-blue">Submit</Submit>
@@ -117,7 +121,7 @@ const LoginPage = () => {
       <table>
         <tbody>
           <tr>
-            <td><img src={qrImage} alt="QR Code"/></td>
+            <td><img src={qrImage} alt="Code"/></td>
           </tr>
           <tr>
             <td>
@@ -246,7 +250,7 @@ const LoginPage = () => {
                         className="rw-label"
                         errorClassName="rw-label rw-label-error"
                       >
-                        QRCode
+                        Code from your device
                       </Label>
                       <TextField
                         name="qrcode"
@@ -256,7 +260,7 @@ const LoginPage = () => {
                         validation={{
                           required: {
                             value: true,
-                            message: 'QRCode is required',
+                            message: 'Code is required',
                           },
                         }}
                       />
