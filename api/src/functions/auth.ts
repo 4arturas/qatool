@@ -1,7 +1,12 @@
 import { db } from 'src/lib/db'
 import { DbAuthHandler } from '@redwoodjs/api'
 import {UserRole} from "src/models";
-import { NoUserIdError } from "@redwoodjs/api/dist/functions/dbAuth/errors";
+import {
+  GenericError,
+  NotLoggedInError,
+  NoUserIdError,
+  UserNotFoundError
+} from "@redwoodjs/api/dist/functions/dbAuth/errors";
 import {authenticator} from "otplib";
 
 export const handler = async (event, context) => {
@@ -155,15 +160,24 @@ export const handler = async (event, context) => {
       mfaSecret: 'mfaSecret',
       mfaSet: 'mfaSet',
     },
-
+    // https://github.com/redwoodjs/redwood/blob/17b9be564d68a140faacac37b3fa8a1db98f7bc0/packages/graphql-server/src/cors.ts#L16
+    cors: {
+      // 👈 setup your CORS configuration options
+      // origin: 'http://localhost:8910',
+      origin: '*',
+      credentials: true,
+      // maxAge: -1,
+      // allowedHeaders: 'X-Requested-With, Content-Type, Accept, Origin, Authorization'
+    },
     // Specifies attributes on the cookie that dbAuth sets in order to remember
     // who is logged in. See https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#restrict_access_to_cookies
     cookie: {
       HttpOnly: true,
       Path: '/',
-      SameSite: 'Strict',
-      Secure: process.env.NODE_ENV !== 'development' ? true : false,
-
+      SameSite: 'None',
+      // Secure: process.env.NODE_ENV !== 'development' ? true : false,
+      Secure: true,
+      // Domain: 'http://localhost:8910'
       // If you need to allow other domains (besides the api side) access to
       // the dbAuth session cookie:
       // Domain: 'example.com',
@@ -191,12 +205,12 @@ export const handler = async (event, context) => {
     if ( dbUser && !dbUser.mfaSet )
       return [{id:dbUser.id, mfa: 0}];
 
-    if ( dbUser && !loginData.qrcode )
+/*    if ( dbUser && !loginData.qrcode )
       return [{id:dbUser.id, mfa: 2}]
 
     const allGood = authenticator.check(loginData.qrcode, dbUser.mfaSecret);
     if ( !allGood )
-      throw new NoUserIdError();
+      throw new NoUserIdError();*/
 
     const handlerUser = await this.options.login.handler(dbUser);
     if (handlerUser == null || handlerUser[this.options.authFields.id] == null) {
@@ -206,6 +220,57 @@ export const handler = async (event, context) => {
 
     const loginResponse = this._loginResponse(handlerUser);
     return loginResponse;
+  }
+
+  authHandler.getToken = async function (): Promise<any> {
+    try {
+      const user = await this._getCurrentUser()
+
+      // need to return *something* for our existing Authorization header stuff
+      // to work, so return the user's ID in case we can use it for something
+      // in the future
+      return [user[this.options.authFields.id]];
+    } catch (e: any) {
+      if (e instanceof NotLoggedInError) {
+        return this._logoutResponse()
+      } else {
+        return this._logoutResponse({error: e.message})
+      }
+    }
+  }
+
+  // gets the user from the database and returns only its ID
+  authHandler._getCurrentUser = async function(): Promise<any>
+  {
+    if (!this.session?.id) {
+      throw new NotLoggedInError()
+    }
+
+    const select = {
+      [this.options.authFields.id]: true,
+      [this.options.authFields.username]: true,
+    }
+
+    if (this.options.webAuthn?.enabled && this.options.authFields.challenge) {
+      select[this.options.authFields.challenge] = true
+    }
+
+    let user
+
+    try {
+      user = await this.dbAccessor.findUnique({
+        where: { [this.options.authFields.id]: this.session?.id },
+        select,
+      })
+    } catch (e: any) {
+      throw new GenericError(e.message)
+    }
+
+    if (!user) {
+      throw new UserNotFoundError()
+    }
+
+    return user
   }
 
   return await authHandler.invoke()
