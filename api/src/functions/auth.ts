@@ -174,10 +174,10 @@ export const handler = async (event, context) => {
     cookie: {
       HttpOnly: true,
       Path: '/',
-      SameSite: 'None',
+      SameSite: 'Lax',
       // Secure: process.env.NODE_ENV !== 'development' ? true : false,
       Secure: true,
-      // Domain: 'http://localhost:8910'
+      Domain: 'qatool.sys'
       // If you need to allow other domains (besides the api side) access to
       // the dbAuth session cookie:
       // Domain: 'example.com',

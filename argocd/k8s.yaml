@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: qatoolapi
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       platform: qatoolapi
@@ -14,6 +14,8 @@ spec:
     spec:
       containers:
         - env:
+            - name: SESSION_SECRET
+              value: changeme
             - name: NODE_ENV
               value: production
             - name: RUNTIME_ENV
@@ -21,11 +23,14 @@ spec:
             - name: DATABASE_URL
               value: postgres://postgres:password@postgres-server:5432/postgres
 #          image: arturix/qatoolapi:latest
+#          image: localhost:32000/qatoolapi:latest
           image: localhost:5000/qatoolapi
           name: qatoolapi
-          imagePullPolicy: Always
+          imagePullPolicy: Never
           ports:
             - containerPort: 8911
+#          command:
+#            - "yarn rw prisma migrate dev"
       imagePullSecrets:
         - name: my-container-registry-secret
 ---
@@ -51,7 +56,7 @@ kind: Deployment
 metadata:
   name: qatoolweb
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       platform: qatoolweb
@@ -67,9 +72,10 @@ spec:
             - name: RUNTIME_ENV
               value: production
 #          image: arturix/qatoolweb:latest
+#          image: localhost:32000/qatoolweb:latest
           image: localhost:5000/qatoolweb
           name: qatoolweb
-          imagePullPolicy: Always
+          imagePullPolicy: Never
           ports:
             - containerPort: 8910
       imagePullSecrets:
