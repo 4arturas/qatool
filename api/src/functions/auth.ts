@@ -164,9 +164,10 @@ export const handler = async (event, context) => {
     cors: {
       // 👈 setup your CORS configuration options
       // origin: 'http://localhost:8910',
-      origin: '*',
-      credentials: true,
-      // maxAge: -1,
+      // origin: '*',
+      // origin: 'http://qatool.sys',
+      // credentials: true,
+      // maxAge: 99999999,
       // allowedHeaders: 'X-Requested-With, Content-Type, Accept, Origin, Authorization'
     },
     // Specifies attributes on the cookie that dbAuth sets in order to remember
@@ -174,15 +175,9 @@ export const handler = async (event, context) => {
     cookie: {
       HttpOnly: true,
       Path: '/',
-      SameSite: 'Lax',
-      // Secure: process.env.NODE_ENV !== 'development' ? true : false,
-      Secure: true,
-      Domain: 'qatool.sys'
-      // If you need to allow other domains (besides the api side) access to
-      // the dbAuth session cookie:
-      // Domain: 'example.com',
+      SameSite: 'Strict',
+      Secure: process.env.NODE_ENV !== 'development' ? true : false,
     },
-
     forgotPassword: forgotPasswordOptions,
     login: loginOptions,
     resetPassword: resetPasswordOptions,
@@ -205,12 +200,12 @@ export const handler = async (event, context) => {
     if ( dbUser && !dbUser.mfaSet )
       return [{id:dbUser.id, mfa: 0}];
 
-/*    if ( dbUser && !loginData.qrcode )
+    if ( dbUser && !loginData.qrcode )
       return [{id:dbUser.id, mfa: 2}]
 
     const allGood = authenticator.check(loginData.qrcode, dbUser.mfaSecret);
     if ( !allGood )
-      throw new NoUserIdError();*/
+      throw new NoUserIdError();
 
     const handlerUser = await this.options.login.handler(dbUser);
     if (handlerUser == null || handlerUser[this.options.authFields.id] == null) {
@@ -238,40 +233,5 @@ export const handler = async (event, context) => {
       }
     }
   }
-
-  // gets the user from the database and returns only its ID
-  authHandler._getCurrentUser = async function(): Promise<any>
-  {
-    if (!this.session?.id) {
-      throw new NotLoggedInError()
-    }
-
-    const select = {
-      [this.options.authFields.id]: true,
-      [this.options.authFields.username]: true,
-    }
-
-    if (this.options.webAuthn?.enabled && this.options.authFields.challenge) {
-      select[this.options.authFields.challenge] = true
-    }
-
-    let user
-
-    try {
-      user = await this.dbAccessor.findUnique({
-        where: { [this.options.authFields.id]: this.session?.id },
-        select,
-      })
-    } catch (e: any) {
-      throw new GenericError(e.message)
-    }
-
-    if (!user) {
-      throw new UserNotFoundError()
-    }
-
-    return user
-  }
-
   return await authHandler.invoke()
 }
