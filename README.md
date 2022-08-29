@@ -78,6 +78,10 @@ docker build -f DockerfileWEB -t qatoolweb . && docker tag qatoolweb localhost:5
 ````
 
 ```bash
+docker build -f DockerfileAPI -t qatoolapi . && docker tag qatoolapi localhost:5000/qatoolapi && docker push localhost:5000/qatoolapi
+````
+
+```bash
 docker build -f DockerfileAPI -t qatoolapi . && docker tag qatoolapi arturix/qatoolapi && docker push arturix/qatoolapi
 ````
 
@@ -86,7 +90,23 @@ docker build -f DockerfileWEB -t qatoolweb . && docker tag qatoolweb arturix/qat
 ````
 
 ```bash
+docker tag qatoolweb localhost:32000/qatoolweb && docker push localhost:32000/qatoolweb
+````
+
+```bash
+docker tag qatoolweb localhost:32000/qatoolapi && docker push localhost:32000/qatoolapi
+````
+
+```bash
 docker run -d -p 8910:8910 qatoolweb
+````
+
+```bash
+docker run -e DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres?connection_limit=1 -p 8911:8911 qatoolapi
+````
+
+```bash
+docker run -p 8911:8911 qatoolapi
 ````
 
 
