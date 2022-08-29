@@ -2,7 +2,7 @@
 # Base
 ###########################################################################################
 
-FROM node:14-alpine as base
+FROM node:16-alpine as base
 WORKDIR /app
 
 ARG NODE_ENV
@@ -11,28 +11,22 @@ ARG RUNTIME_ENV
 ENV RUNTIME_ENV=$RUNTIME_ENV
 
 # Copy
-COPY api/package.json api/package.json
 COPY web/package.json web/package.json
 COPY package.json .
-COPY yarn.lock .
-COPY redwood.toml .
-COPY graphql.config.js .
-COPY .env.defaults .
-COPY .yarn .yarn
-COPY .yarnrc.yml .
 
 # Install dependencies
 RUN yarn install
-
+RUN yarn add react react-dom react-hook-form --ignore-workspace-root-check
 ###########################################################################################
 # Build
 ###########################################################################################
 
 FROM base as build
 
-# Copy
-COPY api api
+WORKDIR /app
+
 COPY web web
+COPY redwood.toml .
 
 # Build
 RUN yarn rw build web
