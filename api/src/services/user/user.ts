@@ -107,9 +107,6 @@ export const showQrCodeImage = async ( { id: id } ) =>
   // session.secret = secret;
   const keyUri = authenticator.keyuri(user.email, 'QATool', secret);
   const dataUrl = await QRCode.toDataURL( keyUri );
-  console.log( secret );
-  // console.log( dataUrl );
-  console.log( id );
   return dataUrl;
 }
 
