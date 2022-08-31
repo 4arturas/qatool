@@ -162,3 +162,8 @@ VALUES(26, 13, 17, 10);
 INSERT INTO public."QaObjectRelationship"
 (id, "parentId", "childrenId", "childrenObjectTypeId")
 VALUES(27, 13, 18, 11);
+
+---
+INSERT INTO public."Scheduler"
+("name", "executeAt", "times", "executed", "createdAt", "updatedAt")
+VALUES('Init', now(), 3, false, now(), now());
