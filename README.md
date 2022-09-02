@@ -181,4 +181,3 @@ yarn rw serve web
 ## TODO
 * Integrate jwt
 * Use websockets for informing user what is going on the backend whe tests are running
-
