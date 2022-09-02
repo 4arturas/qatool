@@ -2,7 +2,8 @@
 # Runner: node
 ###########################################################################################
 
-FROM node:16-alpine as runner
+FROM node:16 as runner
+#FROM gcr.io/distroless/nodejs:16 as runner
 
 # Node
 ARG NODE_ENV
@@ -17,11 +18,20 @@ WORKDIR /app
 
 COPY api/package.json api/package.json
 COPY package.json .
+COPY .npmrc .
+COPY .nvmrc .
+#COPY yarn.lock .
 
 
 # Install dependencies
+#RUN yarn add source-map-resolve --ignore-workspace-root-check
+RUN yarn add core-js@3.25.0 --ignore-workspace-root-check
 RUN yarn install
 RUN yarn add react react-dom --ignore-workspace-root-check
+
+#RUN npm install --save core-js@^3
+#RUN npm install
+#RUN npm install react react-dom
 
 FROM runner as build
 

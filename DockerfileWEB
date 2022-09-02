@@ -3,6 +3,7 @@
 ###########################################################################################
 
 FROM node:16-alpine as base
+#FROM gcr.io/distroless/nodejs:16 as base
 WORKDIR /app
 
 ARG NODE_ENV
@@ -17,6 +18,11 @@ COPY package.json .
 # Install dependencies
 RUN yarn install
 RUN yarn add react react-dom react-hook-form --ignore-workspace-root-check
+
+
+#RUN npm install --save core-js@^3
+#RUN npm install
+#RUN npm install react react-dom react-hook-form
 ###########################################################################################
 # Build
 ###########################################################################################
