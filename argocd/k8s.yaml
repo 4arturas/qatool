@@ -100,8 +100,8 @@ kind: Ingress
 metadata:
   name: qatool
   annotations:
-    kubernetes.io/ingress.class: nginx
-#    kubernetes.io/ingress.class: traefik
+#    kubernetes.io/ingress.class: nginx
+    kubernetes.io/ingress.class: traefik
 spec:
   rules:
     - host: qatool.sys
