@@ -20,12 +20,14 @@ spec:
               value: production
             - name: RUNTIME_ENV
               value: production
+            - name: API_URL
+              value: http://qatool.sys
             - name: DATABASE_URL
               value: postgres://postgres:password@postgres-server:5432/postgres
-          image: arturix/qatoolapi:latest
-#          image: localhost:5000/qatoolapi
+#          image: arturix/qatoolapi:latest
+          image: localhost:5000/qatoolapi
           name: qatoolapi
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8911
 #          command:
@@ -65,15 +67,10 @@ spec:
         platform: qatoolweb
     spec:
       containers:
-        - env:
-            - name: NODE_ENV
-              value: production
-            - name: RUNTIME_ENV
-              value: production
-          image: arturix/qatoolweb:latest
-#          image: localhost:5000/qatoolweb
-          name: qatoolweb
-          imagePullPolicy: Always
+        - name: qatoolweb
+#          image: arturix/qatoolweb:latest
+          image: localhost:5000/qatoolweb
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8910
       imagePullSecrets:
@@ -100,8 +97,8 @@ kind: Ingress
 metadata:
   name: qatool
   annotations:
-#    kubernetes.io/ingress.class: nginx
-    kubernetes.io/ingress.class: traefik
+    kubernetes.io/ingress.class: nginx
+#    kubernetes.io/ingress.class: traefik
 spec:
   rules:
     - host: qatool.sys
