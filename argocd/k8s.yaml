@@ -27,7 +27,7 @@ spec:
 #          image: arturix/qatoolapi:latest
           image: localhost:5000/qatoolapi
           name: qatoolapi
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8911
 #          command:
@@ -70,9 +70,12 @@ spec:
         - name: qatoolweb
 #          image: arturix/qatoolweb:latest
           image: localhost:5000/qatoolweb
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8910
+          env:
+            - name: API_URL
+              value: http://qatool.sys
       imagePullSecrets:
         - name: my-container-registry-secret
 ---
